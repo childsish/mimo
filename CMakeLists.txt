@@ -13,6 +13,7 @@ set(SOURCE_FILES
         src/Queue.cpp include/Queue.h
         src/QueuePusher.cpp include/QueuePusher.h
         src/Stream.cpp include/Stream.h
+        src/entities/Integer.cpp include/entities/Integer.h
         include/streams/Capture.h
         include/streams/Release.h
         include/streams/Sink.h)

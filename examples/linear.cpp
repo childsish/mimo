@@ -4,24 +4,8 @@
  */
 
 #include "Pipeline.h"
-#include "Entity.h"
-#include "Stream.h"
+#include "entities/Integer.h"
 #include "streams/Print.h"
-
-
-class Integer : public Entity {
-public:
-
-    int value;
-
-    Integer(int value_) : value(value_) {}
-
-};
-
-std::ostream &operator<<(std::ostream &out, const Integer &integer) {
-    out << integer.value;
-    return out;
-}
 
 
 class Range : public Stream {

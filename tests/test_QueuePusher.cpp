@@ -2,14 +2,8 @@
 
 #include "Queue.h"
 #include "QueuePusher.h"
+#include "entities/Integer.h"
 
-
-class Integer : public Entity {
-public:
-    int value;
-
-    Integer(int value_) : value(value_) {}
-};
 
 TEST(QueuePusherTest, test_push) {
     Integer *integer = new Integer(0);
