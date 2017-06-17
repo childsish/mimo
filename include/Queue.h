@@ -25,6 +25,8 @@ public:
     Queue(const Queue &&other);
     ~Queue();
 
+    std::size_t size() const;
+
     /**
      * Push an entity into the queue. Return true if there is still space for more.
      * @param entity entity to push

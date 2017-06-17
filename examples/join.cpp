@@ -26,9 +26,11 @@ public:
 };
 
 int main() {
+    Queue::THRESHOLD = 2;
+
     Pipeline pipeline;
-    Range one_to_thousand(1000);
-    Range thousand_to_one(1000, 1, -1);
+    Range one_to_thousand(10);
+    Range thousand_to_one(10, 1, -1);
     Multiply multiply;
     Print<Integer> print;
 

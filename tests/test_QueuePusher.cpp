@@ -38,10 +38,14 @@ TEST(QueuePusherTest, test_threshold) {
     EXPECT_FALSE(pusher.can_push());
     pusher.add_queue(&queue1);
     pusher.add_queue(&queue2);
+
     EXPECT_TRUE(pusher.can_push());
     EXPECT_FALSE(pusher.push(new Entity()));
+    EXPECT_EQ(queue1.size(), 1);
+    EXPECT_EQ(queue2.size(), 1);
 
-    entity = queue1.pop();
+    queue1.pop();
+    entity = queue2.pop();
     entity->reference_count -= 2; // Prevent warning message
     delete entity;
 }

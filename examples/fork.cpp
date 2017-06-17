@@ -38,8 +38,10 @@ bool is_even(const Integer *integer) {
 
 
 int main() {
+    Queue::THRESHOLD = 2;
+
     Pipeline pipeline;
-    Range range(1000);
+    Range range(10);
     Split<Integer> split(is_even);
     Print<Integer> print_true("", " is even");
     Print<Integer> print_false("", " is not even");

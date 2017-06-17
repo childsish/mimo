@@ -14,6 +14,10 @@ Queue::~Queue() {
     }
 }
 
+std::size_t Queue::size() const {
+    return _entities.size();
+}
+
 bool Queue::push(Entity *entity) {
     if (_closed) {
         throw std::runtime_error("Can not push to a closed queue.");

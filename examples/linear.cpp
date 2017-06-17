@@ -10,8 +10,10 @@
 
 
 int main() {
+    Queue::THRESHOLD = 2;
+
     Pipeline pipeline;
-    Range range(1000);
+    Range range(10);
     Print<Integer> print;
 
     uuid range_id = pipeline.add_stream(range);
