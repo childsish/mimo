@@ -1,6 +1,9 @@
 #include "Entity.h"
 
-Entity::Entity : reference_count(1) {}
+#include <iostream>
+
+
+Entity::Entity() : reference_count(1) {}
 
 Entity::~Entity() {
     if (reference_count > 0) {
