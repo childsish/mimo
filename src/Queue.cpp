@@ -14,6 +14,9 @@ Queue::~Queue() {
 }
 
 bool Queue::push(Entity *entity) {
+    if (_closed) {
+        throw std::runtime_error("Can not push to a closed queue.");
+    }
     _entities.push_back(entity);
     return can_push();
 }
@@ -36,8 +39,12 @@ Entity *Queue::pop() {
     return entity;
 }
 
+void Queue::close() {
+    _closed = true;
+}
+
 bool Queue::can_push() const {
-    return _entities.size() < _threshold;
+    return !_closed && _entities.size() < _threshold;
 }
 
 bool Queue::can_pop() const {
