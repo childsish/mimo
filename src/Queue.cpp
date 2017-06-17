@@ -3,9 +3,9 @@
 #include <iostream>
 
 
-Queue::Queue(unsigned int threshold) : _threshold(threshold) {}
+Queue::Queue(unsigned int threshold) : _threshold(threshold), _closed(false) {}
 
-Queue::Queue(const Queue &&other) : _threshold(other._threshold), _entities(other._entities) {}
+Queue::Queue(const Queue &&other) : _threshold(other._threshold), _entities(other._entities), _closed(false) {}
 
 Queue::~Queue() {
     if (_entities.size() > 0) {
