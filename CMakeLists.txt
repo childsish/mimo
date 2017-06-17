@@ -8,7 +8,8 @@ set(GRAPH__DISABLE_TESTS on)
 add_subdirectory(../graph ${PROJECT_BINARY_DIR}/lib/graph)
 
 set(SOURCE_FILES
-        include/Entity.h
+        src/Entity.cpp include/Entity.h
+        src/Pipeline.cpp include/Pipeline.h
         src/Queue.cpp include/Queue.h
         src/QueuePusher.cpp include/QueuePusher.h
         src/Stream.cpp include/Stream.h
@@ -17,7 +18,15 @@ set(SOURCE_FILES
         include/streams/Sink.h)
 add_library(mimo ${SOURCE_FILES})
 target_include_directories(mimo PRIVATE
-        include)
+        include
+        ${PROJECT_BINARY_DIR}/lib/graph/include)
 
 enable_testing()
+
+add_executable(linear examples/linear.cpp)
+target_include_directories(linear PRIVATE
+        include)
+target_link_libraries(linear mimo)
+add_test(linear linear)
+
 add_subdirectory(tests)
