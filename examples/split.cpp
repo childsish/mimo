@@ -9,8 +9,10 @@
 
 
 int main() {
+    Queue::THRESHOLD = 2;
+
     Pipeline pipeline;
-    Range range(500);
+    Range range(10);
     Print<Integer> print_left("", " was split left.");
     Print<Integer> print_right("", " was split right.");
 

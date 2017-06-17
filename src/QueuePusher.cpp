@@ -8,7 +8,7 @@ bool QueuePusher::push(Entity *entity) {
     entity->reference_count += _queues.size() - 1;
     bool can_push = true;
     for (unsigned int i = 0; i < _queues.size(); ++i) {
-        can_push = can_push && _queues[i]->push(entity);
+        can_push = _queues[i]->push(entity) && can_push;
     }
     return can_push;
 }
