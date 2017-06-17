@@ -5,16 +5,17 @@
 #include <iostream>
 
 
+template<typename E>
 class Print : public Stream {
 public:
 
     Print() : Stream("print", {"input"}, {}) {}
 
     void run() {
-        Entity *entity;
+        E *entity;
         while (can_run()) {
-            entity = inputs["input"].pop();
-            std::cout << entity << std::endl;
+            entity = static_cast<E *>(inputs["input"].pop());
+            std::cout << *entity << std::endl;
             collect(entity);
         }
     }
