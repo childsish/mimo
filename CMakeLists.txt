@@ -44,4 +44,10 @@ target_include_directories(fork PRIVATE
 target_link_libraries(fork mimo)
 add_test(fork fork)
 
+add_executable(split examples/split.cpp)
+target_include_directories(split PRIVATE
+        include)
+target_link_libraries(split mimo)
+add_test(split split)
+
 add_subdirectory(tests)
