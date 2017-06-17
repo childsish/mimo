@@ -2,14 +2,7 @@
 
 #include "Entity.h"
 #include "Queue.h"
-
-
-class Integer : public Entity {
-public:
-    int value;
-
-    Integer(int value_) : value(value_) {}
-};
+#include "entities/Integer.h"
 
 
 TEST(QueueTest, test_fifo) {

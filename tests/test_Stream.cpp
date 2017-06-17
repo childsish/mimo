@@ -1,17 +1,10 @@
 #include "gtest/gtest.h"
 
 #include "Stream.h"
+#include "entities/Integer.h"
 #include "streams/Capture.h"
 #include "streams/Release.h"
 #include "streams/Sink.h"
-
-
-class Integer : public Entity {
-public:
-    int value;
-
-    Integer(int value_) : value(value_) {}
-};
 
 
 class DoNothing : public Stream {
