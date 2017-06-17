@@ -21,13 +21,16 @@ TEST(QueueTest, test_fifo) {
 
     integer = static_cast<Integer *>(queue.pop());
     EXPECT_EQ(integer->value, 0);
+    integer->reference_count--; // Prevent warning message
     delete integer;
     integer = static_cast<Integer *>(queue.pop());
     EXPECT_EQ(integer->value, 1);
+    integer->reference_count--; // Prevent warning message
     delete integer;
 }
 
 TEST(QueueTest, test_treshold) {
+    Entity *entity;
     Queue queue(2);
 
     EXPECT_TRUE(queue.can_push());
@@ -38,10 +41,14 @@ TEST(QueueTest, test_treshold) {
     EXPECT_FALSE(queue.push(new Integer(0)));
     EXPECT_FALSE(queue.can_push());
     EXPECT_TRUE(queue.can_pop());
-    delete queue.pop();
+    entity = queue.pop();
+    entity->reference_count--; // Prevent warning message
+    delete entity;
     EXPECT_TRUE(queue.can_push());
     EXPECT_TRUE(queue.can_pop());
-    delete queue.pop();
+    entity = queue.pop();
+    entity->reference_count--; // Prevent warning message
+    delete entity;
     EXPECT_FALSE(queue.can_pop());
 }
 
