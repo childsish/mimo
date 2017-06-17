@@ -27,7 +27,7 @@ public:
 
 int main() {
     Pipeline pipeline;
-    Range one_to_thousand(1, 1000, 1);
+    Range one_to_thousand(1000);
     Range thousand_to_one(1000, 1, -1);
     Multiply multiply;
     Print<Integer> print;

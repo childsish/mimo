@@ -11,7 +11,7 @@
 
 int main() {
     Pipeline pipeline;
-    Range range(0, 1000, 1);
+    Range range(1000);
     Print<Integer> print;
 
     uuid range_id = pipeline.add_stream(range);
