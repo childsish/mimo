@@ -29,13 +29,13 @@ int main() {
     Queue::THRESHOLD = 2;
 
     Pipeline pipeline;
-    Range one_to_thousand(10);
-    Range thousand_to_one(10, 1, -1);
+    Range one_to_n(10);
+    Range n_to_one(10, 0, -1);
     Multiply multiply;
     Print<Integer> print;
 
-    uuid one_to_thousand_id = pipeline.add_stream(one_to_thousand);
-    uuid thousand_to_one_id = pipeline.add_stream(thousand_to_one);
+    uuid one_to_thousand_id = pipeline.add_stream(one_to_n);
+    uuid thousand_to_one_id = pipeline.add_stream(n_to_one);
     uuid multiply_id = pipeline.add_stream(multiply);
     uuid print_id = pipeline.add_stream(print);
     pipeline.pipe({one_to_thousand_id, "output"}, {multiply_id, "multiplicand"});

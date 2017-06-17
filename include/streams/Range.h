@@ -18,7 +18,7 @@ public:
             throw std::runtime_error("Parameter to must be positive.");
         }
     }
-    Range(int from, int to, int step) :
+    Range(int from, int to, int step = 1) :
             Stream("range", {}, {"output"}),
             _from(from),
             _to(to),

@@ -4,9 +4,6 @@ project(mimo)
 set(CMAKE_CXX_STANDARD 14)
 
 
-set(GRAPH__DISABLE_TESTS on)
-add_subdirectory(../graph ${PROJECT_BINARY_DIR}/lib/graph)
-
 set(SOURCE_FILES
         src/Entity.cpp include/Entity.h
         src/Pipeline.cpp include/Pipeline.h

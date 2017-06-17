@@ -38,7 +38,7 @@ bool is_even(const Integer *integer) {
 
 
 int main() {
-    Queue::THRESHOLD = 2;
+    Queue::THRESHOLD = 4;
 
     Pipeline pipeline;
     Range range(10);
