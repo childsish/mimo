@@ -8,6 +8,16 @@
 class Range : public Stream {
 public:
 
+    Range(int to) :
+            Stream("range", {}, {"output"}),
+            _from(0),
+            _to(to),
+            _step(1)
+    {
+        if (to < 0) {
+            throw std::runtime_error("Parameter to must be positive.");
+        }
+    }
     Range(int from, int to, int step) :
             Stream("range", {}, {"output"}),
             _from(from),
