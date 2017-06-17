@@ -43,6 +43,12 @@ public:
     Entity *pop();
 
     /**
+     * Close the queue.
+     * Queue can no longer be pushed to and can only be popped until it's empty.
+     */
+    void close();
+
+    /**
      * Check if queue can be pushed to
      * @return true if fewer entities in queue than threshold
      */
@@ -59,6 +65,8 @@ private:
     unsigned int _threshold;
 
     std::list<Entity *> _entities;
+
+    bool _closed;
 
 };
 

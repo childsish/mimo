@@ -24,6 +24,11 @@ public:
     bool can_push() const;
 
     /**
+     * Close all queues.
+     */
+    void close();
+
+    /**
      * Add a queue to be pushed to
      * @param queue queue to add to pusher
      */
