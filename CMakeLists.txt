@@ -38,4 +38,10 @@ target_include_directories(join PRIVATE
 target_link_libraries(join mimo)
 add_test(join join)
 
+add_executable(fork examples/fork.cpp)
+target_include_directories(fork PRIVATE
+        include)
+target_link_libraries(fork mimo)
+add_test(fork fork)
+
 add_subdirectory(tests)
