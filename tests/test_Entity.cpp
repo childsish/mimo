@@ -16,6 +16,7 @@ TEST(EntityTest, test_init) {
 
     ASSERT_EQ(1, entity->reference_count);
 
+    entity->reference_count--; // Prevent warning message
     delete entity;
 }
 
@@ -24,5 +25,6 @@ TEST(EntityTest, test_inherit) {
 
     ASSERT_EQ(1, integer->reference_count);
 
+    integer->reference_count--; // Prevent warning message
     delete integer;
 }

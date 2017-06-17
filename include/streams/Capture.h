@@ -12,6 +12,7 @@ public:
     Capture() : Stream("capture", {"input"}, {}) {}
     ~Capture() {
         for (auto entity : captured) {
+            entity->reference_count -= 1;
             delete entity;
         }
     }

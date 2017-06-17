@@ -31,10 +31,12 @@ TEST(QueuePusherTest, test_push) {
     integer = static_cast<Integer *>(queue2.pop());
     EXPECT_EQ(0, integer->value);
     EXPECT_EQ(2, integer->reference_count);
+    integer->reference_count -= 2; // Prevent warning message
     delete integer;
 }
 
 TEST(QueuePusherTest, test_threshold) {
+    Entity *entity;
     Queue queue1(1);
     Queue queue2(2);
     QueuePusher pusher;
@@ -45,5 +47,7 @@ TEST(QueuePusherTest, test_threshold) {
     EXPECT_TRUE(pusher.can_push());
     EXPECT_FALSE(pusher.push(new Entity()));
 
-    delete queue1.pop();
+    entity = queue1.pop();
+    entity->reference_count -= 2; // Prevent warning message
+    delete entity;
 }
