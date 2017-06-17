@@ -6,34 +6,7 @@
 #include "Pipeline.h"
 #include "entities/Integer.h"
 #include "streams/Print.h"
-
-
-class Range : public Stream {
-public:
-
-    Range(int from, int to, int step) :
-        Stream("range", {}, {"output"}),
-        _from(from),
-        _to(to),
-        _step(step) {}
-
-    void run() {
-        while (can_run()) {
-            outputs["output"].push(new Integer(_from));
-            _from += _step;
-            if (_from >= _to) {
-                outputs["output"].close();
-            }
-        }
-    }
-
-private:
-
-    int _from;
-    int _to;
-    int _step;
-
-};
+#include "streams/Range.h"
 
 
 int main() {
