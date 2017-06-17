@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+unsigned int Queue::THRESHOLD = 100;
 
 Queue::Queue(unsigned int threshold) : _threshold(threshold), _closed(false) {}
 

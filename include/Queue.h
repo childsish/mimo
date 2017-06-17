@@ -13,12 +13,14 @@
 class Queue {
 public:
 
+    static unsigned int THRESHOLD; // = 100;
+
     /**
      * Create a queue with a given threshold.
      * Copy construction is expressly deleted.
      * @param threshold maximum
      */
-    Queue(unsigned int threshold = 100);
+    Queue(unsigned int threshold = THRESHOLD);
     Queue(const Queue &) = delete;
     Queue(const Queue &&other);
     ~Queue();
