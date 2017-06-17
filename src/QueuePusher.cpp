@@ -25,6 +25,13 @@ bool QueuePusher::can_push() const {
     return can_push;
 }
 
+void QueuePusher::close() {
+    for (unsigned int i = 0; i < _queues.size(); ++i) {
+        _queues.at(i)->close();
+    }
+}
+
+
 void QueuePusher::add_queue(Queue *queue) {
     _queues.push_back(queue);
 }
