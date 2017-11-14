@@ -2,6 +2,7 @@
 #define MIMO_WORKFLOW_H
 
 #include <utility>
+#include <memory>
 
 #include "Stream.h"
 
@@ -20,7 +21,8 @@ public:
 
     bool can_run() const;
 
-    uuid add_stream(Stream &stream);
+    template<typename StreamType, typename... Args>
+    std::unique_ptr<StreamType> add_stream(Args... args);
 
     void pipe(std::pair<uuid, std::string> from, std::pair<uuid, std::string> to);
 

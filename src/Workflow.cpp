@@ -30,3 +30,8 @@ uuid Pipeline::add_stream(Stream &stream) {
 void Pipeline::pipe(std::pair<uuid, std::string> from, std::pair<uuid, std::string> to) {
     _streams.at(from.first)->pipe(*_streams.at(to.first), from.second, to.second);
 }
+
+template<typename StreamType, typename... Args>
+std::unique_ptr<StreamType> Pipeline::add_stream(Args... args) {
+    return std::make_unique<StreamType>(args...);
+}
