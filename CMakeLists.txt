@@ -28,7 +28,7 @@ target_link_libraries(mimo
 
 if (MIMO_BUILD_TESTS)
     add_executable(linear examples/linear.cpp
-            src/entities/Integer.cpp include/entities/Integer.h)
+            include/entities/Integer.h)
     target_include_directories(linear PRIVATE
             include)
     target_link_libraries(linear

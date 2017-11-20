@@ -10,10 +10,13 @@ public:
 
     int value;
 
-    explicit Integer(int value_);
+    explicit Integer(int value_) : value(value_) {}
 
 };
 
-std::ostream &operator<<(std::ostream &out, const Integer &integer);
+std::ostream &operator<<(std::ostream &out, const Integer &integer) {
+    out << integer.value;
+    return out;
+}
 
 #endif //MIMO_INTEGER_H

@@ -8,7 +8,7 @@ add_subdirectory(googletest)
 
 add_executable(test_mimo
         ../include/Entity.h
-        ../src/entities/Integer.cpp ../include/entities/Integer.h
+        ../include/entities/Integer.h
         test_Queue.cpp)
 target_include_directories(test_mimo PRIVATE
     ${gtest_SOURCE_DIR}/include
