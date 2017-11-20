@@ -5,12 +5,12 @@
 #include "Entity.h"
 
 
-class Integer : public Entity {
+class Integer : public mimo::Entity {
 public:
 
     int value;
 
-    Integer(int value_);
+    explicit Integer(int value_);
 
 };
 

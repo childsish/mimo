@@ -2,56 +2,57 @@
 
 #include <iostream>
 
-unsigned int Queue::THRESHOLD = 100;
+unsigned int mimo::Queue::THRESHOLD = 100;
 
-Queue::Queue(unsigned int threshold) : _threshold(threshold), _closed(false) {}
+mimo::Queue::Queue(unsigned int threshold_) :
+        threshold(threshold_),
+        closed(false) {}
 
-Queue::Queue(const Queue &&other) : _threshold(other._threshold), _entities(other._entities), _closed(false) {}
+mimo::Queue::Queue(const Queue &&other) :
+        threshold(other.threshold),
+        entities(other.entities),
+        closed(other.closed) {}
 
-Queue::~Queue() {
-    if (_entities.size() > 0) {
+mimo::Queue::~Queue() {
+    if (!this->entities.empty()) {
         std::cerr << "Warning: queue not emptied before deletion." << std::endl;
     }
 }
 
-std::size_t Queue::size() const {
-    return _entities.size();
-}
-
-bool Queue::push(Entity *entity) {
-    if (_closed) {
+bool mimo::Queue::push(std::shared_ptr<mimo::Entity> entity) {
+    if (this->closed) {
         throw std::runtime_error("Can not push to a closed queue.");
     }
-    _entities.push_back(entity);
-    return can_push();
+    this->entities.push(entity);
+    return this->can_push();
 }
 
-Entity *Queue::peek() {
-    if (_entities.size() == 0) {
+std::shared_ptr<mimo::Entity> mimo::Queue::peek() {
+    if (this->entities.empty()) {
         throw std::runtime_error("Trying to peek in empty queue.");
     }
 
-    return _entities.front();
+    return this->entities.front();
 }
 
-Entity *Queue::pop() {
-    if (_entities.size() == 0) {
+std::shared_ptr<mimo::Entity> mimo::Queue::pop() {
+    if (this->entities.empty()) {
         throw std::runtime_error("Trying to pop from empty queue.");
     }
 
-    Entity *entity = _entities.front();
-    _entities.pop_front();
+    auto entity = this->entities.front();
+    this->entities.pop();
     return entity;
 }
 
-void Queue::close() {
-    _closed = true;
+void mimo::Queue::close() {
+    this->closed = true;
 }
 
-bool Queue::can_push() const {
-    return !_closed && _entities.size() < _threshold;
+bool mimo::Queue::can_push() const {
+    return !this->closed && this->entities.size() < this->threshold;
 }
 
-bool Queue::can_pop() const {
-    return _entities.size() > 0;
+bool mimo::Queue::can_pop() const {
+    return !this->entities.empty();
 }

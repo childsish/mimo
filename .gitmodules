@@ -4,3 +4,6 @@
 [submodule "lib/graph"]
 	path = lib/graph
 	url = https://github.com/childsish/graph.git
+[submodule "lib/workflow"]
+	path = lib/workflow
+	url = https://github.com/childsish/workflow.git

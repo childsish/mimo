@@ -6,15 +6,15 @@ set(CMAKE_CXX_STANDARD 14)
 add_subdirectory(googletest)
 
 
-add_executable(test_units
-        test_Entity.cpp
-        test_Queue.cpp
-        test_QueuePusher.cpp
-        test_Stream.cpp)
-target_include_directories(
-        test_units PRIVATE
-        ${gtest_SOURCE_DIR}/include
-        ../include
+add_executable(test_mimo
+        ../include/Entity.h
+        ../src/entities/Integer.cpp ../include/entities/Integer.h
+        test_Queue.cpp)
+target_include_directories(test_mimo PRIVATE
+    ${gtest_SOURCE_DIR}/include
+    ../include
 )
-target_link_libraries(test_units gtest_main mimo)
-add_test(test_units test_units)
+target_link_libraries(test_mimo
+    gtest_main
+    mimo)
+add_test(test_mimo test_units)

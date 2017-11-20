@@ -10,17 +10,14 @@
 #include <unordered_map>
 #include <unordered_set>
 
+namespace mimo {
 
-class Entity {
-public:
+    class Entity {
+    public:
 
-    unsigned int reference_count;
-    std::unordered_map<std::string, std::unordered_set<std::string>> attributes;
+        std::unordered_map<std::string, std::unordered_set<std::string>> attributes;
 
-    Entity();
-
-    virtual ~Entity();
-
-};
+    };
+}
 
 #endif //MIMO_ENTITY_H
