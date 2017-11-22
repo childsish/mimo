@@ -1,4 +1,4 @@
-#include "Queue.h"
+#include "queues/Queue.h"
 
 #include <iostream>
 
@@ -7,11 +7,6 @@ unsigned int mimo::Queue::THRESHOLD = 100;
 mimo::Queue::Queue(unsigned int threshold_) :
         threshold(threshold_),
         closed(false) {}
-
-mimo::Queue::Queue(const Queue &&other) :
-        threshold(other.threshold),
-        entities(other.entities),
-        closed(other.closed) {}
 
 mimo::Queue::~Queue() {
     if (!this->entities.empty()) {

@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "Entity.h"
-#include "Queue.h"
+#include "queues/Queue.h"
 #include "entities/Integer.h"
 
 

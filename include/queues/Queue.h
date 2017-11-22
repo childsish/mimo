@@ -14,7 +14,7 @@ namespace mimo {
     class Queue {
     public:
 
-        static unsigned int THRESHOLD; // = 100;
+        static unsigned int THRESHOLD;
 
         /**
          * Create a queue with a given threshold.
@@ -23,7 +23,6 @@ namespace mimo {
          */
         explicit Queue(unsigned int threshold = THRESHOLD);
         Queue(const Queue &) = delete;
-        explicit Queue(const Queue &&other);
         ~Queue();
 
         /**
