@@ -19,7 +19,8 @@ add_subdirectory(lib/workflow)
 add_library(mimo
         include/queues/InputQueue.h
         include/queues/OutputQueue.h
-        src/queues/Queue.cpp include/queues/Queue.h)
+        src/queues/Queue.cpp include/queues/Queue.h
+        src/queues/QueueChannel.cpp include/queues/QueueChannel.h)
 target_include_directories(mimo PRIVATE
         include)
 target_link_libraries(mimo
