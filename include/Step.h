@@ -7,19 +7,22 @@
 #include <queues/OutputQueue.h>
 
 
-class Step {
-public:
+namespace mimo {
 
-    /**
-     * Run the step. Returns true if the step completed running.
-     * @param ins input entities
-     * @param outs output entities
-     * @return step completed running
-     */
-    virtual bool run(std::unordered_map<std::string, mimo::InputQueue> ins,
-                     std::unordered_map<std::string, mimo::OutputQueue> outs) = 0;
+    class Step {
+    public:
 
-};
+        /**
+         * Run the step. Returns true if the step completed running.
+         * @param ins input entities
+         * @param outs output entities
+         * @return step completed running
+         */
+        virtual bool run(std::unordered_map<std::string, InputQueue> ins,
+                         std::unordered_map<std::string, OutputQueue> outs) = 0;
+
+    };
+}
 
 
 #endif //MIMO_STEP_H
