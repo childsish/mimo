@@ -17,6 +17,8 @@ add_subdirectory(lib/workflow)
 # Add mimo library
 
 add_library(mimo
+        include/Entity.h
+        include/Step.h
         include/queues/InputQueue.h
         include/queues/OutputQueue.h
         src/queues/Queue.cpp include/queues/Queue.h
