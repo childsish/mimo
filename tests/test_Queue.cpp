@@ -6,7 +6,7 @@
 
 
 TEST(QueueTest, test_fifo) {
-    mimo::Queue queue;
+    mimo::Queue queue(0);
 
     queue.push(std::static_pointer_cast<mimo::Entity>(std::make_shared<Integer>(0)));
     queue.push(std::static_pointer_cast<mimo::Entity>(std::make_shared<Integer>(1)));
@@ -18,7 +18,7 @@ TEST(QueueTest, test_fifo) {
 }
 
 TEST(QueueTest, test_treshold) {
-    mimo::Queue queue(2);
+    mimo::Queue queue(0, 2);
 
     EXPECT_TRUE(queue.can_push());
     EXPECT_FALSE(queue.can_pop());
@@ -36,7 +36,7 @@ TEST(QueueTest, test_treshold) {
 }
 
 TEST(QueueTest, test_empty) {
-    mimo::Queue queue;
+    mimo::Queue queue(0);
 
     EXPECT_THROW(queue.peek(), std::runtime_error);
     EXPECT_THROW(queue.pop(), std::runtime_error);

@@ -2,11 +2,12 @@
 
 #include <iostream>
 
-unsigned int mimo::Queue::THRESHOLD = 100;
+unsigned int mimo::Queue::CAPACITY = 100;
 
-mimo::Queue::Queue(unsigned int threshold_) :
-        threshold(threshold_),
-        closed(false) {}
+mimo::Queue::Queue(unsigned int index_, unsigned int capacity) :
+    index(index_),
+    capacity(capacity),
+    closed(false) {}
 
 mimo::Queue::~Queue() {
     if (!this->entities.empty()) {
@@ -45,7 +46,7 @@ void mimo::Queue::close() {
 }
 
 bool mimo::Queue::can_push() const {
-    return !this->closed && this->entities.size() < this->threshold;
+    return !this->closed && this->entities.size() < this->capacity;
 }
 
 bool mimo::Queue::can_pop() const {

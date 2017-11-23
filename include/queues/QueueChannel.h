@@ -21,23 +21,23 @@ namespace mimo {
 
         explicit QueueChannel(unsigned int capacity = CAPACITY);
 
-        unsigned int reserve();
+        bool reserve(std::unique_ptr<mimo::Queue> &queue);
 
-        void push(std::unique_ptr<Queue> queue, unsigned int identifier);
+        void push(std::unique_ptr<Queue> queue);
 
         std::unique_ptr<Queue> pop();
-
-        bool can_push() const;
 
         bool can_pop() const;
 
     private:
 
-        unsigned int current_identifier;
+        unsigned int current_index;
 
-        std::queue<std::unique_ptr<mimo::Queue>> queues;
+        std::unordered_map<unsigned int, std::unique_ptr<mimo::Queue>> queues;
 
         std::unordered_set<unsigned int> reservations;
+
+        inline unsigned int usage() const;
 
     };
 }

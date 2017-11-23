@@ -5,6 +5,7 @@
 #ifndef MIMO_QUEUE_H
 #define MIMO_QUEUE_H
 
+
 #include <memory>
 #include <queue>
 #include "Entity.h"
@@ -14,14 +15,16 @@ namespace mimo {
     class Queue {
     public:
 
-        static unsigned int THRESHOLD;
+        static unsigned int CAPACITY;
+
+        unsigned int index;
 
         /**
          * Create a queue with a given threshold.
          * Copy construction is explicitly deleted.
-         * @param threshold maximum
+         * @param capacity maximum
          */
-        explicit Queue(unsigned int threshold = THRESHOLD);
+        explicit Queue(unsigned int index, unsigned int capacity = CAPACITY);
         Queue(const Queue &) = delete;
         ~Queue();
 
@@ -64,7 +67,7 @@ namespace mimo {
 
     private:
 
-        unsigned int threshold;
+        unsigned int capacity;
 
         std::queue<std::shared_ptr<mimo::Entity>> entities;
 

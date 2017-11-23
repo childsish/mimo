@@ -7,43 +7,55 @@
 #include "queues/QueueChannel.h"
 
 
-unsigned int mimo::QueueChannel::CAPACITY = 100;
+unsigned int mimo::QueueChannel::CAPACITY = 10;
 
 mimo::QueueChannel::QueueChannel(unsigned int capacity_) :
     capacity(capacity_),
-    current_identifier(0)
+    current_index(0)
 {
     if (capacity_ < 1) {
         throw std::runtime_error("QueueChannel initialised with too little capacity.");
     }
 }
 
-unsigned int mimo::QueueChannel::reserve() {
-    if (!this->can_push()) {
-        throw std::runtime_error("Channel has no extra capacity.");
+bool mimo::QueueChannel::reserve(std::unique_ptr<mimo::Queue> &queue) {
+    unsigned int usage = this->usage();
+    if (usage >= this->capacity) {
+        return false;
     }
-    this->reservations.insert(this->current_identifier);
-    return this->current_identifier++;
+    else if (this->reservations.find(queue->index) != this->reservations.end()) {
+        return false;
+    }
+    else if (usage == this->capacity - 1
+             && this->queues.find(this->current_index) == this->queues.end()
+             && queue->index != this->current_index) {
+        return false;
+    }
+    this->reservations.insert(queue->index);
 }
 
-void mimo::QueueChannel::push(std::unique_ptr<mimo::Queue> queue, unsigned int identifier) {
-    if (this->reservations.find(identifier) == this->reservations.end()) {
+void mimo::QueueChannel::push(std::unique_ptr<mimo::Queue> queue) {
+    if (this->reservations.find(queue->index) == this->reservations.end()) {
         throw std::runtime_error("No reservation made for this queue.");
     }
-    this->reservations.erase(identifier);
-    this->queues.push(std::move(queue));
+    this->reservations.erase(queue->index);
+    this->queues[queue->index] = std::move(queue);
 }
 
 std::unique_ptr<mimo::Queue> mimo::QueueChannel::pop() {
-    std::unique_ptr<Queue> queue(std::move(queues.front()));
-    this->queues.pop();
+    if (!this->can_pop()) {
+        throw std::runtime_error("Front queue is not the next in line.");
+    }
+    std::unique_ptr<Queue> queue(std::move(this->queues[this->current_index]));
+    this->queues.erase(this->current_index);
+    this->current_index += 1;
     return queue;
 }
 
-bool mimo::QueueChannel::can_push() const {
-    return this->reservations.size() + this->queues.size() < this->capacity;
+bool mimo::QueueChannel::can_pop() const {
+    return this->queues.find(this->current_index) != this->queues.end();
 }
 
-bool mimo::QueueChannel::can_pop() const {
-    return !this->queues.empty();
+unsigned int mimo::QueueChannel::usage() const {
+    return this->reservations.size() + this->queues.size();
 }
