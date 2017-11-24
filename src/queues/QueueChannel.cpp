@@ -18,7 +18,7 @@ mimo::QueueChannel::QueueChannel(unsigned int capacity_) :
     }
 }
 
-bool mimo::QueueChannel::reserve(std::unique_ptr<mimo::Queue> &queue) {
+bool mimo::QueueChannel::reserve(const std::unique_ptr<mimo::Queue> &queue) {
     unsigned int usage = this->usage();
     if (usage >= this->capacity) {
         return false;
@@ -42,6 +42,13 @@ void mimo::QueueChannel::push(std::unique_ptr<mimo::Queue> queue) {
     this->queues[queue->index] = std::move(queue);
 }
 
+const std::unique_ptr<mimo::Queue> &mimo::QueueChannel::peek() {
+    if (!this->can_pop())  {
+        throw std::runtime_error("Front queue is not the next in line.");
+    }
+    return this->queues[this->current_index];
+}
+
 std::unique_ptr<mimo::Queue> mimo::QueueChannel::pop() {
     if (!this->can_pop()) {
         throw std::runtime_error("Front queue is not the next in line.");
@@ -54,6 +61,13 @@ std::unique_ptr<mimo::Queue> mimo::QueueChannel::pop() {
 
 bool mimo::QueueChannel::can_pop() const {
     return this->queues.find(this->current_index) != this->queues.end();
+}
+
+bool mimo::QueueChannel::can_reserve(std::unique_ptr<mimo::Queue> &queue) const {
+    return !(this->usage() >= this->capacity
+             || this->usage() == this->capacity - 1
+                && this->queues.find(queue->index) == this->queues.end()
+                && this->current_index != queue->index);
 }
 
 unsigned int mimo::QueueChannel::usage() const {

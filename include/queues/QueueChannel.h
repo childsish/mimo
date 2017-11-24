@@ -8,6 +8,7 @@
 
 
 #include <unordered_set>
+#include <bits/unordered_set.h>
 #include "Queue.h"
 
 namespace mimo {
@@ -21,13 +22,17 @@ namespace mimo {
 
         explicit QueueChannel(unsigned int capacity = CAPACITY);
 
-        bool reserve(std::unique_ptr<mimo::Queue> &queue);
+        bool reserve(const std::unique_ptr<mimo::Queue> &queue);
 
         void push(std::unique_ptr<Queue> queue);
+
+        const std::unique_ptr<Queue> &peek();
 
         std::unique_ptr<Queue> pop();
 
         bool can_pop() const;
+
+        bool can_reserve(std::unique_ptr<mimo::Queue> &queue) const;
 
     private:
 
