@@ -1,16 +1,16 @@
 #include "gtest/gtest.h"
 
-#include "Stream.h"
+#include "Step.h"
 #include "entities/Integer.h"
 #include "streams/Capture.h"
 #include "streams/Release.h"
 #include "streams/Sink.h"
 
 
-class DoNothing : public Stream {
+class DoNothing : public Step {
 public:
 
-    DoNothing() : Stream("do_nothing", {"input"}, {"output"}) {}
+    DoNothing() : Step("do_nothing", {"input"}, {"output"}) {}
 
     void run() {
         Entity *entity;
@@ -23,7 +23,7 @@ public:
 
 
 TEST(StreamTest, test_inherit) {
-    Stream *stream = new DoNothing();
+    Step *stream = new DoNothing();
 
     EXPECT_EQ(stream->name, "do_nothing");
 
@@ -31,7 +31,7 @@ TEST(StreamTest, test_inherit) {
 }
 
 TEST(StreamTest, test_run) {
-    Stream *stream = new Sink();
+    Step *stream = new Sink();
 
     ASSERT_FALSE(stream->can_run());
     stream->push(new Entity(), "input");
@@ -43,14 +43,14 @@ TEST(StreamTest, test_run) {
 }
 
 TEST(StreamTest, test_pipe) {
-    Stream *release = new Release({
+    Step *release = new Release({
         new Integer(0),
         new Integer(1),
         new Integer(2),
         new Integer(3),
         new Integer(4)
     });
-    Stream *capture = new Capture();
+    Step *capture = new Capture();
 
     release->pipe(*capture);
 

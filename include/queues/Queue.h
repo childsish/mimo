@@ -17,16 +17,16 @@ namespace mimo {
 
         static unsigned int CAPACITY;
 
-        unsigned int index;
+        const unsigned int run;
 
         /**
          * Create a queue with a given threshold.
          * Copy construction is explicitly deleted.
          * @param capacity maximum
          */
-        explicit Queue(unsigned int index, unsigned int capacity = CAPACITY);
-        Queue(const Queue &) = delete;
-        ~Queue();
+        explicit Queue(unsigned int run, unsigned int capacity = CAPACITY);
+        //Queue(const Queue &) = delete;
+        //~Queue();
 
         /**
          * Push an entity into the queue. Return true if there is still space for more.
@@ -52,6 +52,7 @@ namespace mimo {
          * Queue can no longer be pushed to and can only be popped until it's empty.
          */
         void close();
+        bool closed() const;
 
         /**
          * Check if queue can be pushed to
@@ -71,7 +72,7 @@ namespace mimo {
 
         std::queue<std::shared_ptr<mimo::Entity>> entities;
 
-        bool closed;
+        bool _closed;
 
     };
 }

@@ -21,6 +21,7 @@ add_library(mimo
         include/Step.h
         include/queues/InputQueue.h
         include/queues/OutputQueue.h
+        src/Job.cpp include/Job.h
         src/queues/Queue.cpp include/queues/Queue.h
         src/queues/QueueChannel.cpp include/queues/QueueChannel.h)
 target_include_directories(mimo PRIVATE
