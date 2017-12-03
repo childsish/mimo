@@ -19,9 +19,6 @@ mimo::QueueChannel::QueueChannel(unsigned int capacity_) :
 }
 
 void mimo::QueueChannel::reserve(unsigned int run) {
-    if (!this->can_reserve(run)) {
-        throw std::runtime_error("Can not reserve run.");
-    }
     this->reservations.insert(run);
     while (this->reservations.find(this->current_reserve) != this->reservations.end()) {
         this->current_reserve += 1;
@@ -29,7 +26,13 @@ void mimo::QueueChannel::reserve(unsigned int run) {
 }
 
 void mimo::QueueChannel::push(std::unique_ptr<mimo::Queue> queue) {
-    if (this->reservations.find(queue->run) == this->reservations.end()) {
+    if (this->usage() >= this->capacity) {
+        throw std::runtime_error("Can not push to channel: Channel is full.");
+    }
+    else if (this->usage() == this->capacity - 1 && run != this->current_reserve) {
+        throw std::runtime_error("Can not push to channel: Last place is reserved for next run.");
+    }
+    else if (this->reservations.find(queue->run) == this->reservations.end()) {
         throw std::runtime_error("No reservation made for this queue.");
     }
     this->reservations.erase(queue->run);
@@ -43,14 +46,14 @@ void mimo::QueueChannel::push(std::unique_ptr<mimo::Queue> queue) {
 }
 
 const std::unique_ptr<mimo::Queue> &mimo::QueueChannel::peek() const {
-    if (!this->can_pop())  {
+    if (!this->get_pop_status())  {
         throw std::runtime_error("Front queue is not the next in line.");
     }
     return this->queues.at(this->current_pop).front();
 }
 
 std::unique_ptr<mimo::Queue> mimo::QueueChannel::pop() {
-    if (!this->can_pop()) {
+    if (!this->get_pop_status()) {
         throw std::runtime_error("Front queue is not the next in line.");
     }
     std::unique_ptr<Queue> queue(std::move(this->queues.at(this->current_pop).front()));
@@ -63,32 +66,46 @@ std::unique_ptr<mimo::Queue> mimo::QueueChannel::pop() {
     return queue;
 }
 
-bool mimo::QueueChannel::can_reserve(unsigned int run) const {
-    return this->usage() < this->capacity - 1
-              && run >= this->current_reserve
-              && this->reservations.find(run) == this->reservations.end()
-            || this->usage() == this->capacity - 1
-              && this->current_reserve == run;
+ReserveStatus mimo::QueueChannel::get_reserve_status(unsigned int run) const {
+    if (this->usage() >= this->capacity) {
+        return RESERVE_FULL;
+    }
+    else if (this->usage() == this->capacity - 1 && run != this->current_reserve) {
+        return RESERVE_NEXT;
+    }
+    else if (this->usage() < this->capacity - 1) {
+        if (run < this->current_reserve) {
+            return RESERVE_OLD;
+        }
+        else if (this->reservations.find(run) != this->reservations.end()) {
+            return RESERVE_FOUND;
+        }
+    }
+    return CAN_RESERVE;
 }
 
-bool mimo::QueueChannel::can_push(unsigned int run) const {
-    return this->usage() < this->capacity - 1
-              && this->reservations.find(run) != this->reservations.end()
-           || this->usage() == this->capacity - 1
-              && this->current_push == run;
+PushStatus mimo::QueueChannel::get_push_status(unsigned int run) const {
+    if (this->usage() >= this->capacity) {
+        return PUSH_FULL;
+    }
+    else if (this->usage() == this->capacity - 1 && run != this->current_push) {
+        return PUSH_NEXT;
+    }
+    else if (this->reservations.find(run) == this->reservations.end()) {
+        return PUSH_UNEXPECTED;
+    }
+    return CAN_PUSH;
 }
 
-bool mimo::QueueChannel::can_pop() const {
-    return this->queues.find(this->current_pop) != this->queues.end()
-           && !this->queues.at(this->current_pop).empty();
+PopStatus mimo::QueueChannel::get_pop_status() const {
+    if (this->queues.find(this->current_pop) != this->queues.end() && !this->queues.at(this->current_pop).empty()) {
+        return CAN_POP;
+    }
+    return CAN_NOT_POP;
 }
 
-bool mimo::QueueChannel::has_reservation(unsigned int run) const {
-    return this->reservations.find(run) != this->reservations.end();
-}
-
-unsigned int mimo::QueueChannel::usage() const {
-    unsigned int total = 0;
+unsigned long mimo::QueueChannel::usage() const {
+    unsigned long total = 0;
     for (auto item : this->queues) {
         total += item.second.size();
     }

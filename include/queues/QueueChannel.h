@@ -20,6 +20,26 @@ namespace mimo {
     class QueueChannel {
     public:
 
+        enum ReserveStatus {
+            CAN_RESERVE, // can reserve place in channel
+            RESERVE_FULL, // no space left in channel to reserve
+            RESERVE_NEXT, // last place must be reserved by next run
+            RESERVE_FOUND, // run is already reserved
+            RESERVE_OLD // run had already been reserved (but is no longer)
+        };
+
+        enum PushStatus {
+            CAN_PUSH, // can push to channel
+            PUSH_FULL, // no space left in channel for push
+            PUSH_NEXT, // last place must be pushed by next run
+            PUSH_UNEXPECTED // no reservation made for this run
+        };
+
+        enum PopStatus {
+            CAN_POP,
+            CAN_NOT_POP
+        };
+
         static unsigned int CAPACITY;
 
         const unsigned int capacity;
@@ -61,7 +81,7 @@ namespace mimo {
          * @param run run to reserve space for
          * @return if space can be reserved
          */
-        bool can_reserve(unsigned int run) const;
+        ReserveStatus get_reserve_status(unsigned int run) const;
 
         /**
          * A queue can only be pushed if there is sufficient space or there is only one space left and the run being
@@ -69,20 +89,13 @@ namespace mimo {
          * @param run run to push
          * @return if queue can be pushed
          */
-        bool can_push(unsigned int run) const;
+        PushStatus get_push_status(unsigned int run) const;
 
         /**
          * A queue can only be popped from the channel if it has a run number one more than the previous pop.
          * @return
          */
-        bool can_pop() const;
-
-        /**
-         * Check if the run has a reservation
-         * @param run
-         * @return
-         */
-        bool has_reservation(unsigned int run) const;
+        PopStatus get_pop_status() const;
 
     private:
 
@@ -98,7 +111,7 @@ namespace mimo {
 
         std::unordered_set<unsigned int> reservations;
 
-        inline unsigned int usage() const;
+        inline unsigned long usage() const;
 
     };
 
