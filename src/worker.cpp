@@ -72,6 +72,14 @@ std::vector<mimo::Job> get_next_jobs(
     }
 }
 
+void drain_outputs(
+        const workflow::Workflow &workflow,
+        std::unordered_map<unsigned int, mimo::QueueChannel> inputs,
+        std::unordered_map<unsigned int, mimo::QueueChannel> outputs
+) {
+
+}
+
 void worker(
         std::queue<mimo::Job> &jobs,
         std::mutex &job_mutex,

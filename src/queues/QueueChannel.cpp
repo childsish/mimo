@@ -36,9 +36,6 @@ void mimo::QueueChannel::reserve(unsigned int run) {
     }
 
     this->reservations.insert(run);
-    while (this->reservations.find(this->current_reserve) != this->reservations.end()) {
-        this->current_reserve += 1;
-    }
 }
 
 void mimo::QueueChannel::push(std::unique_ptr<mimo::Queue> queue) {
@@ -53,9 +50,13 @@ void mimo::QueueChannel::push(std::unique_ptr<mimo::Queue> queue) {
         throw std::runtime_error("Can not push: no reservation made for this run.");
     }
 
-    this->reservations.erase(queue->run);
     if (queue->closed()) {
         this->closed_queues.insert(queue->run);
+        this->reservations.erase(queue->run);
+    }
+    while (this->closed_queues.find(this->current_reserve) != this->closed_queues.end()) {
+        this->closed_queues.erase(this->current_reserve);
+        this->current_reserve += 1;
     }
     this->queues[queue->run].push(std::move(queue));
     while (this->queues.find(this->current_push) != this->queues.end()) {
@@ -85,16 +86,17 @@ std::unique_ptr<mimo::Queue> mimo::QueueChannel::pop() {
 }
 
 mimo::QueueChannel::ReserveStatus mimo::QueueChannel::get_reserve_status(unsigned int run) const {
-    if (this->usage() >= this->capacity) {
+    unsigned long usage_ = this->reservations.size();
+    if (usage_ >= this->capacity) {
         return RESERVE_FULL;
     }
     else if (this->reservations.find(run) != this->reservations.end()) {
         return RESERVE_FOUND;
     }
-    else if (this->usage() == this->capacity - 1 && run != this->current_reserve) {
+    else if (usage_ == this->capacity - 1 && run != this->current_reserve) {
         return RESERVE_NEXT;
     }
-    else if (this->usage() < this->capacity - 1 && run < this->current_reserve) {
+    else if (usage_ < this->capacity - 1 && run < this->current_reserve) {
         return RESERVE_OLD;
     }
     return CAN_RESERVE;
@@ -125,6 +127,5 @@ unsigned long mimo::QueueChannel::usage() const {
     for (const auto &item : this->queues) {
         total += item.second.size();
     }
-    return total + this->reservations.size();
-    return 0;
+    return total;;
 }

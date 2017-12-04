@@ -46,7 +46,7 @@ void mimo::Queue::close() {
 }
 
 bool mimo::Queue::closed() const {
-    this->_closed;
+    return this->_closed;
 }
 
 bool mimo::Queue::can_push() const {
