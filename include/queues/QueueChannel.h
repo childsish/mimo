@@ -115,8 +115,6 @@ namespace mimo {
 
     };
 
-    unsigned int QueueChannel::CAPACITY = 10;
-
 }
 
 
