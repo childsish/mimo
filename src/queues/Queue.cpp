@@ -7,7 +7,7 @@ unsigned int mimo::Queue::CAPACITY = 100;
 mimo::Queue::Queue(unsigned int run_, unsigned int capacity) :
     run(run_),
     capacity(capacity),
-    _closed(false) {}
+    end_of_run(false) {}
 
 /*mimo::Queue::~Queue() {
     if (!this->entities.empty()) {
@@ -16,8 +16,8 @@ mimo::Queue::Queue(unsigned int run_, unsigned int capacity) :
 }*/
 
 bool mimo::Queue::push(std::shared_ptr<mimo::Entity> entity) {
-    if (this->_closed) {
-        throw std::runtime_error("Can not push to a closed queue.");
+    if (this->end_of_run) {
+        throw std::runtime_error("Can not push to a is_end_of_run queue.");
     }
     this->entities.push(entity);
     return this->can_push();
@@ -41,16 +41,16 @@ std::shared_ptr<mimo::Entity> mimo::Queue::pop() {
     return entity;
 }
 
-void mimo::Queue::close() {
-    this->_closed = true;
+void mimo::Queue::end_run() {
+    this->end_of_run = true;
 }
 
-bool mimo::Queue::closed() const {
-    return this->_closed;
+bool mimo::Queue::is_end_of_run() const {
+    return this->end_of_run;
 }
 
 bool mimo::Queue::can_push() const {
-    return !this->_closed && this->entities.size() < this->capacity;
+    return !this->end_of_run && this->entities.size() < this->capacity;
 }
 
 bool mimo::Queue::can_pop() const {

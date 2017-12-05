@@ -93,7 +93,12 @@ void worker(
         jobs.pop();
         job_mutex.unlock();
 
-        job.run();
+        bool complete = job.run();
+        if (complete) {
+            for (auto &output : job.outputs) {
+                output.end_run();
+            }
+        }
 
         drain_outputs(workflow, outputs);
         auto next_jobs = get_next_jobs(job, workflow, inputs, outputs);

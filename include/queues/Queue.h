@@ -51,8 +51,8 @@ namespace mimo {
          * Close the queue.
          * Queue can no longer be pushed to and can only be popped until it's empty.
          */
-        void close();
-        bool closed() const;
+        void end_run();
+        bool is_end_of_run() const;
 
         /**
          * Check if queue can be pushed to
@@ -72,7 +72,7 @@ namespace mimo {
 
         std::queue<std::shared_ptr<mimo::Entity>> entities;
 
-        bool _closed;
+        bool end_of_run;
 
     };
 }
