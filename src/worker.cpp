@@ -98,15 +98,24 @@ void worker(
             for (auto &output : job.outputs) {
                 output.end_run();
             }
+            if (std::all_of(inputs.is_closed())) {
+                for (auto &output : job.outputs) {
+                    output.close();
+                }
+            }
         }
 
         drain_outputs(workflow, outputs);
         auto next_jobs = get_next_jobs(job, workflow, inputs, outputs);
         for (auto next_job : next_jobs) {
+            job_mutex.lock();
             jobs.push(next_job);
+            job_mutex.unlock();
         }
         if (!job.completed) {
+            job_mutex.lock();
             jobs.push(job);
+            job_mutex.unlock();
         }
     }
 }

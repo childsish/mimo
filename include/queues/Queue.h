@@ -48,11 +48,20 @@ namespace mimo {
         std::shared_ptr<mimo::Entity> pop();
 
         /**
-         * Close the queue.
+         * @brief flag queue as end-of-run
+         * Indicate that this queue is the last to be produced in this run.
          * Queue can no longer be pushed to and can only be popped until it's empty.
          */
         void end_run();
         bool is_end_of_run() const;
+
+        /**
+         * @brief flag queue as end-of-stream
+         * Indicate that this queue is the last to be produced by this step.
+         * Queue can no longer be pushed to and can only be popped until it's empty.
+         */
+        void close();
+        bool is_closed() const;
 
         /**
          * Check if queue can be pushed to
@@ -73,6 +82,8 @@ namespace mimo {
         std::queue<std::shared_ptr<mimo::Entity>> entities;
 
         bool end_of_run;
+
+        bool closed;
 
     };
 }

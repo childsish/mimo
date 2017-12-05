@@ -7,7 +7,8 @@ unsigned int mimo::Queue::CAPACITY = 100;
 mimo::Queue::Queue(unsigned int run_, unsigned int capacity) :
     run(run_),
     capacity(capacity),
-    end_of_run(false) {}
+    end_of_run(false),
+    closed(false) {}
 
 /*mimo::Queue::~Queue() {
     if (!this->entities.empty()) {
@@ -47,6 +48,14 @@ void mimo::Queue::end_run() {
 
 bool mimo::Queue::is_end_of_run() const {
     return this->end_of_run;
+}
+
+void mimo::Queue::close() {
+    this->closed = true;
+}
+
+bool mimo::Queue::is_closed() const {
+    return this->closed;
 }
 
 bool mimo::Queue::can_push() const {
