@@ -77,7 +77,16 @@ void drain_outputs(
         std::unordered_map<unsigned int, mimo::QueueChannel> inputs,
         std::unordered_map<unsigned int, mimo::QueueChannel> outputs
 ) {
-
+    if (std::all_of(output.can_push(output))) {
+        for (auto &output : job.outputs) {
+            unsigned int fragment = output->run + 1;
+            outputs[output->id].push(std::move(output));
+            outputs[output->id] = std::make_unique<mimo::Queue>(fragment);
+        }
+    }
+    else {
+        pending_jobs.push(job);
+    }
 }
 
 void worker(
