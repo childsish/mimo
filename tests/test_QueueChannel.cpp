@@ -36,10 +36,11 @@ TEST(QueueChannelTest, test_pop) {
     queue = std::make_unique<mimo::Queue>(0);
     channel.push(std::move(queue));
     EXPECT_EQ(channel.get_pop_status(), mimo::QueueChannel::CAN_POP);
-    channel.pop();
+    EXPECT_NO_THROW(channel.pop());
     EXPECT_EQ(channel.get_pop_status(), mimo::QueueChannel::CAN_NOT_POP);
 
     queue = std::make_unique<mimo::Queue>(1);
+    queue->end_run();
     channel.push(std::move(queue));
     EXPECT_EQ(channel.get_pop_status(), mimo::QueueChannel::CAN_NOT_POP);
     queue = std::make_unique<mimo::Queue>(0);
@@ -52,20 +53,4 @@ TEST(QueueChannelTest, test_pop) {
     EXPECT_EQ(channel.get_pop_status(), mimo::QueueChannel::CAN_POP);
     EXPECT_EQ(channel.pop()->run, 2);
     EXPECT_EQ(channel.get_pop_status(), mimo::QueueChannel::CAN_NOT_POP);
-}
-
-TEST(QueueChannelTest, test_reserve_stays_till_queue_closed) {
-    mimo::QueueChannel channel(2);
-
-    auto queue0 = std::make_unique<mimo::Queue>(0);
-    auto queue1 = std::make_unique<mimo::Queue>(1);
-    channel.push(std::move(queue0));
-    EXPECT_EQ(channel.get_push_status(queue1->run), mimo::QueueChannel::PUSH_NEXT);
-
-    queue0 = std::make_unique<mimo::Queue>(0);
-    queue0->end_run();
-    channel.push(std::move(queue0));
-    channel.pop();
-    EXPECT_EQ(channel.get_push_status(queue1->run), mimo::QueueChannel::CAN_PUSH);
-    EXPECT_NO_THROW(channel.push(std::move(queue1)));
 }

@@ -24,7 +24,7 @@ namespace mimo {
             CAN_PUSH, // can push to channel
             PUSH_FULL, // no space left in channel for push
             PUSH_NEXT, // last place must be pushed by next run
-            PUSH_CLOSED
+            PUSH_ENDED // queue is from run that has ended
         };
 
         enum PopStatus {
@@ -43,7 +43,9 @@ namespace mimo {
 
         /**
          * Push a queue to the QueueChannel
-         * @param queue
+         * Queues from the same run are expected to be pushed in-order. The last queue must be ended with
+         * Queue::end_run.
+         * @param queue queue being pushed
          */
         void push(std::unique_ptr<Queue> queue);
 

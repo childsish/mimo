@@ -27,6 +27,9 @@ void mimo::QueueChannel::push(std::unique_ptr<mimo::Queue> queue) {
     else if (status == PUSH_NEXT) {
         throw std::runtime_error("Can not push: last place must be pushed by next run.");
     }
+    else if (status == PUSH_ENDED) {
+        throw std::runtime_error("Can not push: queue is from run that has ended");
+    }
 
     if (queue->is_end_of_run()) {
         this->ended_queues.insert(queue->run);
@@ -57,7 +60,7 @@ std::unique_ptr<mimo::Queue> mimo::QueueChannel::pop() {
 
 mimo::QueueChannel::PushStatus mimo::QueueChannel::get_push_status(unsigned int run) const {
     if (this->ended_queues.find(run) != this->ended_queues.end() || run < this->current_push) {
-        return PUSH_CLOSED;
+        return PUSH_ENDED;
     }
     else if (this->usage() >= this->capacity) {
         return PUSH_FULL;
