@@ -23,6 +23,8 @@ namespace mimo {
         std::shared_ptr<mimo::Entity> pop() { return _queue->pop(); }
         bool can_pop() const { return _queue->can_pop(); }
 
+        std::unique_ptr<Queue> &release_queue() { return this->_queue; }
+
     private:
 
         std::unique_ptr<Queue> _queue;

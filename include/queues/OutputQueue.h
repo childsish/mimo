@@ -22,6 +22,8 @@ namespace mimo {
         bool push(std::shared_ptr<mimo::Entity> entity) { return this->_queue->push(entity); }
         bool can_push() const { return this->_queue->can_push(); }
 
+        std::unique_ptr<Queue> release_queue() { return this->_queue; }
+
     private:
 
         std::unique_ptr<Queue> _queue;
