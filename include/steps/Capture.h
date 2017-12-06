@@ -1,15 +1,15 @@
 #ifndef MIMO_CAPTURE_H
 #define MIMO_CAPTURE_H
 
-#include "Stream.h"
+#include "Step.h"
 
 
-class Capture : public Stream {
+class Capture : public Step {
 public:
 
     std::vector<Entity *> captured;
 
-    Capture() : Stream("capture", {"input"}, {}) {}
+    Capture() : Step("capture", {"input"}, {}) {}
     ~Capture() {
         for (auto entity : captured) {
             collect(entity);

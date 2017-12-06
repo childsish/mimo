@@ -1,16 +1,16 @@
 #ifndef MIMO_CAPTURE_H
 #define MIMO_CAPTURE_H
 
-#include "Stream.h"
+#include "Step.h"
 #include <iostream>
 
 
 template<typename E>
-class Print : public Stream {
+class Print : public Step {
 public:
 
     Print(const std::string prefix = "", const std::string suffix = "") :
-            Stream("print", {"input"}, {}),
+            Step("print", {"input"}, {}),
             _prefix(prefix),
             _suffix(suffix) {}
 

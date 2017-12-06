@@ -1,16 +1,16 @@
 #ifndef MIMO_RELEASE_H
 #define MIMO_RELEASE_H
 
-#include "Stream.h"
+#include "Step.h"
 
 #include <deque>
 
-class Release : public Stream {
+class Release : public Step {
 public:
 
     std::deque<Entity *> released;
 
-    Release(std::deque<Entity *> released_) : Stream("release", {}, {"output"}), released(released_) {}
+    Release(std::deque<Entity *> released_) : Step("release", {}, {"output"}), released(released_) {}
     ~Release() {
         for (unsigned int i = 0; i < released.size(); ++i) {
             delete released[i];
@@ -26,7 +26,7 @@ public:
     }
 
     bool can_run() const {
-        return released.size() > 0 && Stream::can_run();
+        return released.size() > 0 && Step::can_run();
     }
 };
 
