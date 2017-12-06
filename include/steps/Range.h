@@ -27,19 +27,19 @@ namespace mimo {
             if (step == 0) {
                 throw std::runtime_error("Parameter step must be non-zero.");
             }
+            else if (from < to && step < 0 || to < from && step > 0) {
+                throw std::runtime_error("Step iterates in opposite direction from 'from' to 'to'.");
+            }
         }
 
-        void run() {
-            while (can_run()) {
-                outputs["output"].push(std::static_pointer_cast<Entity>(std::make_shared<Integer>(_from)));
+        bool run(std::unordered_map<std::string, Queue> ins, std::unordered_map<std::string, Queue> outs) {
+            while (outs["output"].push(std::static_pointer_cast<Entity>(std::make_shared<Integer>(_from)))) {
                 _from += _step;
-                if (_step > 0 && _from >= _to) {
-                    outputs["output"].close();
-                }
-                else if (_step < 0 && _from <= _to) {
-                    outputs["output"].close();
+                if (_step > 0 && _from >= _to || _step < 0 && _from < _to) {
+                    return true;
                 }
             }
+            return false;
         }
 
     private:
