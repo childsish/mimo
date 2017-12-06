@@ -14,14 +14,23 @@ namespace mimo {
     class Inputs {
     public:
 
-        Inputs();
-        Inputs(unsigned int threshold, std::vector<std::string> names);
+        explicit Inputs(bool synchronous);
+
+        void add_queue(const std::string &name, std::unique_ptr<mimo::Queue> queue);
+
+        std::unique_ptr<mimo::Queue> release_queue(const std::string &name);
 
         bool can_pop() const;
 
         mimo::InputQueue &operator[](const std::string &name);
 
+        std::unordered_map<std::string, mimo::InputQueue>::iterator begin() const;
+
+        std::unordered_map<std::string, mimo::InputQueue>::iterator end() const;
+
     private:
+
+        bool synchronous;
 
         std::unordered_map<std::string, mimo::InputQueue> queues;
 
