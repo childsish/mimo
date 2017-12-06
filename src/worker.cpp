@@ -107,7 +107,7 @@ void worker(
             for (auto &output : job.outputs) {
                 output.end_run();
             }
-            if (std::all_of(inputs.is_closed())) {
+            if (inputs.empty() || std::all_of(inputs.is_closed())) {
                 for (auto &output : job.outputs) {
                     output.close();
                 }
