@@ -9,6 +9,7 @@ add_subdirectory(googletest)
 add_executable(test_mimo
         ../include/Entity.h
         ../include/entities/Integer.h
+        test_Inputs.cpp
         test_Queue.cpp
         test_QueueChannel.cpp)
 target_include_directories(test_mimo PRIVATE
