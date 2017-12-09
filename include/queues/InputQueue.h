@@ -17,7 +17,7 @@ namespace mimo {
     class InputQueue {
     public:
 
-        explicit InputQueue(std::unique_ptr<Queue> queue) : _queue(std::move(queue)) {}
+        InputQueue(std::unique_ptr<Queue> queue) : _queue(std::move(queue)) {}
 
         std::shared_ptr<mimo::Entity> peek() { return _queue->peek(); }
         std::shared_ptr<mimo::Entity> pop() { return _queue->pop(); }
