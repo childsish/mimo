@@ -6,6 +6,9 @@
 #include <algorithm>
 #include "queues/Inputs.h"
 
+
+mimo::Inputs::Inputs() : group_id(0) {}
+
 void mimo::Inputs::add_queue(const std::string &name, std::unique_ptr<mimo::Queue> queue) {
     this->queues.emplace(name, std::move(queue));
     this->sync_groups[name] = group_id;
@@ -28,6 +31,9 @@ void mimo::Inputs::synchronise_queues(const std::vector<std::string> &group) {
 bool mimo::Inputs::can_pop() const {
     std::unordered_map<unsigned int, bool> groups;
     for (const auto &item : this->sync_groups) {
+        if (groups.find(item.second) == groups.end()) {
+            groups[item.second] = true;
+        }
         groups[item.second] &= this->queues.at(item.first).can_pop();
     }
     return std::any_of(

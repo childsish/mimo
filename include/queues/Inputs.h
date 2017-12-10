@@ -14,6 +14,8 @@ namespace mimo {
     class Inputs {
     public:
 
+        Inputs();
+
         void add_queue(const std::string &name, std::unique_ptr<mimo::Queue> queue);
 
         std::unique_ptr<mimo::Queue> release_queue(const std::string &name);
