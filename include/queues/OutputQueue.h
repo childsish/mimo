@@ -17,12 +17,12 @@ namespace mimo {
     class OutputQueue {
     public:
 
-        explicit OutputQueue(std::unique_ptr<Queue> queue) : _queue(std::move(queue)) {}
+        OutputQueue(std::unique_ptr<Queue> queue) : _queue(std::move(queue)) {}
 
         bool push(std::shared_ptr<mimo::Entity> entity) { return this->_queue->push(entity); }
         bool can_push() const { return this->_queue->can_push(); }
 
-        std::unique_ptr<Queue> release_queue() { return this->_queue; }
+        std::unique_ptr<Queue> release_queue() { return std::move(this->_queue); }
 
     private:
 

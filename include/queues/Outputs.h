@@ -15,23 +15,27 @@ namespace mimo {
     class Outputs {
     public:
 
-        explicit Outputs(bool synchronous);
+        Outputs();
 
         void add_queue(const std::string &name, std::unique_ptr<mimo::Queue> queue);
 
         std::unique_ptr<mimo::Queue> release_queue(const std::string &name);
 
+        void synchronise_queues(const std::vector<std::string> &group);
+
         bool can_push() const;
 
-        mimo::OutputQueue &operator[](const std::string name);
+        mimo::OutputQueue &operator[](const std::string &name);
 
-        std::unordered_map<std::string, mimo::OutputQueue>::iterator begin() const;
+        std::unordered_map<std::string, mimo::OutputQueue>::const_iterator begin() const;
 
-        std::unordered_map<std::string, mimo::OutputQueue>::iterator end() const;
+        std::unordered_map<std::string, mimo::OutputQueue>::const_iterator end() const;
 
     private:
 
-        bool synchronous;
+        unsigned int group_id;
+
+        std::unordered_map<std::string, unsigned int> sync_groups;
 
         std::unordered_map<std::string, mimo::OutputQueue> queues;
 

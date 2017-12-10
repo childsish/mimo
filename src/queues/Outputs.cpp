@@ -6,41 +6,51 @@
 #include <algorithm>
 #include "queues/Outputs.h"
 
-mimo::Outputs::Outputs(bool synchronous_) : synchronous(synchronous_) {}
+
+mimo::Outputs::Outputs() : group_id(0) {}
 
 void mimo::Outputs::add_queue(const std::string &name, std::unique_ptr<mimo::Queue> queue) {
-    this->queues.emplace({name, queue});
+    this->queues.emplace(name, std::move(queue));
+    this->sync_groups[name] = group_id;
+    this->group_id += 1;
 }
 
 std::unique_ptr<mimo::Queue> mimo::Outputs::release_queue(const std::string &name) {
-    std::unique_ptr<mimo::Queue> queue = this->queues[name].release_queue();
+    auto queue = std::move(this->queues.at(name).release_queue());
     this->queues.erase(name);
     return queue;
 }
 
+void mimo::Outputs::synchronise_queues(const std::vector<std::string> &group) {
+    for (const auto &name : group) {
+        this->sync_groups[name] = group_id;
+    }
+    group_id += 1;
+}
+
 bool mimo::Outputs::can_push() const {
-    if (this->synchronous) {
-        return std::all_of(
-                this->queues.begin(),
-                this->queues.end(),
-                [](std::pair<std::string, std::unique_ptr<mimo::Queue>> item){ return item.second->can_push(); }
-        );
+    std::unordered_map<unsigned int, bool> groups;
+    for (const auto &item : this->sync_groups) {
+        if (groups.find(item.second) == groups.end()) {
+            groups[item.second] = true;
+        }
+        groups[item.second] &= this->queues.at(item.first).can_push();
     }
     return std::any_of(
-            this->queues.begin(),
-            this->queues.end(),
-            [](std::pair<std::string, std::unique_ptr<mimo::Queue>> item){ return item.second->can_push(); }
+            groups.begin(),
+            groups.end(),
+            [](const std::pair<unsigned int, bool> &item){ return item.second; }
     );
 }
 
-mimo::OutputQueue &mimo::Outputs::operator[](const std::string name) {
-    return this->queues[name];
+mimo::OutputQueue &mimo::Outputs::operator[](const std::string &name) {
+    return this->queues.at(name);
 }
 
-std::unordered_map<std::string, mimo::OutputQueue>::iterator mimo::Outputs::begin() const {
+std::unordered_map<std::string, mimo::OutputQueue>::const_iterator mimo::Outputs::begin() const {
     return this->queues.begin();
 }
 
-std::unordered_map<std::string, mimo::OutputQueue>::iterator mimo::Outputs::end() const {
+std::unordered_map<std::string, mimo::OutputQueue>::const_iterator mimo::Outputs::end() const {
     return this->queues.end();
 }
