@@ -54,3 +54,13 @@ std::unordered_map<std::string, mimo::InputQueue>::const_iterator mimo::Inputs::
 std::unordered_map<std::string, mimo::InputQueue>::const_iterator mimo::Inputs::end() const {
     return this->queues.end();
 }
+
+bool mimo::Inputs::is_empty() const {
+    return this->queues.empty();
+}
+
+bool mimo::Inputs::is_closed() const {
+    return std::all_of(this->queues.begin(),
+                       this->queues.end(),
+                       [](const mimo::InputQueue &queue){ return queue.is_closed(); });
+}
