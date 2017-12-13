@@ -12,6 +12,12 @@
 #include "Job.h"
 #include "queues/QueueChannel.h"
 
+
+std::queue<mimo::Job> before_run;
+std::mutex before_run_mutex;
+std::queue<mimo::Job> after_run;
+std::mutex after_run_mutex;
+
 void create_job(workflow::Workflow workflow,
                 const std::shared_ptr<workflow::Step> &step,
                 std::unordered_map<unsigned int, mimo::QueueChannel> inputs) {
@@ -85,46 +91,58 @@ void drain_outputs(
         }
     }
     else {
-        pending_jobs.push(job);
+        before_run.push(job);
     }
 }
 
 void worker(
-        std::queue<mimo::Job> &jobs,
-        std::mutex &job_mutex,
         const workflow::Workflow &workflow,
         std::unordered_map<unsigned int, mimo::QueueChannel> inputs,
         std::unordered_map<unsigned int, mimo::QueueChannel> outputs
 ) {
-    while (!jobs.empty()) {
-        job_mutex.lock();
-        mimo::Job job = jobs.front();
-        jobs.pop();
-        job_mutex.unlock();
+    while (!before_run.empty() && !after_run.empty()) {
+        if (!before_run.empty()) {
+            before_run_mutex.lock();
+            mimo::Job job = before_run.front();
+            before_run.pop();
+            before_run_mutex.unlock();
 
-        bool complete = job.run();
-        if (complete) {
-            for (auto &output : job.outputs) {
-                output.end_run();
-            }
-            if (inputs.empty() || std::all_of(inputs.is_closed())) {
-                for (auto &output : job.outputs) {
-                    output.close();
+            job.run();
+
+            if (job.completed) {
+                for (auto &output : job.outs) {
+                    output.second.end_run();
+                }
+                if (job.ins.is_empty() || job.ins.is_closed()) {
+                    for (auto &output : job.outs) {
+                        output.second.close();
+                    }
                 }
             }
+
+            after_run_mutex.lock();
+            after_run.push(job);
+            after_run_mutex.unlock();
         }
 
-        drain_outputs(workflow, outputs);
-        auto next_jobs = get_next_jobs(job, workflow, inputs, outputs);
-        for (auto next_job : next_jobs) {
-            job_mutex.lock();
-            jobs.push(next_job);
-            job_mutex.unlock();
-        }
-        if (!job.completed) {
-            job_mutex.lock();
-            jobs.push(job);
-            job_mutex.unlock();
+        if (!after_run.empty()) {
+            after_run_mutex.lock();
+            mimo::Job job = after_run.front();
+            after_run.pop();
+            after_run_mutex.unlock();
+
+            drain_outputs(workflow, outputs);
+            auto next_jobs = get_next_jobs(job, workflow, inputs, outputs);
+            for (auto next_job : next_jobs) {
+                before_run_mutex.lock();
+                before_run.push(next_job);
+                before_run_mutex.unlock();
+            }
+            if (!job.completed) {
+                before_run_mutex.lock();
+                before_run.push(job);
+                before_run_mutex.unlock();
+            }
         }
     }
 }
