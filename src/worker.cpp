@@ -18,6 +18,9 @@ std::mutex before_run_mutex;
 std::queue<mimo::Job> after_run;
 std::mutex after_run_mutex;
 
+std::unordered_map<unsigned int, mimo::QueueChannel> inputs;
+std::unordered_map<unsigned int, mimo::QueueChannel> outputs;
+
 void create_job(workflow::Workflow workflow,
                 const std::shared_ptr<workflow::Step> &step,
                 std::unordered_map<unsigned int, mimo::QueueChannel> inputs) {
@@ -78,11 +81,46 @@ std::vector<mimo::Job> get_next_jobs(
     }
 }
 
-void drain_outputs(
-        const workflow::Workflow &workflow,
-        std::unordered_map<unsigned int, mimo::QueueChannel> inputs,
-        std::unordered_map<unsigned int, mimo::QueueChannel> outputs
-) {
+void process_job() {
+    before_run_mutex.lock();
+    mimo::Job job = before_run.front();
+    before_run.pop();
+    before_run_mutex.unlock();
+
+    job.run();
+
+    if (job.completed) {
+        for (auto &output : job.outs) {
+            output.second.end_run();
+        }
+        if (job.ins.is_empty() || job.ins.is_closed()) {
+            for (auto &output : job.outs) {
+                output.second.close();
+            }
+        }
+    }
+
+    after_run_mutex.lock();
+    after_run.push(job);
+    after_run_mutex.unlock();
+}
+
+/**
+ * move job output to global outputs if possible
+ * otherwise, add job to pending outputs
+ */
+void process_output() {
+    after_run_mutex.lock();
+    mimo::Job job = after_run.front();
+    after_run.pop();
+    after_run_mutex.unlock();
+
+    for (auto &output : job.outs) {
+        if (output.second.is_empty()) {
+
+        }
+    }
+
     if (std::all_of(output.can_push(output))) {
         for (auto &output : job.outputs) {
             unsigned int fragment = output->run + 1;
@@ -95,54 +133,31 @@ void drain_outputs(
     }
 }
 
-void worker(
-        const workflow::Workflow &workflow,
-        std::unordered_map<unsigned int, mimo::QueueChannel> inputs,
-        std::unordered_map<unsigned int, mimo::QueueChannel> outputs
-) {
+void process_input() {
+    auto next_jobs = get_next_jobs(job, workflow, inputs, outputs);
+    for (auto next_job : next_jobs) {
+        before_run_mutex.lock();
+        before_run.push(next_job);
+        before_run_mutex.unlock();
+    }
+    if (!job.completed) {
+        before_run_mutex.lock();
+        before_run.push(job);
+        before_run_mutex.unlock();
+    }
+}
+
+void worker(const workflow::Workflow &workflow) {
     while (!before_run.empty() && !after_run.empty()) {
+        // run a job
+        // move job output to global output if possible otherwise, add to pending output
+        // move global output to global input if possible
+        // move global input to job input
         if (!before_run.empty()) {
-            before_run_mutex.lock();
-            mimo::Job job = before_run.front();
-            before_run.pop();
-            before_run_mutex.unlock();
-
-            job.run();
-
-            if (job.completed) {
-                for (auto &output : job.outs) {
-                    output.second.end_run();
-                }
-                if (job.ins.is_empty() || job.ins.is_closed()) {
-                    for (auto &output : job.outs) {
-                        output.second.close();
-                    }
-                }
-            }
-
-            after_run_mutex.lock();
-            after_run.push(job);
-            after_run_mutex.unlock();
+            process_job();
         }
-
-        if (!after_run.empty()) {
-            after_run_mutex.lock();
-            mimo::Job job = after_run.front();
-            after_run.pop();
-            after_run_mutex.unlock();
-
-            drain_outputs(workflow, outputs);
-            auto next_jobs = get_next_jobs(job, workflow, inputs, outputs);
-            for (auto next_job : next_jobs) {
-                before_run_mutex.lock();
-                before_run.push(next_job);
-                before_run_mutex.unlock();
-            }
-            if (!job.completed) {
-                before_run_mutex.lock();
-                before_run.push(job);
-                before_run_mutex.unlock();
-            }
+        else if (!after_run.empty()) {
+            process_output();
         }
     }
 }

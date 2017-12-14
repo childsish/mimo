@@ -54,3 +54,15 @@ std::unordered_map<std::string, mimo::OutputQueue>::const_iterator mimo::Outputs
 std::unordered_map<std::string, mimo::OutputQueue>::const_iterator mimo::Outputs::end() const {
     return this->queues.end();
 }
+
+void mimo::Outputs::end_run() {
+    for (auto &queue : this->queues) {
+        queue.second.end_run();
+    }
+}
+
+void mimo::Outputs::close() {
+    for (auto &queue : this->queues) {
+        queue.second.close();
+    }
+}

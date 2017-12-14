@@ -31,6 +31,10 @@ namespace mimo {
 
         std::unordered_map<std::string, mimo::OutputQueue>::const_iterator end() const;
 
+        void end_run();
+
+        void close();
+
     private:
 
         unsigned int group_id;
