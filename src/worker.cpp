@@ -9,6 +9,7 @@
 #include <queue>
 #include <unordered_set>
 #include <workflow/Workflow.h>
+#include <iostream>
 #include "Job.h"
 #include "queues/QueueChannel.h"
 
@@ -19,7 +20,9 @@ std::queue<mimo::Job> after_run;
 std::mutex after_run_mutex;
 
 std::unordered_map<unsigned int, mimo::QueueChannel> inputs;
+std::mutex inputs_mutex;
 std::unordered_map<unsigned int, mimo::QueueChannel> outputs;
+std::mutex outputs_mutex;
 
 void create_job(workflow::Workflow workflow,
                 const std::shared_ptr<workflow::Step> &step,
@@ -81,59 +84,8 @@ std::vector<mimo::Job> get_next_jobs(
     }
 }
 
-void process_job() {
-    before_run_mutex.lock();
-    mimo::Job job = before_run.front();
-    before_run.pop();
-    before_run_mutex.unlock();
 
-    job.run();
-
-    if (job.completed) {
-        for (auto &output : job.outs) {
-            output.second.end_run();
-        }
-        if (job.ins.is_empty() || job.ins.is_closed()) {
-            for (auto &output : job.outs) {
-                output.second.close();
-            }
-        }
-    }
-
-    after_run_mutex.lock();
-    after_run.push(job);
-    after_run_mutex.unlock();
-}
-
-/**
- * move job output to global outputs if possible
- * otherwise, add job to pending outputs
- */
-void process_output() {
-    after_run_mutex.lock();
-    mimo::Job job = after_run.front();
-    after_run.pop();
-    after_run_mutex.unlock();
-
-    for (auto &output : job.outs) {
-        if (output.second.is_empty()) {
-
-        }
-    }
-
-    if (std::all_of(output.can_push(output))) {
-        for (auto &output : job.outputs) {
-            unsigned int fragment = output->run + 1;
-            outputs[output->id].push(std::move(output));
-            outputs[output->id] = std::make_unique<mimo::Queue>(fragment);
-        }
-    }
-    else {
-        before_run.push(job);
-    }
-}
-
-void process_input() {
+void process_global_output() {
     auto next_jobs = get_next_jobs(job, workflow, inputs, outputs);
     for (auto next_job : next_jobs) {
         before_run_mutex.lock();
@@ -147,6 +99,70 @@ void process_input() {
     }
 }
 
+/**
+ * Run the job and end/close output if job completed/closed.
+ */
+void process_before_job() {
+    before_run_mutex.lock();
+    mimo::Job job = before_run.front();
+    before_run.pop();
+    before_run_mutex.unlock();
+
+    job.run();
+
+    if (job.completed) {
+        job.outs.end_run();
+        if (job.ins.is_empty() || job.ins.is_closed()) {
+            job.outs.close();
+        }
+    }
+
+    after_run_mutex.lock();
+    after_run.push(job);
+    after_run_mutex.unlock();
+}
+
+/**
+ * Move job output to global output then global input and queue next jobs.
+ */
+void process_after_job() {
+    after_run_mutex.lock();
+    mimo::Job job = after_run.front();
+    after_run.pop();
+    after_run_mutex.unlock();
+
+    for (auto &output : job.outs) {
+        if (output.second.is_empty()) {
+            continue;
+        }
+        unsigned int output_id = 0; // TODO: get the output identifier
+        unsigned int run = 0; // TODO: get the run identifier
+        outputs_mutex.lock();
+        mimo::QueueChannel::PushStatus push_status = outputs[output_id].get_push_status(run);
+        if (push_status == mimo::QueueChannel::CAN_PUSH) {
+            outputs[output_id].push(output.second.release_queue());
+        }
+        else if (push_status == mimo::QueueChannel::PUSH_ENDED) {
+            std::cout << "Error: attempting to push job queue after job's last queue already pushed." << std::endl;
+            throw std::runtime_error("Error: attempting to push job queue after job'S last queue already pushed.");
+        }
+        outputs_mutex.unlock();
+    }
+
+    if (job.outs.is_empty()) {
+        if (!job.completed) {
+            before_run_mutex.lock();
+            before_run.push(job);
+            before_run_mutex.unlock();
+        }
+    }
+    else {
+        after_run_mutex.lock();
+        after_run.push(job);
+        after_run_mutex.unlock();
+    }
+}
+
 void worker(const workflow::Workflow &workflow) {
     while (!before_run.empty() && !after_run.empty()) {
         // run a job
@@ -154,10 +170,10 @@ void worker(const workflow::Workflow &workflow) {
         // move global output to global input if possible
         // move global input to job input
         if (!before_run.empty()) {
-            process_job();
+            process_before_job();
         }
         else if (!after_run.empty()) {
-            process_output();
+            process_after_job();
         }
     }
 }

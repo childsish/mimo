@@ -21,6 +21,7 @@ add_library(mimo
         include/Step.h
         include/queues/InputQueue.h
         include/queues/OutputQueue.h
+        src/worker.cpp
         src/queues/Inputs.cpp include/queues/Inputs.h
         src/queues/Outputs.cpp include/queues/Outputs.h
         src/queues/Queue.cpp include/queues/Queue.h
