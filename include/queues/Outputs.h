@@ -35,6 +35,8 @@ namespace mimo {
 
         void close();
 
+        bool is_empty();
+
     private:
 
         unsigned int group_id;

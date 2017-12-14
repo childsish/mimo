@@ -66,3 +66,10 @@ void mimo::Outputs::close() {
         queue.second.close();
     }
 }
+
+bool mimo::Outputs::is_empty() {
+    return std::all_of(this->queues.begin(), this->queues.end(),
+                       [](const std::unordered_map<std::string, mimo::OutputQueue>::const_iterator &item) {
+                           return item->second.is_empty();
+                       });
+}
