@@ -85,3 +85,11 @@ unsigned long mimo::QueueChannel::usage() const {
     }
     return total;;
 }
+
+void mimo::QueueChannel::lock() {
+    this->mutex.lock();
+}
+
+void mimo::QueueChannel::unlock() {
+    this->mutex.unlock();
+}

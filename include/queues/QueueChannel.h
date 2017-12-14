@@ -7,6 +7,7 @@
 #define MIMO_QUEUECHANNEL_H
 
 
+#include <mutex>
 #include <unordered_set>
 #include <bits/unordered_set.h>
 #include "Queue.h"
@@ -77,6 +78,16 @@ namespace mimo {
          */
         PopStatus get_pop_status() const;
 
+        /**
+         * Lock the queue channel
+         */
+        void lock();
+
+        /**
+         * Unlock the queue channel
+         */
+        void unlock();
+
     private:
 
         unsigned int current_push;
@@ -88,6 +99,8 @@ namespace mimo {
         std::unordered_set<unsigned int> ended_queues;
 
         inline unsigned long usage() const;
+
+        std::mutex mutex;
 
     };
 

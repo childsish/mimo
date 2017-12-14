@@ -13,16 +13,17 @@
 #include "Job.h"
 #include "queues/QueueChannel.h"
 
+std::unordered_map<unsigned int, std::unique_ptr<mimo::Queue>> inputs;
+std::unordered_map<unsigned int, mimo::QueueChannel> outputs;
 
 std::queue<mimo::Job> before_run;
 std::mutex before_run_mutex;
 std::queue<mimo::Job> after_run;
 std::mutex after_run_mutex;
 
-std::unordered_map<unsigned int, mimo::QueueChannel> inputs;
-std::mutex inputs_mutex;
-std::unordered_map<unsigned int, mimo::QueueChannel> outputs;
-std::mutex outputs_mutex;
+std::queue<unsigned int> ready_outputs;
+std::mutex ready_outputs_mutex;
+
 
 void create_job(workflow::Workflow workflow,
                 const std::shared_ptr<workflow::Step> &step,
@@ -123,7 +124,7 @@ void process_before_job() {
 }
 
 /**
- * Move job output to global output then global input and queue next jobs.
+ * Move job output to global output
  */
 void process_after_job() {
     after_run_mutex.lock();
@@ -135,18 +136,22 @@ void process_after_job() {
         if (output.second.is_empty()) {
             continue;
         }
-        unsigned int output_id = 0; // TODO: get the output identifier
-        unsigned int run = 0; // TODO: get the run identifier
-        outputs_mutex.lock();
+        unsigned int output_id = 0; // TODO: get correct output identifier
+        unsigned int run = 0; // TODO: get run identifier
+        outputs[output_id].lock();
         mimo::QueueChannel::PushStatus push_status = outputs[output_id].get_push_status(run);
         if (push_status == mimo::QueueChannel::CAN_PUSH) {
             outputs[output_id].push(output.second.release_queue());
+
+            ready_outputs_mutex.lock();
+            ready_outputs.push(output_id);
+            ready_outputs_mutex.unlock();
         }
         else if (push_status == mimo::QueueChannel::PUSH_ENDED) {
             std::cout << "Error: attempting to push job queue after job's last queue already pushed." << std::endl;
             throw std::runtime_error("Error: attempting to push job queue after job'S last queue already pushed.");
         }
-        outputs_mutex.unlock();
+        outputs[output_id].unlock();
     }
 
     if (job.outs.is_empty()) {
@@ -163,17 +168,31 @@ void process_after_job() {
     }
 }
 
+/**
+ * Move global outputs to global inputs and queue next jobs
+ */
+void process_ready_outputs(const workflow::Workflow &workflow) {
+    ready_outputs_mutex.lock();
+    unsigned int output_id = ready_outputs.front(); // TODO: get correct output identifier
+    ready_outputs.pop();
+    ready_outputs_mutex.unlock();
+
+    auto inputs = workflow.get_connected_inputs(output_id);
+    while (std::all_of(inputs.begin(), inputs.end(), [](){})) {
+
+    }
+}
+
 void worker(const workflow::Workflow &workflow) {
     while (!before_run.empty() && !after_run.empty()) {
-        // run a job
-        // move job output to global output if possible otherwise, add to pending output
-        // move global output to global input if possible
-        // move global input to job input
         if (!before_run.empty()) {
             process_before_job();
         }
         else if (!after_run.empty()) {
             process_after_job();
+        }
+        else if (!ready_outputs.empty()) {
+            process_ready_outputs(workflow);
         }
     }
 }
