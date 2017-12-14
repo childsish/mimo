@@ -75,6 +75,12 @@ namespace mimo {
          */
         bool can_pop() const;
 
+        /**
+         * Check if the queue is empty
+         * @return true if the queue is empty
+         */
+        bool is_empty() const;
+
     private:
 
         unsigned int capacity;

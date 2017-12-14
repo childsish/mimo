@@ -65,3 +65,7 @@ bool mimo::Queue::can_push() const {
 bool mimo::Queue::can_pop() const {
     return !this->entities.empty();
 }
+
+bool mimo::Queue::is_empty() const {
+    return this->entities.empty();
+}
