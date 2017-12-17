@@ -148,8 +148,10 @@ void process_after_job() {
             ready_outputs_mutex.unlock();
         }
         else if (push_status == mimo::QueueChannel::PUSH_ENDED) {
+            // TODO: replace with proper logging
+            outputs[output_id].unlock();
             std::cout << "Error: attempting to push job queue after job's last queue already pushed." << std::endl;
-            throw std::runtime_error("Error: attempting to push job queue after job'S last queue already pushed.");
+            throw std::runtime_error("Error: attempting to push job queue after job's last queue already pushed.");
         }
         outputs[output_id].unlock();
     }
@@ -172,14 +174,24 @@ void process_after_job() {
  * Move global outputs to global inputs and queue next jobs
  */
 void process_ready_outputs(const workflow::Workflow &workflow) {
+    // TODO: Ensure popped output identifiers are unique
     ready_outputs_mutex.lock();
     unsigned int output_id = ready_outputs.front(); // TODO: get correct output identifier
     ready_outputs.pop();
     ready_outputs_mutex.unlock();
 
-    auto inputs = workflow.get_connected_inputs(output_id);
-    while (std::all_of(inputs.begin(), inputs.end(), [](){})) {
-
+    auto connected_inputs = workflow.get_connected_inputs(output_id);
+    while (std::all_of(
+            connected_inputs.begin(), connected_inputs.end(),
+            [](const std::unordered_map<unsigned int, std::unique_ptr<mimo::Queue>>::const_iterator &item){
+                return item->second->can_push();
+            }) &&
+            outputs[output_id].peek()->can_pop())
+    {
+        auto entity = outputs[output_id].peek()->pop();
+        for (auto &input : connected_inputs) {
+            inputs[input->identifier]->push(entity);
+        }
     }
 }
 
