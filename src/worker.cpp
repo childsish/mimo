@@ -5,13 +5,18 @@
 
 
 #include <algorithm>
+#include <iostream>
 #include <mutex>
 #include <queue>
 #include <unordered_set>
 #include <workflow/Workflow.h>
-#include <iostream>
 #include "Job.h"
+#include "JobManager.h"
 #include "queues/QueueChannel.h"
+
+
+workflow::Workflow workflow_;
+mimo::JobManager job_manager;
 
 std::unordered_map<unsigned int, std::unique_ptr<mimo::Queue>> inputs;
 std::unordered_map<unsigned int, mimo::QueueChannel> outputs;
@@ -24,81 +29,6 @@ std::mutex after_run_mutex;
 std::queue<unsigned int> ready_outputs;
 std::mutex ready_outputs_mutex;
 
-
-void create_job(workflow::Workflow workflow,
-                const std::shared_ptr<workflow::Step> &step,
-                std::unordered_map<unsigned int, mimo::QueueChannel> inputs) {
-    for (auto input_name : workflow.get_connected_inputs(step)) {
-        inputs[input_name].pop();
-    }
-}
-
-void drain_outputs(
-        mimo::Outputs &outputs,
-        const workflow::Workflow &workflow,
-        std::unordered_map<unsigned int, mimo::QueueChannel> inputs
-) {
-    for (auto output : outputs) {
-        auto inputs = workflow.get_connected_inputs(output);
-        for (auto input : inputs) {
-
-        }
-    }
-}
-
-bool can_run(
-        const std::shared_ptr<workflow::Step> &step,
-        const workflow::Workflow &workflow,
-        std::unordered_map<unsigned int, mimo::QueueChannel> inputs,
-        std::unordered_map<unsigned int, mimo::QueueChannel> outputs
-) {
-    auto step_inputs = workflow.get_connected_inputs(step);
-    auto step_outputs = workflow.get_connected_outputs(step);
-
-    return std::all_of(step_inputs.begin(), step_inputs.end(),
-                       [&inputs](std::shared_ptr<workflow::Input> input){
-                           return inputs[input->identifier].can_pop();
-                       })
-            && std::all_of(step_outputs.begin(), step_outputs.end(),
-                           [&outputs](std::shared_ptr<workflow::Output> output){
-                               return outputs[output->identifier].can_reserve();
-                           });
-}
-
-std::vector<mimo::Job> get_next_jobs(
-        const mimo::Job &job,
-        const workflow::Workflow &workflow,
-        std::unordered_map<unsigned int, mimo::QueueChannel> inputs,
-        std::unordered_map<unsigned int, mimo::QueueChannel> outputs
-) {
-    auto step_outputs = workflow.get_connected_outputs(job.step.identifier);
-    std::unordered_set<std::shared_ptr<workflow::Step>> next_step_candidates;
-    for (auto output : step_outputs) {
-        step_outputs.merge(workflow.get_connected_steps(output));
-    }
-
-    std::unordered_set<std::shared_ptr<workflow::Step>> next_steps;
-    for (auto candidate : next_step_candidates) {
-        if (can_run(candidate, workflow, inputs, outputs)) {
-            next_steps.insert(candidate);
-        }
-    }
-}
-
-
-void process_global_output() {
-    auto next_jobs = get_next_jobs(job, workflow, inputs, outputs);
-    for (auto next_job : next_jobs) {
-        before_run_mutex.lock();
-        before_run.push(next_job);
-        before_run_mutex.unlock();
-    }
-    if (!job.completed) {
-        before_run_mutex.lock();
-        before_run.push(job);
-        before_run_mutex.unlock();
-    }
-}
 
 /**
  * Run the job and end/close output if job completed/closed.
@@ -173,14 +103,14 @@ void process_after_job() {
 /**
  * Move global outputs to global inputs and queue next jobs
  */
-void process_ready_outputs(const workflow::Workflow &workflow) {
+void process_ready_outputs() {
     // TODO: Ensure popped output identifiers are unique
     ready_outputs_mutex.lock();
     unsigned int output_id = ready_outputs.front(); // TODO: get correct output identifier
     ready_outputs.pop();
     ready_outputs_mutex.unlock();
 
-    auto connected_inputs = workflow.get_connected_inputs(output_id);
+    auto connected_inputs = workflow_.get_connected_inputs(output_id);
     while (std::all_of(
             connected_inputs.begin(), connected_inputs.end(),
             [](const std::unordered_map<unsigned int, std::unique_ptr<mimo::Queue>>::const_iterator &item){
@@ -193,9 +123,34 @@ void process_ready_outputs(const workflow::Workflow &workflow) {
             inputs[input->identifier]->push(entity);
         }
     }
+
+    std::vector<std::shared_ptr<workflow::Step>> connected_steps;
+    for (auto &connected_input : connected_inputs) {
+        for (auto &connected_step : workflow_.get_connected_steps(connected_input)) {
+            connected_steps.push_back(connected_step);
+        }
+    }
+
+    for (auto &connected_step : connected_steps) {
+        connected_inputs = workflow_.get_connected_inputs(connected_step);
+        if (std::all_of(
+                connected_inputs.begin(), connected_inputs.end(),
+                [](const std::unordered_map<unsigned int, std::unique_ptr<mimo::Queue>>::const_iterator &item){
+                    return item->second->can_pop();
+                }
+        ))
+        {
+            if (job_manager.can_make_job()) {
+                before_run.push(job_manager.make_job());
+            }
+        }
+    }
 }
 
-void worker(const workflow::Workflow &workflow) {
+/**
+ * Client loop for processing jobs.
+ */
+void worker() {
     while (!before_run.empty() && !after_run.empty()) {
         if (!before_run.empty()) {
             process_before_job();
@@ -204,7 +159,7 @@ void worker(const workflow::Workflow &workflow) {
             process_after_job();
         }
         else if (!ready_outputs.empty()) {
-            process_ready_outputs(workflow);
+            process_ready_outputs();
         }
     }
 }
