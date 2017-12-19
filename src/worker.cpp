@@ -21,12 +21,12 @@ mimo::JobManager job_manager;
 std::unordered_map<unsigned int, std::unique_ptr<mimo::Queue>> inputs;
 std::unordered_map<unsigned int, mimo::QueueChannel> outputs;
 
-std::queue<mimo::Job> before_run;
+std::queue<std::unique_ptr<mimo::Job>> before_run;
 std::mutex before_run_mutex;
-std::queue<mimo::Job> after_run;
+std::queue<std::unique_ptr<mimo::Job>> after_run;
 std::mutex after_run_mutex;
 
-std::queue<unsigned int> ready_outputs;
+std::queue<std::shared_ptr<workflow::Output>> ready_outputs;
 std::mutex ready_outputs_mutex;
 
 
@@ -35,16 +35,16 @@ std::mutex ready_outputs_mutex;
  */
 void process_before_job() {
     before_run_mutex.lock();
-    mimo::Job job = before_run.front();
+    std::unique_ptr<mimo::Job> job = std::move(before_run.front());
     before_run.pop();
     before_run_mutex.unlock();
 
-    job.run();
+    job->run();
 
-    if (job.completed) {
-        job.outs.end_run();
-        if (job.ins.is_empty() || job.ins.is_closed()) {
-            job.outs.close();
+    if (job->is_complete()) {
+        job->outs().end_run();
+        if (job->ins().is_empty() || job->ins().is_closed()) {
+            job->outs().close();
         }
     }
 
@@ -58,20 +58,20 @@ void process_before_job() {
  */
 void process_after_job() {
     after_run_mutex.lock();
-    mimo::Job job = after_run.front();
+    std::unique_ptr<mimo::Job> job = std::move(after_run.front());
     after_run.pop();
     after_run_mutex.unlock();
 
-    for (auto &output : job.outs) {
+    for (auto &output : job->outs()) {
         if (output.second.is_empty()) {
             continue;
         }
-        unsigned int output_id = 0; // TODO: get correct output identifier
+        auto output_id = output.second.identifier;
         unsigned int run = 0; // TODO: get run identifier
-        outputs[output_id].lock();
-        mimo::QueueChannel::PushStatus push_status = outputs[output_id].get_push_status(run);
+        outputs[output_id.identifier].lock();
+        mimo::QueueChannel::PushStatus push_status = outputs[output_id.identifier].get_push_status(run);
         if (push_status == mimo::QueueChannel::CAN_PUSH) {
-            outputs[output_id].push(output.second.release_queue());
+            outputs[output_id.identifier].push(output.second.release_queue());
 
             ready_outputs_mutex.lock();
             ready_outputs.push(output_id);
@@ -79,15 +79,15 @@ void process_after_job() {
         }
         else if (push_status == mimo::QueueChannel::PUSH_ENDED) {
             // TODO: replace with proper logging
-            outputs[output_id].unlock();
+            outputs[output_id.identifier].unlock();
             std::cout << "Error: attempting to push job queue after job's last queue already pushed." << std::endl;
             throw std::runtime_error("Error: attempting to push job queue after job's last queue already pushed.");
         }
-        outputs[output_id].unlock();
+        outputs[output_id.identifier].unlock();
     }
 
-    if (job.outs.is_empty()) {
-        if (!job.completed) {
+    if (job->outs().is_empty()) {
+        if (!job->is_complete()) {
             before_run_mutex.lock();
             before_run.push(job);
             before_run_mutex.unlock();
@@ -106,7 +106,7 @@ void process_after_job() {
 void process_ready_outputs() {
     // TODO: Ensure popped output identifiers are unique
     ready_outputs_mutex.lock();
-    unsigned int output_id = ready_outputs.front(); // TODO: get correct output identifier
+    auto output_id = ready_outputs.front();
     ready_outputs.pop();
     ready_outputs_mutex.unlock();
 
@@ -116,9 +116,9 @@ void process_ready_outputs() {
             [](const std::unordered_map<unsigned int, std::unique_ptr<mimo::Queue>>::const_iterator &item){
                 return item->second->can_push();
             }) &&
-            outputs[output_id].peek()->can_pop())
+            outputs[output_id->identifier].peek()->can_pop())
     {
-        auto entity = outputs[output_id].peek()->pop();
+        auto entity = outputs[output_id->identifier].peek()->pop();
         for (auto &input : connected_inputs) {
             inputs[input->identifier]->push(entity);
         }
@@ -140,8 +140,8 @@ void process_ready_outputs() {
                 }
         ))
         {
-            if (job_manager.can_make_job()) {
-                before_run.push(job_manager.make_job());
+            if (job_manager.can_make_job(connected_step)) {
+                before_run.push(job_manager.make_job(connected_step));
             }
         }
     }
