@@ -25,7 +25,7 @@ namespace mimo {
         void end_run() { this->_queue->end_run(); }
         void close() { this->_queue->close(); }
 
-        bool is_empty() const { return this->_queue}
+        bool is_empty() const { return this->_queue->is_empty(); }
 
         std::unique_ptr<mimo::Queue> release_queue() {
             std::unique_ptr<mimo::Queue> queue = std::move(this->_queue);
