@@ -22,6 +22,8 @@ add_library(mimo
         include/queues/InputQueue.h
         include/queues/OutputQueue.h
         src/worker.cpp
+        src/Job.cpp include/Job.h
+        src/JobManager.cpp include/JobManager.h
         src/queues/Inputs.cpp include/queues/Inputs.h
         src/queues/Outputs.cpp include/queues/Outputs.h
         src/queues/Queue.cpp include/queues/Queue.h

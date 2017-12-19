@@ -6,26 +6,44 @@
 #ifndef MIMO_JOB_H
 #define MIMO_JOB_H
 
+#include <workflow/Step.h>
+#include <workflow/Input.h>
+#include <workflow/Output.h>
 #include "Step.h"
 #include "queues/Inputs.h"
 #include "queues/Outputs.h"
+
 
 namespace mimo {
 
     class Job {
     public:
 
-        Step &step;
-        Inputs &ins;
-        Outputs &outs;
+        const workflow::Step &identifier;
 
-        bool completed;
+        explicit Job(const workflow::Step &identifier);
 
-        Job(Step &step, Inputs &ins, Outputs &outs);
+        void add_input(const workflow::Input &identifier);
+
+        Inputs &ins() const;
+
+        void add_output(const workflow::Output &identifier);
+
+        Outputs &outs() const;
 
         void run();
 
+        bool is_complete() const;
+
     private:
+
+        bool completed;
+
+        Step step;
+
+        Inputs _ins;
+
+        Outputs _outs;
 
     };
 }
