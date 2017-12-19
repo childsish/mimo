@@ -7,8 +7,8 @@
 #define MIMO_OUTPUTS_H
 
 #include <string>
-#include "queues/Queue.h"
 #include "OutputQueue.h"
+#include "queues/Queue.h"
 
 namespace mimo {
 
@@ -17,7 +17,7 @@ namespace mimo {
 
         Outputs();
 
-        void add_queue(const std::string &name, std::unique_ptr<mimo::Queue> queue);
+        void add_queue(const workflow::Output &identifier);
 
         std::unique_ptr<mimo::Queue> release_queue(const std::string &name);
 

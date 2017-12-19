@@ -8,6 +8,7 @@
 
 #include <string>
 #include "InputQueue.h"
+#include "queues/Queue.h"
 
 namespace mimo {
 
@@ -16,7 +17,7 @@ namespace mimo {
 
         Inputs();
 
-        void add_queue(const std::string &name, std::unique_ptr<mimo::Queue> queue);
+        void add_queue(const workflow::Input &identifier);
 
         std::unique_ptr<mimo::Queue> release_queue(const std::string &name);
 

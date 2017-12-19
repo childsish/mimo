@@ -7,6 +7,7 @@
 #define MIMO_INPUTQUEUE_H
 
 
+#include <workflow/Input.h>
 #include "Queue.h"
 
 namespace mimo {
@@ -17,7 +18,11 @@ namespace mimo {
     class InputQueue {
     public:
 
-        InputQueue(std::unique_ptr<mimo::Queue> queue) : _queue(std::move(queue)) {}
+        const workflow::Input &identifier;
+
+        explicit InputQueue(const workflow::Input &identifier_) : identifier(identifier_) {
+            this->_queue = std::make_unique<mimo::Queue>();
+        }
 
         std::shared_ptr<mimo::Entity> peek() { return _queue->peek(); }
         std::shared_ptr<mimo::Entity> pop() { return _queue->pop(); }

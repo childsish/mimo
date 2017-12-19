@@ -3,8 +3,8 @@
 
 #include <string>
 #include <unordered_map>
-#include <queues/InputQueue.h>
-#include <queues/OutputQueue.h>
+#include <queues/Inputs.h>
+#include <queues/Outputs.h>
 
 
 namespace mimo {
@@ -18,11 +18,9 @@ namespace mimo {
          * @param outs output entities
          * @return step completed running
          */
-        virtual bool run(std::unordered_map<std::string, InputQueue> ins,
-                         std::unordered_map<std::string, OutputQueue> outs) = 0;
+        virtual bool run(Inputs &ins, Outputs &outs) = 0;
 
     };
 }
-
 
 #endif //MIMO_STEP_H

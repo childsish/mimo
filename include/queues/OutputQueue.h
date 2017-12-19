@@ -7,6 +7,7 @@
 #define MIMO_OUTPUTQUEUE_H
 
 
+#include <workflow/Output.h>
 #include "Queue.h"
 
 namespace mimo {
@@ -17,7 +18,11 @@ namespace mimo {
     class OutputQueue {
     public:
 
-        OutputQueue(std::unique_ptr<mimo::Queue> queue) : _queue(std::move(queue)) {}
+        const workflow::Output &identifier;
+
+        explicit OutputQueue(const workflow::Output &identifier_) : identifier(identifier_) {
+            this->_queue = std::make_unique<mimo::Queue>();
+        }
 
         bool push(std::shared_ptr<mimo::Entity> entity) { return this->_queue->push(entity); }
         bool can_push() const { return this->_queue->can_push(); }

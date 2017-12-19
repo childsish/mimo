@@ -9,9 +9,9 @@
 
 mimo::Inputs::Inputs() : group_id(0) {}
 
-void mimo::Inputs::add_queue(const std::string &name, std::unique_ptr<mimo::Queue> queue) {
-    this->queues.emplace(name, std::move(queue));
-    this->sync_groups[name] = group_id;
+void mimo::Inputs::add_queue(const workflow::Input &identifier) {
+    this->queues.emplace(identifier.name, identifier);
+    this->sync_groups[identifier.name] = group_id;
     this->group_id += 1;
 }
 
