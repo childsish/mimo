@@ -1,25 +1,24 @@
 /**
- * An example demonstrating a simple workflow containing a linear combination of streams. Each stream has one input and
+ * An example demonstrating a simple workflow containing a linear combination of steps. Each step has one input and
  * one output and the outputs are never split.
  */
 
-#include "Pipeline.h"
-#include "entities/Integer.h"
-#include "streams/Print.h"
-#include "streams/Range.h"
+#include <workflow/Workflow.h>
+#include "Engine.h"
+#include "steps/Print.h"
+#include "steps/Range.h"
 
 
 int main() {
-    Queue::THRESHOLD = 2;
+    auto workflow = std::make_unique<workflow::Workflow>();
+    auto range = workflow->add_step("range", {}, {"output"});
+    auto print = workflow->add_step("print", {"input"}, {});
+    range->pipe(print);
 
-    Pipeline pipeline;
-    Range range(10);
-    Print<Integer> print;
-
-    uuid range_id = pipeline.add_stream(range);
-    uuid print_id = pipeline.add_stream(print);
-    pipeline.pipe({range_id, "output"}, {print_id, "input"});
-    pipeline.run();
+    mimo::Engine engine;
+    engine.register_step(range, [](){ return std::make_unique<Range>(); });
+    engine.register_step<Print>(print);
+    engine.run(workflow);
 
     return 0;
 }
