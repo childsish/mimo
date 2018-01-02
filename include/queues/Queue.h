@@ -17,16 +17,12 @@ namespace mimo {
 
         static unsigned int CAPACITY;
 
-        const unsigned int run;
-
         /**
          * Create a queue with a given threshold.
          * Copy construction is explicitly deleted.
          * @param capacity maximum
          */
-        explicit Queue(unsigned int run, unsigned int capacity = CAPACITY);
-        //Queue(const Queue &) = delete;
-        //~Queue();
+        explicit Queue(unsigned int capacity = CAPACITY);
 
         /**
          * Push an entity into the queue. Return true if there is still space for more.

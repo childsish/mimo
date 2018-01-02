@@ -4,17 +4,10 @@
 
 unsigned int mimo::Queue::CAPACITY = 100;
 
-mimo::Queue::Queue(unsigned int run_, unsigned int capacity) :
-    run(run_),
+mimo::Queue::Queue(unsigned int capacity) :
     capacity(capacity),
     end_of_run(false),
     closed(false) {}
-
-/*mimo::Queue::~Queue() {
-    if (!this->entities.empty()) {
-        std::cerr << "Warning: queue not emptied before deletion." << std::endl;
-    }
-}*/
 
 bool mimo::Queue::push(std::shared_ptr<mimo::Entity> entity) {
     if (this->end_of_run) {

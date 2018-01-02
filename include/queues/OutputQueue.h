@@ -20,7 +20,11 @@ namespace mimo {
 
         const std::shared_ptr<workflow::Output> identifier;
 
-        explicit OutputQueue(const std::shared_ptr<workflow::Output> identifier_) : identifier(identifier_)
+        const unsigned int run;
+
+        explicit OutputQueue(const std::shared_ptr<workflow::Output> &identifier_, unsigned int run_) :
+            identifier(identifier_),
+            run(run_)
         {
             this->_queue = std::make_unique<mimo::Queue>();
         }
