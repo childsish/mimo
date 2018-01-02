@@ -17,7 +17,7 @@ namespace mimo {
 
         Outputs();
 
-        void add_queue(const workflow::Output &identifier);
+        void add_queue(const std::shared_ptr<workflow::Output> &identifier);
 
         std::unique_ptr<mimo::Queue> release_queue(const std::string &name);
 

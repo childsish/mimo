@@ -18,9 +18,9 @@ namespace mimo {
     class InputQueue {
     public:
 
-        const workflow::Input &identifier;
+        const std::shared_ptr<workflow::Input> &identifier;
 
-        explicit InputQueue(const workflow::Input &identifier_) : identifier(identifier_) {
+        explicit InputQueue(const std::shared_ptr<workflow::Input> &identifier_) : identifier(identifier_) {
             this->_queue = std::make_unique<mimo::Queue>();
         }
 

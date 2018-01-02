@@ -18,9 +18,10 @@ namespace mimo {
     class OutputQueue {
     public:
 
-        const workflow::Output &identifier;
+        const std::shared_ptr<workflow::Output> identifier;
 
-        explicit OutputQueue(const workflow::Output &identifier_) : identifier(identifier_) {
+        explicit OutputQueue(const std::shared_ptr<workflow::Output> identifier_) : identifier(identifier_)
+        {
             this->_queue = std::make_unique<mimo::Queue>();
         }
 
