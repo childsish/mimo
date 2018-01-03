@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include "queues/QueueChannel.h"
+#include "queues/OutputQueue.h"
 
 
 unsigned int mimo::QueueChannel::CAPACITY = 10;
@@ -19,8 +20,8 @@ mimo::QueueChannel::QueueChannel(unsigned int capacity_) :
     }
 }
 
-void mimo::QueueChannel::push(std::unique_ptr<mimo::Queue> queue) {
-    PushStatus status = this->get_push_status(queue->run);
+void mimo::QueueChannel::push(mimo::OutputQueue &queue) {
+    PushStatus status = this->get_push_status(queue.get_run());
     if (status == PUSH_FULL) {
         throw std::runtime_error("Can not push: no space left in channel for push.");
     }
@@ -31,10 +32,10 @@ void mimo::QueueChannel::push(std::unique_ptr<mimo::Queue> queue) {
         throw std::runtime_error("Can not push: queue is from run that has ended");
     }
 
-    if (queue->is_end_of_run()) {
-        this->ended_queues.insert(queue->run);
+    if (queue.is_end_of_run()) {
+        this->ended_queues.insert(queue.get_run());
     }
-    this->queues[queue->run].push(std::move(queue));
+    this->queues[queue.get_run()].push(std::move(queue.release_queue()));
 }
 
 const std::unique_ptr<mimo::Queue> &mimo::QueueChannel::peek() const {

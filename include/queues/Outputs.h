@@ -10,14 +10,16 @@
 #include "OutputQueue.h"
 #include "queues/Queue.h"
 
+namespace workflow {
+    class Output;
+}
+
 namespace mimo {
 
     class Outputs {
     public:
 
-        Outputs();
-
-        void add_queue(const std::shared_ptr<workflow::Output> &identifier);
+        explicit Outputs(const std::unordered_map<std::string, std::shared_ptr<workflow::Output>> &outputs);
 
         std::unique_ptr<mimo::Queue> release_queue(const std::string &name);
 

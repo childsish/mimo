@@ -10,9 +10,11 @@
 #include <mutex>
 #include <unordered_set>
 #include <bits/unordered_set.h>
-#include "Queue.h"
+#include "queues/Queue.h"
 
 namespace mimo {
+
+    class OutputQueue;
 
     /**
      * A container class for co-ordinating Queues. To ensure that out-of-order Queues are retrieved in-order, a
@@ -48,7 +50,7 @@ namespace mimo {
          * Queue::end_run.
          * @param queue queue being pushed
          */
-        void push(std::unique_ptr<Queue> queue);
+        void push(OutputQueue &queue);
 
         /**
          * Peek at the next Queue in the channel. If the next is not yet available, an exception is thrown.

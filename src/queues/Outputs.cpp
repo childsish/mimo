@@ -4,15 +4,16 @@
  */
 
 #include <algorithm>
+#include <workflow/Output.h>
 #include "queues/Outputs.h"
 
 
-mimo::Outputs::Outputs() : group_id(0) {}
-
-void mimo::Outputs::add_queue(const std::shared_ptr<workflow::Output> &identifier) {
-    this->queues.emplace(identifier->name, identifier);
-    this->sync_groups[identifier->name] = group_id;
-    this->group_id += 1;
+mimo::Outputs::Outputs(const std::unordered_map<std::string, std::shared_ptr<workflow::Output>> &outputs) : group_id(0) {
+    for (auto &item : outputs) {
+        this->queues.emplace(item.first, OutputQueue(item.second));
+        this->sync_groups.emplace(item.first, this->group_id);
+        this->group_id += 1;
+    }
 }
 
 std::unique_ptr<mimo::Queue> mimo::Outputs::release_queue(const std::string &name) {
@@ -68,8 +69,7 @@ void mimo::Outputs::close() {
 }
 
 bool mimo::Outputs::is_empty() {
-    return std::all_of(this->queues.begin(), this->queues.end(),
-                       [](const std::unordered_map<std::string, mimo::OutputQueue>::const_iterator &item) {
-                           return item->second.is_empty();
-                       });
+    return std::all_of(this->queues.begin(),
+                       this->queues.end(),
+                       [](const std::pair<const std::string, mimo::OutputQueue> &item){ return item.second.is_empty(); });
 }

@@ -6,20 +6,23 @@
 #ifndef MIMO_INPUTS_H
 #define MIMO_INPUTS_H
 
+#include <memory>
 #include <string>
-#include "InputQueue.h"
-#include "queues/Queue.h"
+#include <unordered_map>
+#include "queues/InputQueue.h"
+
+namespace workflow {
+    class Input;
+}
 
 namespace mimo {
+
+    class Queue;
 
     class Inputs {
     public:
 
-        Inputs();
-
-        void add_queue(const std::shared_ptr<workflow::Input> &identifier);
-
-        std::unique_ptr<mimo::Queue> release_queue(const std::string &name);
+        explicit Inputs(const std::unordered_map<std::string, std::shared_ptr<workflow::Input>> &inputs);
 
         void synchronise_queues(const std::vector<std::string> &group);
 

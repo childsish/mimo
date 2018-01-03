@@ -4,21 +4,17 @@
  */
 
 #include <algorithm>
+#include <workflow/Input.h>
 #include "queues/Inputs.h"
+#include "queues/InputQueue.h"
 
 
-mimo::Inputs::Inputs() : group_id(0) {}
-
-void mimo::Inputs::add_queue(const std::shared_ptr<workflow::Input> &identifier) {
-    this->queues.emplace(identifier->name, identifier);
-    this->sync_groups[identifier->name] = group_id;
-    this->group_id += 1;
-}
-
-std::unique_ptr<mimo::Queue> mimo::Inputs::release_queue(const std::string &name) {
-    auto queue = std::move(this->queues.at(name).release_queue());
-    this->queues.erase(name);
-    return queue;
+mimo::Inputs::Inputs(const std::unordered_map<std::string, std::shared_ptr<workflow::Input>> &inputs) : group_id(0) {
+    for (auto &item : inputs) {
+        this->queues.emplace(item.first, InputQueue(item.second));
+        this->sync_groups.emplace(item.first, this->group_id);
+        this->group_id += 1;
+    }
 }
 
 void mimo::Inputs::synchronise_queues(const std::vector<std::string> &group) {
@@ -60,7 +56,8 @@ bool mimo::Inputs::is_empty() const {
 }
 
 bool mimo::Inputs::is_closed() const {
-    return std::all_of(this->queues.begin(),
-                       this->queues.end(),
-                       [](const mimo::InputQueue &queue){ return queue.is_closed(); });
+    std::unordered_map<std::string, mimo::InputQueue> queues_;
+    return std::all_of(queues_.begin(),
+                       queues_.end(),
+                       [](const std::pair<const std::string, mimo::InputQueue> &item){ return item.second.is_closed(); });
 }
