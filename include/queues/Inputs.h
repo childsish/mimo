@@ -9,7 +9,6 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include <vector>
 
 namespace workflow {
     class Input;
@@ -17,7 +16,8 @@ namespace workflow {
 
 namespace mimo {
 
-    class IQueue;
+    class Entity;
+    class Queue;
 
     /**
      * @brief:
@@ -25,28 +25,33 @@ namespace mimo {
     class Inputs {
     public:
 
+        enum class PopStatus {
+            CAN_POP,
+            QUEUE_EMPTY,
+            SYNC_QUEUE_EMPTY
+        };
+
         Inputs(
-            const std::unordered_map<std::string, std::shared_ptr<workflow::Input>> &inputs,
-            std::unordered_map<std::string, std::unique_ptr<IQueue>> &queues
+            const std::unordered_map<std::string, std::shared_ptr<workflow::Input>> &identifiers,
+            std::unordered_map<std::string, std::unique_ptr<Queue>> &queues,
+            const std::unordered_map<std::string, unsigned int> &sync_groups
         );
 
-        void synchronise_queues(const std::vector<std::string> &group);
+        PopStatus get_status() const;
+        PopStatus get_status(const std::string &name) const;
 
-        bool can_pop() const;
-
-        std::unique_ptr<mimo::IQueue> &operator[](const std::string &name);
-
-        bool is_empty() const;
-
-        bool is_closed() const;
+        std::shared_ptr<Entity> &peek(const std::string &name);
+        std::shared_ptr<Entity> pop(const std::string &name);
 
     private:
 
         unsigned int group_id;
 
+        std::unordered_map<std::string, std::unique_ptr<mimo::Queue>> queues;
+
         std::unordered_map<std::string, unsigned int> sync_groups;
 
-        std::unordered_map<std::string, std::unique_ptr<mimo::IQueue>> queues;
+        std::unordered_map<unsigned int, bool> get_group_status() const;
 
     };
 }

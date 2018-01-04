@@ -6,9 +6,9 @@
 #ifndef MIMO_OUTPUTS_H
 #define MIMO_OUTPUTS_H
 
+#include <memory>
 #include <string>
-#include "OutputQueue.h"
-#include "queues/Queue.h"
+#include <unordered_map>
 
 namespace workflow {
     class Output;
@@ -16,43 +16,41 @@ namespace workflow {
 
 namespace mimo {
 
-    class IQueueFactory;
+    class Entity;
+    class Queue;
 
+    /**
+     * @brief:
+     */
     class Outputs {
     public:
 
-        explicit Outputs(
-                const std::unordered_map<std::string, std::shared_ptr<workflow::Output>> &outputs,
-                const IQueueFactory &factory
+        enum class PushStatus {
+            CAN_PUSH,
+            QUEUE_FULL,
+            SYNC_QUEUE_FULL
+        };
+
+        Outputs(
+            const std::unordered_map<std::string, std::shared_ptr<workflow::Output>> &identifiers,
+            std::unordered_map<std::string, std::unique_ptr<Queue>> &queues,
+            const std::unordered_map<std::string, unsigned int> &sync_groups
         );
 
-        std::unique_ptr<mimo::Queue> release_queue(const std::string &name);
+        PushStatus get_status() const;
+        PushStatus get_status(const std::string &name) const;
 
-        void synchronise_queues(const std::vector<std::string> &group);
-
-        bool can_push() const;
-
-        mimo::OutputQueue &operator[](const std::string &name);
-
-        std::unordered_map<std::string, mimo::OutputQueue>::const_iterator begin() const;
-
-        std::unordered_map<std::string, mimo::OutputQueue>::const_iterator end() const;
-
-        void end_run();
-
-        void close();
-
-        bool is_empty();
+        void push(const std::string &name, std::shared_ptr<Entity> entity);
 
     private:
 
         unsigned int group_id;
 
+        std::unordered_map<std::string, std::unique_ptr<Queue>> queues;
+
         std::unordered_map<std::string, unsigned int> sync_groups;
 
-        std::unordered_map<std::string, mimo::OutputQueue> queues;
-
-        const IQueueFactory &factory;
+        std::unordered_map<unsigned int, bool> get_group_status() const;
 
     };
 }

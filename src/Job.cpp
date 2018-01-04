@@ -34,7 +34,7 @@ void mimo::Job::run() {
     this->completed = this->step.run(inputs_, outputs_);
     if (this->completed) {
         outputs_.end_run();
-        if (inputs_.is_empty() || inputs_.is_closed()) {
+        if (this->inputs.empty() || inputs_.is_closed()) {
             outputs_.close();
         }
     }
