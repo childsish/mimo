@@ -9,7 +9,7 @@
 #include <memory>
 #include <string>
 #include <unordered_map>
-#include "queues/InputQueue.h"
+#include <vector>
 
 namespace workflow {
     class Input;
@@ -17,22 +17,24 @@ namespace workflow {
 
 namespace mimo {
 
-    class Queue;
+    class IQueue;
 
+    /**
+     * @brief:
+     */
     class Inputs {
     public:
 
-        explicit Inputs(const std::unordered_map<std::string, std::shared_ptr<workflow::Input>> &inputs);
+        Inputs(
+            const std::unordered_map<std::string, std::shared_ptr<workflow::Input>> &inputs,
+            std::unordered_map<std::string, std::unique_ptr<IQueue>> &queues
+        );
 
         void synchronise_queues(const std::vector<std::string> &group);
 
         bool can_pop() const;
 
-        mimo::InputQueue &operator[](const std::string &name);
-
-        std::unordered_map<std::string, mimo::InputQueue>::const_iterator begin() const;
-
-        std::unordered_map<std::string, mimo::InputQueue>::const_iterator end() const;
+        std::unique_ptr<mimo::IQueue> &operator[](const std::string &name);
 
         bool is_empty() const;
 
@@ -44,7 +46,7 @@ namespace mimo {
 
         std::unordered_map<std::string, unsigned int> sync_groups;
 
-        std::unordered_map<std::string, mimo::InputQueue> queues;
+        std::unordered_map<std::string, std::unique_ptr<mimo::IQueue>> queues;
 
     };
 }

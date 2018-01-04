@@ -16,20 +16,21 @@
 
 namespace mimo {
 
+    class IQueue;
+    class IQueueFactory;
+    class Step;
+
+    /**
+     * @brief:
+     */
     class Job {
     public:
 
         const workflow::Step &identifier;
 
-        explicit Job(const workflow::Step &identifier);
+        Job(const workflow::Step &identifier, Step &step, const IQueueFactory &factory);
 
-        void add_input(const workflow::Input &identifier);
-
-        Inputs &ins() const;
-
-        void add_output(const workflow::Output &identifier);
-
-        Outputs &outs() const;
+        void set_inputs(std::unordered_map<std::string, std::unique_ptr<IQueue>> &inputs);
 
         void run();
 
@@ -37,13 +38,13 @@ namespace mimo {
 
     private:
 
+        const IQueueFactory &factory;
+        Step &step;
+
+        std::unordered_map<std::string, std::unique_ptr<IQueue>> inputs;
+        std::unordered_map<std::string, std::unique_ptr<IQueue>> outputs;
+
         bool completed;
-
-        Step step;
-
-        Inputs _ins;
-
-        Outputs _outs;
 
     };
 }

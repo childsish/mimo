@@ -19,13 +19,14 @@ add_subdirectory(lib/workflow)
 add_library(mimo
         include/Entity.h
         include/Step.h
-        include/queues/InputQueue.h
-        include/queues/OutputQueue.h
+        include/interfaces/IQueue.h
+        include/interfaces/IQueueFactory.h
         src/worker.cpp
         src/Job.cpp include/Job.h
-        src/JobManager.cpp include/JobManager.h
         src/queues/Inputs.cpp include/queues/Inputs.h
+        src/queues/InputQueue.cpp include/queues/InputQueue.h
         src/queues/Outputs.cpp include/queues/Outputs.h
+        src/queues/OutputQueue.cpp include/queues/OutputQueue.h
         src/queues/Queue.cpp include/queues/Queue.h
         src/queues/QueueChannel.cpp include/queues/QueueChannel.h)
 target_include_directories(mimo PRIVATE

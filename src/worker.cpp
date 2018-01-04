@@ -41,13 +41,6 @@ void process_before_job() {
 
     job->run();
 
-    if (job->is_complete()) {
-        job->outs().end_run();
-        if (job->ins().is_empty() || job->ins().is_closed()) {
-            job->outs().close();
-        }
-    }
-
     after_run_mutex.lock();
     after_run.push(job);
     after_run_mutex.unlock();

@@ -8,7 +8,12 @@
 #include "queues/Outputs.h"
 
 
-mimo::Outputs::Outputs(const std::unordered_map<std::string, std::shared_ptr<workflow::Output>> &outputs) : group_id(0) {
+mimo::Outputs::Outputs(
+        const std::unordered_map<std::string, std::shared_ptr<workflow::Output>> &outputs,
+        const IQueueFactory &factory_
+) : group_id(0),
+    factory(factory_)
+{
     for (auto &item : outputs) {
         this->queues.emplace(item.first, OutputQueue(item.second));
         this->sync_groups.emplace(item.first, this->group_id);

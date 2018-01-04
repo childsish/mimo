@@ -3,15 +3,20 @@
  * @brief:
  */
 
+#include <queues/Inputs.h>
+
 #include <algorithm>
+#include <interfaces/IQueue.h>
 #include <workflow/Input.h>
-#include "queues/Inputs.h"
-#include "queues/InputQueue.h"
 
 
-mimo::Inputs::Inputs(const std::unordered_map<std::string, std::shared_ptr<workflow::Input>> &inputs) : group_id(0) {
+mimo::Inputs::Inputs(
+        const std::unordered_map<std::string, std::shared_ptr<workflow::Input>> &inputs,
+        std::unordered_map<std::string, std::unique_ptr<mimo::IQueue>> &queues_
+) : group_id(0),
+    queues(queues_)
+{
     for (auto &item : inputs) {
-        this->queues.emplace(item.first, InputQueue(item.second));
         this->sync_groups.emplace(item.first, this->group_id);
         this->group_id += 1;
     }
@@ -39,16 +44,8 @@ bool mimo::Inputs::can_pop() const {
     );
 }
 
-mimo::InputQueue &mimo::Inputs::operator[](const std::string &name) {
+std::unique_ptr<mimo::IQueue> &mimo::Inputs::operator[](const std::string &name) {
     return this->queues.at(name);
-}
-
-std::unordered_map<std::string, mimo::InputQueue>::const_iterator mimo::Inputs::begin() const {
-    return this->queues.begin();
-}
-
-std::unordered_map<std::string, mimo::InputQueue>::const_iterator mimo::Inputs::end() const {
-    return this->queues.end();
 }
 
 bool mimo::Inputs::is_empty() const {

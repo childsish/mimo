@@ -16,10 +16,15 @@ namespace workflow {
 
 namespace mimo {
 
+    class IQueueFactory;
+
     class Outputs {
     public:
 
-        explicit Outputs(const std::unordered_map<std::string, std::shared_ptr<workflow::Output>> &outputs);
+        explicit Outputs(
+                const std::unordered_map<std::string, std::shared_ptr<workflow::Output>> &outputs,
+                const IQueueFactory &factory
+        );
 
         std::unique_ptr<mimo::Queue> release_queue(const std::string &name);
 
@@ -46,6 +51,8 @@ namespace mimo {
         std::unordered_map<std::string, unsigned int> sync_groups;
 
         std::unordered_map<std::string, mimo::OutputQueue> queues;
+
+        const IQueueFactory &factory;
 
     };
 }
