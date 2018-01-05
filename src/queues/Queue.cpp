@@ -17,7 +17,7 @@ bool mimo::Queue::push(std::shared_ptr<mimo::Entity> entity) {
     return this->can_push();
 }
 
-std::shared_ptr<mimo::Entity> mimo::Queue::peek() {
+std::shared_ptr<mimo::Entity> &mimo::Queue::peek() {
     if (this->entities.empty()) {
         throw std::runtime_error("Trying to peek in empty queue.");
     }

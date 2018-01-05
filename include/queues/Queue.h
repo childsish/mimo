@@ -8,11 +8,13 @@
 
 #include <memory>
 #include <queue>
-#include "Entity.h"
+#include <queues/IQueue.h>
 
 namespace mimo {
 
-    class Queue {
+    class Entity;
+
+    class Queue : public IQueue {
     public:
 
         static unsigned int CAPACITY;
@@ -35,7 +37,7 @@ namespace mimo {
          * Get the next entity, but don't remove it from the queue.
          * @return next entity
          */
-        std::shared_ptr<mimo::Entity> peek();
+        std::shared_ptr<mimo::Entity> &peek();
 
         /**
          * Get the next entity and remove it from the queue.
@@ -76,6 +78,13 @@ namespace mimo {
          * @return true if the queue is empty
          */
         bool is_empty() const;
+
+        /**
+         * Check if the queue is full
+         * @return true if the queue is full
+         * @return
+         */
+        bool is_full() const;
 
     private:
 

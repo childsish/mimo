@@ -17,16 +17,16 @@ add_subdirectory(lib/workflow)
 # Add mimo library
 
 add_library(mimo
+        include/errors.h
         include/Entity.h
         include/Step.h
         include/interfaces/IQueue.h
         include/interfaces/IQueueFactory.h
-        src/worker.cpp
         src/Job.cpp include/Job.h
         src/queues/Inputs.cpp include/queues/Inputs.h
-        src/queues/InputQueue.cpp include/queues/InputQueue.h
+        src/queues/JobInputs.cpp include/queues/JobInputs.h
+        src/queues/JobOutputs.cpp include/queues/JobOutputs.h
         src/queues/Outputs.cpp include/queues/Outputs.h
-        src/queues/OutputQueue.cpp include/queues/OutputQueue.h
         src/queues/Queue.cpp include/queues/Queue.h
         src/queues/QueueChannel.cpp include/queues/QueueChannel.h)
 target_include_directories(mimo PRIVATE
@@ -39,7 +39,9 @@ target_link_libraries(mimo
 
 if (MIMO_BUILD_TESTS)
     add_executable(linear examples/linear.cpp
-            include/entities/Integer.h)
+            include/entities/Integer.h
+            include/steps/Print.h
+            include/steps/Range.h)
     target_include_directories(linear PRIVATE
             include)
     target_link_libraries(linear

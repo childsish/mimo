@@ -16,7 +16,7 @@
 
 
 workflow::Workflow workflow_;
-mimo::JobManager job_manager;
+std::unique_ptr<mimo::JobManager> job_manager;
 
 std::unordered_map<unsigned int, std::unique_ptr<mimo::Queue>> inputs;
 std::unordered_map<unsigned int, mimo::QueueChannel> outputs;
@@ -61,10 +61,10 @@ void process_after_job() {
         }
         auto output_id = output.second.identifier;
         unsigned int run = 0; // TODO: get run identifier
-        outputs[output_id.identifier].lock();
-        mimo::QueueChannel::PushStatus push_status = outputs[output_id.identifier].get_push_status(run);
+        outputs[output_id->identifier].lock();
+        mimo::QueueChannel::PushStatus push_status = outputs[output_id->identifier].get_push_status(run);
         if (push_status == mimo::QueueChannel::CAN_PUSH) {
-            outputs[output_id.identifier].push(output.second.release_queue());
+            outputs[output_id->identifier].push(std::move(output.second));
 
             ready_outputs_mutex.lock();
             ready_outputs.push(output_id);
@@ -72,11 +72,11 @@ void process_after_job() {
         }
         else if (push_status == mimo::QueueChannel::PUSH_ENDED) {
             // TODO: replace with proper logging
-            outputs[output_id.identifier].unlock();
+            outputs[output_id->identifier].unlock();
             std::cout << "Error: attempting to push job queue after job's last queue already pushed." << std::endl;
             throw std::runtime_error("Error: attempting to push job queue after job's last queue already pushed.");
         }
-        outputs[output_id.identifier].unlock();
+        outputs[output_id->identifier].unlock();
     }
 
     if (job->outs().is_empty()) {
@@ -133,8 +133,8 @@ void process_ready_outputs() {
                 }
         ))
         {
-            if (job_manager.can_make_job(connected_step)) {
-                before_run.push(job_manager.make_job(connected_step));
+            if (job_manager->can_make_job(connected_step)) {
+                before_run.push(std::move(job_manager->make_job(connected_step)));
             }
         }
     }

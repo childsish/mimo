@@ -8,7 +8,7 @@
 
 #include <memory>
 #include <string>
-#include <unordered_map>
+#include "queues/JobInputs.h"
 
 namespace workflow {
     class Input;
@@ -20,22 +20,18 @@ namespace mimo {
     class Queue;
 
     /**
-     * @brief:
+     * @brief: Provides access to input queues.
      */
     class Inputs {
     public:
 
         enum class PopStatus {
-            CAN_POP,
-            QUEUE_EMPTY,
-            SYNC_QUEUE_EMPTY
+            CAN_POP = static_cast<int>(JobInputs::PopStatus::CAN_POP),
+            QUEUE_EMPTY = static_cast<int>(JobInputs::PopStatus::QUEUE_EMPTY),
+            SYNC_QUEUE_EMPTY = static_cast<int>(JobInputs::PopStatus::SYNC_QUEUE_EMPTY)
         };
 
-        Inputs(
-            const std::unordered_map<std::string, std::shared_ptr<workflow::Input>> &identifiers,
-            std::unordered_map<std::string, std::unique_ptr<Queue>> &queues,
-            const std::unordered_map<std::string, unsigned int> &sync_groups
-        );
+        explicit Inputs(JobInputs &inputs);
 
         PopStatus get_status() const;
         PopStatus get_status(const std::string &name) const;
@@ -45,13 +41,7 @@ namespace mimo {
 
     private:
 
-        unsigned int group_id;
-
-        std::unordered_map<std::string, std::unique_ptr<mimo::Queue>> queues;
-
-        std::unordered_map<std::string, unsigned int> sync_groups;
-
-        std::unordered_map<unsigned int, bool> get_group_status() const;
+        JobInputs &inputs;
 
     };
 }

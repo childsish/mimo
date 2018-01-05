@@ -17,7 +17,7 @@ namespace mimo {
 
         bool can_make_job(const std::shared_ptr<workflow::Step> &step) const;
 
-        std::shared_ptr<Job> make_job(const std::shared_ptr<workflow::Step> &step);
+        std::unique_ptr<Job> make_job(const std::shared_ptr<workflow::Step> &step);
 
         void destroy_job(const std::shared_ptr<workflow::Step> &step);
 

@@ -6,21 +6,20 @@
 
 
 template<typename E>
-class Print : public Step {
+class Print : public mimo::Step {
 public:
 
     Print(const std::string prefix = "", const std::string suffix = "") :
-            Step("print", {"input"}, {}),
             _prefix(prefix),
             _suffix(suffix) {}
 
-    void run() {
+    bool run(mimo::Inputs &ins, mimo::Outputs &outs) {
         E *entity;
-        while (can_run()) {
-            entity = static_cast<E *>(inputs["input"].pop());
+        while (ins.can_pop()) {
+            entity = static_cast<E *>(ins["input"].pop());
             std::cout << _prefix << *entity << _suffix << std::endl;
-            collect(entity);
         }
+        return true;
     }
 
 private:

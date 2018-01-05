@@ -8,7 +8,7 @@
 
 #include <memory>
 #include <string>
-#include <unordered_map>
+#include "queues/JobOutputs.h"
 
 namespace workflow {
     class Output;
@@ -20,22 +20,18 @@ namespace mimo {
     class Queue;
 
     /**
-     * @brief:
+     * @brief: Provides access to output queues.
      */
     class Outputs {
     public:
 
         enum class PushStatus {
-            CAN_PUSH,
-            QUEUE_FULL,
-            SYNC_QUEUE_FULL
+            CAN_PUSH = static_cast<int>(JobOutputs::PushStatus::CAN_PUSH),
+            QUEUE_FULL = static_cast<int>(JobOutputs::PushStatus::QUEUE_FULL),
+            SYNC_QUEUE_FULL = static_cast<int>(JobOutputs::PushStatus::SYNC_QUEUE_FULL)
         };
 
-        Outputs(
-            const std::unordered_map<std::string, std::shared_ptr<workflow::Output>> &identifiers,
-            std::unordered_map<std::string, std::unique_ptr<Queue>> &queues,
-            const std::unordered_map<std::string, unsigned int> &sync_groups
-        );
+        explicit Outputs(JobOutputs &outputs);
 
         PushStatus get_status() const;
         PushStatus get_status(const std::string &name) const;
@@ -44,13 +40,7 @@ namespace mimo {
 
     private:
 
-        unsigned int group_id;
-
-        std::unordered_map<std::string, std::unique_ptr<Queue>> queues;
-
-        std::unordered_map<std::string, unsigned int> sync_groups;
-
-        std::unordered_map<unsigned int, bool> get_group_status() const;
+        JobOutputs &outputs;
 
     };
 }

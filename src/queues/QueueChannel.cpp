@@ -4,8 +4,8 @@
  */
 
 #include <iostream>
-#include "queues/QueueChannel.h"
-#include "queues/OutputQueue.h"
+#include <queues/QueueChannel.h>
+#include <queues/OutputQueue.h>
 
 
 unsigned int mimo::QueueChannel::CAPACITY = 10;
@@ -35,7 +35,7 @@ void mimo::QueueChannel::push(mimo::OutputQueue &queue) {
     if (queue.is_end_of_run()) {
         this->ended_queues.insert(queue.get_run());
     }
-    this->queues[queue.get_run()].push(std::move(queue.release_queue()));
+    this->queues[queue.get_run()].push(std::move(queue.release()));
 }
 
 const std::unique_ptr<mimo::Queue> &mimo::QueueChannel::peek() const {

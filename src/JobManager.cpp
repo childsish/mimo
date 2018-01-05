@@ -8,8 +8,8 @@ bool mimo::JobManager::can_make_job(const std::shared_ptr<workflow::Step> &step)
     return this->counts.at(step->identifier) < this->capacity;
 }
 
-std::shared_ptr<mimo::Job> mimo::JobManager::make_job(const std::shared_ptr<workflow::Step> &step) {
-    auto job = std::make_shared<mimo::Job>(step);
+std::unique_ptr<mimo::Job> mimo::JobManager::make_job(const std::shared_ptr<workflow::Step> &step) {
+    auto job = std::make_unique<mimo::Job>(step);
     this->counts.at(step->identifier) += 1;
     return job;
 }
