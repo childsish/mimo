@@ -6,18 +6,17 @@
 #ifndef MIMO_JOB_H
 #define MIMO_JOB_H
 
-#include <workflow/Step.h>
-#include <workflow/Input.h>
-#include <workflow/Output.h>
-#include "Step.h"
-#include "queues/Inputs.h"
-#include "queues/Outputs.h"
+#include <memory>
 
+
+namespace workflow {
+    class Step;
+}
 
 namespace mimo {
 
-    class IQueue;
-    class IQueueFactory;
+    class JobInputs;
+    class JobOutputs;
     class Step;
 
     /**
@@ -29,14 +28,15 @@ namespace mimo {
         const std::shared_ptr<workflow::Step> identifier;
 
         explicit Job(
-            const std::shared_ptr<workflow::Step> &identifier,
-            std::unique_ptr<mimo::Step> step,
-            const mimo::IQueueFactory &factory
+            const std::shared_ptr<workflow::Step> identifier,
+            std::unique_ptr<Step> step,
+            std::unique_ptr<JobInputs> inputs,
+            std::unique_ptr<JobOutputs> outputs
         );
 
-        Inputs &ins();
+        std::unique_ptr<JobInputs> &ins();
 
-        Outputs &outs();
+        std::unique_ptr<JobOutputs> &outs();
 
         void run();
 
@@ -48,11 +48,8 @@ namespace mimo {
 
         std::unique_ptr<mimo::Step> step;
 
-        std::unordered_map<std::string, std::unique_ptr<IQueue>> inputs;
-        std::unordered_map<std::string, std::unique_ptr<IQueue>> outputs;
-
-        bool completed;
-
+        std::unique_ptr<JobInputs> inputs;
+        std::unique_ptr<JobOutputs> outputs;
     };
 }
 

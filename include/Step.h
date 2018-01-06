@@ -1,13 +1,11 @@
 #ifndef MIMO_STEP_H
 #define MIMO_STEP_H
 
-#include <string>
-#include <unordered_map>
-#include <queues/Inputs.h>
-#include <queues/Outputs.h>
-
 
 namespace mimo {
+
+    class Inputs;
+    class Outputs;
 
     class Step {
     public:

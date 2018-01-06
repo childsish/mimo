@@ -3,39 +3,42 @@
  * @brief:
  */
 
-#include <Job.h>
+#include "Job.h"
 
-#include <interfaces/IQueueFactory.h>
+#include <workflow/Step.h>
+#include "Step.h"
+#include "queues/JobInputs.h"
+#include "queues/JobOutputs.h"
+#include "queues/Inputs.h"
+#include "queues/Outputs.h"
 
 
-mimo::Job::Job(const workflow::Step &identifier_, mimo::Step &step_, const IQueueFactory &factory_) :
-    identifier(identifier_),
-    step(step_),
-    factory(factory_)
-{
-    for (auto &input : identifier_.ins) {
-        this->inputs.emplace(input.first, std::move(factory.make()));
-    }
-    for (auto &output : identifier_.outs) {
-        this->outputs.emplace(output.first, std::move(factory.make()));
-    }
+mimo::Job::Job(
+        const std::shared_ptr<workflow::Step> identifier_,
+        std::unique_ptr<Step> step_,
+        std::unique_ptr<JobInputs> inputs_,
+        std::unique_ptr<JobOutputs> outputs_
+) : identifier(identifier_),
+    step(std::move(step_)),
+    inputs(std::move(inputs_)),
+    outputs(std::move(outputs_)) {}
+
+std::unique_ptr<mimo::JobInputs> &mimo::Job::ins() {
+    return this->inputs;
 }
 
-void mimo::Job::set_inputs(std::unordered_map<std::string, std::unique_ptr<mimo::IQueue>> &inputs_) {
-    this->inputs.empty();
-    for (auto &item : inputs_) {
-        this->inputs.emplace(item.first, std::move(item.second));
-    }
+std::unique_ptr<mimo::JobOutputs> &mimo::Job::outs() {
+    return this->outputs;
 }
 
 void mimo::Job::run() {
-    mimo::Inputs inputs_(this->identifier.ins, this->inputs);
-    mimo::Outputs outputs_(this->identifier.outs, this->outputs);
-    this->completed = this->step.run(inputs_, outputs_);
+    mimo::Inputs inputs_(this->inputs);
+    mimo::Outputs outputs_(this->outputs);
+    this->completed = this->step->run(inputs_, outputs_);
     if (this->completed) {
-        outputs_.end_run();
-        if (this->inputs.empty() || inputs_.is_closed()) {
-            outputs_.close();
+        this->outputs->end_run();
+        if (this->inputs->is_empty() || this->inputs->is_closed()) {
+            this->outputs->close();
         }
     }
 }

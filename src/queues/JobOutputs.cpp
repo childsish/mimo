@@ -12,9 +12,11 @@
 
 
 mimo::JobOutputs::JobOutputs(
-        std::unordered_map<std::string, std::unique_ptr<mimo::Queue>> &queues_,
+        const IQueueFactory &factory_,
         const std::unordered_map<std::string, unsigned int> &sync_groups_
-) : queues(queues_),
+) : run(0),
+    job_ended(false),
+    factory(factory_),
     sync_groups(sync_groups_) {}
 
 mimo::JobOutputs::PushStatus mimo::JobOutputs::get_status() const {
@@ -60,4 +62,16 @@ std::unordered_map<unsigned int, bool> mimo::JobOutputs::get_group_status() cons
         groups[item.second] &= this->queues.at(item.first)->can_push();
     }
     return groups;
+}
+
+void mimo::JobOutputs::end_run() {
+    this->run += 1;
+}
+
+void mimo::JobOutputs::end_job() {
+    this->job_ended = true;
+}
+
+bool mimo::JobOutputs::is_job_ended() const {
+    return this->job_ended;
 }

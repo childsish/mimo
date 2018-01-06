@@ -72,3 +72,11 @@ std::unordered_map<unsigned int, bool> mimo::JobInputs::get_group_status() const
     }
     return groups;
 }
+
+bool mimo::JobInputs::is_empty() const {
+    return std::all_of()
+}
+
+bool mimo::JobInputs::is_closed() const {
+    return false;
+}

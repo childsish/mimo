@@ -31,7 +31,7 @@ namespace mimo {
             SYNC_QUEUE_EMPTY = static_cast<int>(JobInputs::PopStatus::SYNC_QUEUE_EMPTY)
         };
 
-        explicit Inputs(JobInputs &inputs);
+        explicit Inputs(std::unique_ptr<JobInputs> &inputs);
 
         PopStatus get_status() const;
         PopStatus get_status(const std::string &name) const;
@@ -41,7 +41,7 @@ namespace mimo {
 
     private:
 
-        JobInputs &inputs;
+        std::unique_ptr<JobInputs> &inputs;
 
     };
 }

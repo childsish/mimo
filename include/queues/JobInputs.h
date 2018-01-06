@@ -6,6 +6,7 @@
 #ifndef MIMO_JOBINPUT_H
 #define MIMO_JOBINPUT_H
 
+#include <memory>
 #include <unordered_map>
 
 
@@ -36,6 +37,9 @@ namespace mimo {
 
         std::shared_ptr<Entity> &peek(const std::string &name);
         std::shared_ptr<Entity> pop(const std::string &name);
+
+        bool is_empty() const;
+        bool is_closed() const;
 
     private:
 

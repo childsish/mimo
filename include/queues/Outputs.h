@@ -31,7 +31,7 @@ namespace mimo {
             SYNC_QUEUE_FULL = static_cast<int>(JobOutputs::PushStatus::SYNC_QUEUE_FULL)
         };
 
-        explicit Outputs(JobOutputs &outputs);
+        explicit Outputs(std::unique_ptr<JobOutputs> &outputs);
 
         PushStatus get_status() const;
         PushStatus get_status(const std::string &name) const;
@@ -40,7 +40,7 @@ namespace mimo {
 
     private:
 
-        JobOutputs &outputs;
+        std::unique_ptr<JobOutputs> &outputs;
 
     };
 }

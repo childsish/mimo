@@ -3,16 +3,18 @@
  * @brief:
  */
 
-#ifndef MIMO_JOBOUTPUT_H
-#define MIMO_JOBOUTPUT_H
+#ifndef MIMO_JOBOUTPUTS_H
+#define MIMO_JOBOUTPUTS_H
 
 #include <string>
+#include <memory>
 #include <unordered_map>
 
 
 namespace mimo {
 
     class Entity;
+    class IQueueFactory;
     class Queue;
 
     /**
@@ -28,7 +30,7 @@ namespace mimo {
         };
 
         JobOutputs(
-            std::unordered_map<std::string, std::unique_ptr<Queue>> &queues,
+            const IQueueFactory &factory,
             const std::unordered_map<std::string, unsigned int> &sync_groups
         );
 
@@ -51,11 +53,23 @@ namespace mimo {
          */
         void push(const std::string &name, std::shared_ptr<Entity> entity);
 
+        void end_run();
+
+        void end_job();
+
+        bool is_job_ended() const;
+
     private:
 
-        std::unordered_map<std::string, std::unique_ptr<Queue>> &queues;
+        unsigned int run;
+
+        bool job_ended;
+
+        std::unordered_map<std::string, std::unique_ptr<Queue>> queues;
 
         const std::unordered_map<std::string, unsigned int> &sync_groups;
+
+        const IQueueFactory &factory;
 
         std::unordered_map<unsigned int, bool> get_group_status() const;
 
@@ -63,4 +77,4 @@ namespace mimo {
 }
 
 
-#endif //MIMO_JOBOUTPUT_H
+#endif //MIMO_JOBOUTPUTS_H
