@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 
 namespace mimo {
@@ -27,25 +28,57 @@ namespace mimo {
             SYNC_QUEUE_EMPTY
         };
 
-        JobInputs(
-            std::unordered_map<std::string, std::unique_ptr<Queue>> &queues,
-            const std::unordered_map<std::string, unsigned int> &sync_groups
-        );
+        JobInputs();
 
+        /**
+         * @brief Add a queue to the inputs.
+         * @param name Name of the queue.
+         * @param queue The queue.
+         */
+        void add_queue(const std::string &name, std::unique_ptr<Queue> queue);
+
+        /**
+         * @brief Synchronise the named queues.
+         */
+        void synchronise_queues(const std::vector<std::string> &queues);
+
+        /**
+         * Get whether all queues can be popped.
+         * @return
+         */
         PopStatus get_status() const;
+
+        /**
+         * @brief Get whether a queue can be popped or if it, or a synchronised queue, is empty.
+         * @param name Queue to query.
+         */
         PopStatus get_status(const std::string &name) const;
 
+        /**
+         * @brief Peek at the first item in the named queue but do not pop it.
+         */
         std::shared_ptr<Entity> &peek(const std::string &name);
+
+        /**
+         * @brief Pop and return the first item of the named queue.
+         */
         std::shared_ptr<Entity> pop(const std::string &name);
 
+        /**
+         * @brief Get whether all queues are empty.
+         */
         bool is_empty() const;
+
+        /**
+         * @brief Get whether all queues are closed.
+         */
         bool is_closed() const;
 
     private:
 
         unsigned int group_id;
 
-        std::unordered_map<std::string, std::unique_ptr<mimo::Queue>> queues;
+        std::unordered_map<std::string, std::unique_ptr<Queue>> queues;
 
         std::unordered_map<std::string, unsigned int> sync_groups;
 
