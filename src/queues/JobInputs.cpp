@@ -11,18 +11,25 @@
 #include "queues/Queue.h"
 
 
-mimo::JobInputs::JobInputs(
-        std::unordered_map<std::string, std::unique_ptr<mimo::Queue>> &queues_,
-        const std::unordered_map<std::string, unsigned int> &sync_groups_
-) : queues(queues_),
-    sync_groups(sync_groups_) {}
+mimo::JobInputs::JobInputs() : group_id(0) {}
+
+void mimo::JobInputs::add_queue(const std::string &name, std::unique_ptr<mimo::Queue> queue) {
+    this->queues.emplace(name, std::move(queue));
+}
+
+void mimo::JobInputs::synchronise_queues(const std::vector<std::string> &queues) {
+    for (const auto &name : queues) {
+        this->sync_groups[name] = this->group_id;
+    }
+    group_id += 1;
+}
 
 mimo::JobInputs::PopStatus mimo::JobInputs::get_status() const {
     auto group_can_pop = this->get_group_status();
     if (std::any_of(
             group_can_pop.begin(),
             group_can_pop.end(),
-            [](const std::pair<unsigned int, bool> &item){ return item.second; })
+            [](const auto &item){ return item.second; })
     ) {
         return PopStatus::CAN_POP;
     }
@@ -62,21 +69,31 @@ std::shared_ptr<mimo::Entity> mimo::JobInputs::pop(const std::string &name) {
     return this->queues.at(name)->pop();
 }
 
+bool mimo::JobInputs::is_empty() const {
+    return std::all_of(
+        this->queues.begin(),
+        this->queues.end(),
+        [](const auto &item){ return item.second->is_empty(); }
+    );
+}
+
+bool mimo::JobInputs::is_closed() const {
+    return std::all_of(
+        this->queues.begin(),
+        this->queues.end(),
+        [](const auto &item){ return item.second->is_closed(); }
+    );
+}
+
+// private:
+
 std::unordered_map<unsigned int, bool> mimo::JobInputs::get_group_status() const {
     std::unordered_map<unsigned int, bool> groups;
     for (const auto &item : this->sync_groups) {
         if (groups.find(item.second) == groups.end()) {
             groups[item.second] = true;
         }
-        groups[item.second] &= this->queues.at(item.first).can_pop();
+        groups[item.second] &= this->queues.at(item.first)->can_pop();
     }
     return groups;
-}
-
-bool mimo::JobInputs::is_empty() const {
-    return std::all_of()
-}
-
-bool mimo::JobInputs::is_closed() const {
-    return false;
 }
