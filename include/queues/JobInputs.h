@@ -14,7 +14,7 @@
 namespace mimo {
 
     class Entity;
-    class Queue;
+    class IQueue;
 
     /**
      * @brief: A set of input queues to a step.
@@ -35,7 +35,7 @@ namespace mimo {
          * @param name Name of the queue.
          * @param queue The queue.
          */
-        void add_queue(const std::string &name, std::unique_ptr<Queue> queue);
+        void add_queue(const std::string &name, std::unique_ptr<IQueue> queue);
 
         /**
          * @brief Synchronise the named queues.
@@ -57,7 +57,7 @@ namespace mimo {
         /**
          * @brief Peek at the first item in the named queue but do not pop it.
          */
-        std::shared_ptr<Entity> &peek(const std::string &name);
+        std::shared_ptr<Entity> peek(const std::string &name);
 
         /**
          * @brief Pop and return the first item of the named queue.
@@ -65,7 +65,7 @@ namespace mimo {
         std::shared_ptr<Entity> pop(const std::string &name);
 
         /**
-         * @brief Get whether all queues are empty.
+         * @brief Get whether there are any queues in the inputs.
          */
         bool is_empty() const;
 
@@ -78,7 +78,7 @@ namespace mimo {
 
         unsigned int group_id;
 
-        std::unordered_map<std::string, std::unique_ptr<Queue>> queues;
+        std::unordered_map<std::string, std::unique_ptr<IQueue>> queues;
 
         std::unordered_map<std::string, unsigned int> sync_groups;
 

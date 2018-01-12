@@ -5,16 +5,15 @@
 #ifndef MIMO_QUEUE_H
 #define MIMO_QUEUE_H
 
-
 #include <memory>
 #include <queue>
-#include <queues/IQueue.h>
+
 
 namespace mimo {
 
     class Entity;
 
-    class Queue : public IQueue {
+    class Queue {
     public:
 
         static unsigned int CAPACITY;
@@ -27,6 +26,18 @@ namespace mimo {
         explicit Queue(unsigned int capacity = CAPACITY);
 
         /**
+         * Get the next entity, but don't remove it from the queue.
+         * @return next entity
+         */
+        std::shared_ptr<mimo::Entity> peek();
+
+        /**
+         * Get the next entity and remove it from the queue.
+         * @return next entity
+         */
+        std::shared_ptr<mimo::Entity> pop();
+
+        /**
          * Push an entity into the queue. Return true if there is still space for more.
          * @param entity entity to push
          * @return true if queue size is less than threshold
@@ -34,16 +45,16 @@ namespace mimo {
         bool push(std::shared_ptr<mimo::Entity> entity);
 
         /**
-         * Get the next entity, but don't remove it from the queue.
-         * @return next entity
+         * Check if queue can be popped from
+         * @return true if entities in queue
          */
-        std::shared_ptr<mimo::Entity> &peek();
+        bool can_pop() const;
 
         /**
-         * Get the next entity and remove it from the queue.
-         * @return next entity
+         * Check if queue can be pushed to
+         * @return true if fewer entities in queue than threshold
          */
-        std::shared_ptr<mimo::Entity> pop();
+        bool can_push() const;
 
         /**
          * @brief flag queue as end-of-run
@@ -60,18 +71,6 @@ namespace mimo {
          */
         void close();
         bool is_closed() const;
-
-        /**
-         * Check if queue can be pushed to
-         * @return true if fewer entities in queue than threshold
-         */
-        bool can_push() const;
-
-        /**
-         * Check if queue can be popped from
-         * @return true if entities in queue
-         */
-        bool can_pop() const;
 
         /**
          * Check if the queue is empty

@@ -3,8 +3,8 @@
  * The basic entity class. All entities implement reference counting and attributes. Reference counting is
  * automatically taken care of by Queues. Attributes are used to track meta-information about the entity.
  */
-#ifndef MIMO_IENTITY_H
-#define MIMO_IENTITY_H
+#ifndef MIMO_ENTITY_H
+#define MIMO_ENTITY_H
 
 #include <string>
 #include <unordered_map>
@@ -12,7 +12,7 @@
 
 namespace mimo {
 
-    class IEntity {
+    class Entity {
     public:
 
         std::unordered_map<std::string, std::unordered_set<std::string>> attributes;
@@ -20,4 +20,4 @@ namespace mimo {
     };
 }
 
-#endif //MIMO_IENTITY_H
+#endif //MIMO_ENTITY_H

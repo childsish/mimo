@@ -1,43 +1,70 @@
-#include "gtest/gtest.h"
+/**
+ * @author: Liam Childs (liam.h.childs@gmail.com)
+ * @brief:
+ */
 
-#include <Entity.h>
-#include <workflow/Input.h>
-#include "queues/Inputs.h"
+#include "gtest/gtest.h"
+#include "queues/JobInputs.h"
+
+#include "Entity.h"
+#include "errors.h"
+#include "interfaces/IQueue.h"
+
+
+class EmptyQueue : public mimo::IQueue {
+    std::shared_ptr<mimo::Entity> peek() override { throw mimo::QueueError("Trying to peek from empty queue."); }
+    std::shared_ptr<mimo::Entity> pop() override { throw mimo::QueueError("Trying to pop from empty queue."); }
+    void push(std::shared_ptr<mimo::Entity> entity) override {}
+    bool can_pop() const override { return false; }
+    bool can_push() const override { return true; }
+    bool is_closed() const override { return false; }
+    bool is_empty() const override { return true; }
+};
+
+class FullQueue : public mimo::IQueue {
+    std::shared_ptr<mimo::Entity> peek() override { return std::make_shared<mimo::Entity>(); }
+    std::shared_ptr<mimo::Entity> pop() override { throw mimo::QueueError("Trying to pop from empty queue."); }
+    void push(std::shared_ptr<mimo::Entity> entity) override {}
+    bool can_pop() const override { return true; }
+    bool can_push() const override { return false; }
+    bool is_closed() const override { return false; }
+    bool is_empty() const override { return false; }
+};
 
 
 TEST(InputsTest, test_asynced_queues) {
-    std::unique_ptr<mimo::Queue> queue2 = std::make_unique<mimo::Queue>(0);
-    queue2->push(std::make_shared<mimo::Entity>());
+    auto queue1 = std::make_unique<EmptyQueue>();
+    auto queue2 = std::make_unique<FullQueue>();
 
-    std::unordered_map<std::string, std::shared_ptr<workflow::Input>> input_map;
-    input_map.emplace("queue1", std::make_shared<workflow::Input>(0, "queue1"));
-    input_map.emplace("queue2", std::make_shared<workflow::Input>(1, "queue2"));
+    mimo::JobInputs inputs;
+    inputs.add_queue("queue1", std::move(queue1));
+    inputs.add_queue("queue2", std::move(queue2));
 
-    mimo::Inputs inputs(input_map);
-    inputs["queue2"].acquire_queue(std::move(queue2));
-
-    EXPECT_TRUE(inputs.can_pop());
+    EXPECT_EQ(inputs.get_status(), mimo::JobInputs::PopStatus::CAN_POP);
+    EXPECT_EQ(inputs.get_status("queue1"), mimo::JobInputs::PopStatus::QUEUE_EMPTY);
+    EXPECT_EQ(inputs.get_status("queue2"), mimo::JobInputs::PopStatus::CAN_POP);
 
     inputs.synchronise_queues({"queue1", "queue2"});
-    EXPECT_FALSE(inputs.can_pop());
+    EXPECT_EQ(inputs.get_status(), mimo::JobInputs::PopStatus::SYNC_QUEUE_EMPTY);
+    EXPECT_EQ(inputs.get_status("queue1"), mimo::JobInputs::PopStatus::QUEUE_EMPTY);
+    EXPECT_EQ(inputs.get_status("queue2"), mimo::JobInputs::PopStatus::SYNC_QUEUE_EMPTY);
 }
 
 TEST(InputsTest, test_synced_queues) {
-    std::unique_ptr<mimo::Queue> queue1 = std::make_unique<mimo::Queue>(0);
-    queue1->push(std::make_shared<mimo::Entity>());
-    std::unique_ptr<mimo::Queue> queue2 = std::make_unique<mimo::Queue>(0);
-    queue2->push(std::make_shared<mimo::Entity>());
+    auto queue1 = std::make_unique<FullQueue>();
+    auto queue2 = std::make_unique<FullQueue>();
 
-    std::unordered_map<std::string, std::shared_ptr<workflow::Input>> input_map;
-    input_map.emplace("queue1", std::make_shared<workflow::Input>(0, "queue1"));
-    input_map.emplace("queue2", std::make_shared<workflow::Input>(1, "queue2"));
+    mimo::JobInputs inputs;
+    inputs.add_queue("queue1", std::move(queue1));
+    inputs.add_queue("queue2", std::move(queue2));
 
-    mimo::Inputs inputs(input_map);
-    inputs["queue1"].acquire_queue(std::move(queue1));
-    inputs["queue2"].acquire_queue(std::move(queue2));
 
-    EXPECT_TRUE(inputs.can_pop());
+    EXPECT_EQ(inputs.get_status(), mimo::JobInputs::PopStatus::CAN_POP);
+    EXPECT_EQ(inputs.get_status("queue1"), mimo::JobInputs::PopStatus::CAN_POP);
+    EXPECT_EQ(inputs.get_status("queue2"), mimo::JobInputs::PopStatus::CAN_POP);
 
     inputs.synchronise_queues({"queue1", "queue2"});
-    EXPECT_TRUE(inputs.can_pop());
+    EXPECT_EQ(inputs.get_status(), mimo::JobInputs::PopStatus::CAN_POP);
+    EXPECT_EQ(inputs.get_status("queue1"), mimo::JobInputs::PopStatus::CAN_POP);
+    EXPECT_EQ(inputs.get_status("queue2"), mimo::JobInputs::PopStatus::CAN_POP);
 }

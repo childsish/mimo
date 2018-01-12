@@ -36,7 +36,7 @@ namespace mimo {
         PopStatus get_status() const;
         PopStatus get_status(const std::string &name) const;
 
-        std::shared_ptr<Entity> &peek(const std::string &name);
+        std::shared_ptr<Entity> peek(const std::string &name);
         std::shared_ptr<Entity> pop(const std::string &name);
 
     private:

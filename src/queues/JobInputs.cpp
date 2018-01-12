@@ -3,17 +3,16 @@
  * @brief:
  */
 
-#include <queues/JobInputs.h>
+#include "queues/JobInputs.h"
 
 #include <algorithm>
-#include <memory>
 #include "errors.h"
-#include "queues/Queue.h"
+#include "interfaces/IQueue.h"
 
 
 mimo::JobInputs::JobInputs() : group_id(0) {}
 
-void mimo::JobInputs::add_queue(const std::string &name, std::unique_ptr<mimo::Queue> queue) {
+void mimo::JobInputs::add_queue(const std::string &name, std::unique_ptr<mimo::IQueue> queue) {
     this->queues.emplace(name, std::move(queue));
 }
 
@@ -47,7 +46,7 @@ mimo::JobInputs::PopStatus mimo::JobInputs::get_status(const std::string &name) 
     return PopStatus::CAN_POP;
 }
 
-std::shared_ptr<mimo::Entity> &mimo::JobInputs::peek(const std::string &name) {
+std::shared_ptr<mimo::Entity> mimo::JobInputs::peek(const std::string &name) {
     PopStatus status = this->get_status();
     if (status == PopStatus::QUEUE_EMPTY) {
         throw mimo::QueueError("Can not peek. " + name + " is empty.");
@@ -70,11 +69,7 @@ std::shared_ptr<mimo::Entity> mimo::JobInputs::pop(const std::string &name) {
 }
 
 bool mimo::JobInputs::is_empty() const {
-    return std::all_of(
-        this->queues.begin(),
-        this->queues.end(),
-        [](const auto &item){ return item.second->is_empty(); }
-    );
+    return this->queues.empty();
 }
 
 bool mimo::JobInputs::is_closed() const {

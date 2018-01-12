@@ -16,7 +16,7 @@ mimo::Inputs::PopStatus mimo::Inputs::get_status(const std::string &name) const 
     return static_cast<PopStatus>(this->inputs->get_status(name));
 }
 
-std::shared_ptr<mimo::Entity> &mimo::Inputs::peek(const std::string &name) {
+std::shared_ptr<mimo::Entity> mimo::Inputs::peek(const std::string &name) {
     return this->inputs->peek(name);
 }
 

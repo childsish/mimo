@@ -22,13 +22,11 @@ add_library(mimo
         include/Step.h
         include/interfaces/IQueue.h
         include/interfaces/IQueueFactory.h
-        src/Job.cpp include/Job.h
         src/queues/Inputs.cpp include/queues/Inputs.h
         src/queues/JobInputs.cpp include/queues/JobInputs.h
         src/queues/JobOutputs.cpp include/queues/JobOutputs.h
         src/queues/Outputs.cpp include/queues/Outputs.h
-        src/queues/Queue.cpp include/queues/Queue.h
-        src/queues/QueueChannel.cpp include/queues/QueueChannel.h)
+        src/queues/Queue.cpp include/queues/Queue.h)
 target_include_directories(mimo PRIVATE
         include)
 target_link_libraries(mimo

@@ -1,7 +1,8 @@
 #include "gtest/gtest.h"
+#include "queues/Queue.h"
 
 #include "Entity.h"
-#include "queues/Queue.h"
+#include "errors.h"
 #include "entities/Integer.h"
 
 
@@ -18,7 +19,7 @@ TEST(QueueTest, test_fifo) {
 }
 
 TEST(QueueTest, test_treshold) {
-    mimo::Queue queue(0, 2);
+    mimo::Queue queue(2);
 
     EXPECT_TRUE(queue.can_push());
     EXPECT_FALSE(queue.can_pop());
@@ -38,6 +39,6 @@ TEST(QueueTest, test_treshold) {
 TEST(QueueTest, test_empty) {
     mimo::Queue queue(0);
 
-    EXPECT_THROW(queue.peek(), std::runtime_error);
-    EXPECT_THROW(queue.pop(), std::runtime_error);
+    EXPECT_THROW(queue.peek(), mimo::QueueError);
+    EXPECT_THROW(queue.pop(), mimo::QueueError);
 }
