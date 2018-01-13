@@ -16,7 +16,7 @@ int main() {
     range->pipe(print);
 
     mimo::Engine engine;
-    engine.register_step(range, [](){ return std::make_unique<Range>(); });
+    engine.register_step<Range>(range, 0, 10, 1);
     engine.register_step<Print>(print);
     engine.run(workflow);
 
