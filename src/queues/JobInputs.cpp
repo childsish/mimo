@@ -14,6 +14,8 @@ mimo::JobInputs::JobInputs() : group_id(0) {}
 
 void mimo::JobInputs::add_queue(const std::string &name, std::unique_ptr<mimo::IQueue> queue) {
     this->queues.emplace(name, std::move(queue));
+    this->sync_groups.emplace(name, this->group_id);
+    this->group_id += 1;
 }
 
 void mimo::JobInputs::synchronise_queues(const std::vector<std::string> &queues) {
@@ -26,9 +28,9 @@ void mimo::JobInputs::synchronise_queues(const std::vector<std::string> &queues)
 mimo::JobInputs::PopStatus mimo::JobInputs::get_status() const {
     auto group_can_pop = this->get_group_status();
     if (std::any_of(
-            group_can_pop.begin(),
-            group_can_pop.end(),
-            [](const auto &item){ return item.second; })
+        group_can_pop.begin(),
+        group_can_pop.end(),
+        [](const auto &item){ return item.second; })
     ) {
         return PopStatus::CAN_POP;
     }

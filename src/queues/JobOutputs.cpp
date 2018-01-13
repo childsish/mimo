@@ -11,10 +11,18 @@
 #include "interfaces/IQueueFactory.h"
 
 
-mimo::JobOutputs::JobOutputs(IQueueFactory &factory_, const std::vector<std::string> &sync_groups_
-) : run(0),
+mimo::JobOutputs::JobOutputs(IQueueFactory &factory_, const std::vector<std::string> &outputs) :
+    group_id(0),
+    run(0),
     job_ended(false),
-    factory(factory_) {}
+    factory(factory_)
+{
+    for (const auto &output : outputs) {
+        this->queues.emplace(output, this->factory.make());
+        this->sync_groups.emplace(output, this->group_id);
+        this->group_id += 1;
+    }
+}
 
 std::unique_ptr<mimo::IQueue> mimo::JobOutputs::get_queue(const std::string name) {
     auto queue = std::move(this->queues.at(name));
@@ -32,9 +40,9 @@ void mimo::JobOutputs::synchronise_queues(const std::vector<std::string> &queues
 mimo::JobOutputs::PushStatus mimo::JobOutputs::get_status() const {
     auto group_can_push = this->get_group_status();
     if (std::any_of(
-            group_can_push.begin(),
-            group_can_push.end(),
-            [](const std::pair<unsigned int, bool> item){ return item.second; })
+        group_can_push.begin(),
+        group_can_push.end(),
+        [](const std::pair<unsigned int, bool> item){ return item.second; })
     ) {
         return PushStatus::CAN_PUSH;
     }

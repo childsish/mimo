@@ -61,14 +61,14 @@ TEST(OutputsTest, test_asynced_queues) {
 
     outputs.synchronise_queues({"queue1", "queue2"});
     EXPECT_EQ(outputs.get_status(), mimo::JobOutputs::PushStatus::SYNC_QUEUE_FULL);
-    EXPECT_EQ(outputs.get_status("queue1"), mimo::JobOutputs::PushStatus::QUEUE_FULL);
-    EXPECT_EQ(outputs.get_status("queue2"), mimo::JobOutputs::PushStatus::SYNC_QUEUE_FULL);
+    EXPECT_EQ(outputs.get_status("queue1"), mimo::JobOutputs::PushStatus::SYNC_QUEUE_FULL);
+    EXPECT_EQ(outputs.get_status("queue2"), mimo::JobOutputs::PushStatus::QUEUE_FULL);
 }
 
 TEST(OutputsTest, test_synced_queues) {
     std::queue<std::unique_ptr<mimo::IQueue>> queues;
     queues.push(std::make_unique<EmptyQueue>());
-    queues.push(std::make_unique<FullQueue>());
+    queues.push(std::make_unique<EmptyQueue>());
     QueueFactory factory(queues);
 
     mimo::JobOutputs outputs(factory, {"queue1", "queue2"});
