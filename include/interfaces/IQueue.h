@@ -18,6 +18,7 @@ namespace mimo {
         virtual bool can_push() const = 0;
         virtual bool is_closed() const = 0;
         virtual bool is_empty() const = 0;
+        virtual bool is_full() const = 0;
     };
 }
 

@@ -1,8 +1,3 @@
-/**
- * @author: Liam Childs (liam.h.childs@gmail.com)
- * @brief:
- */
-
 #include "gtest/gtest.h"
 #include "queues/JobInputs.h"
 
@@ -12,6 +7,7 @@
 
 
 class EmptyQueue : public mimo::IQueue {
+public:
     std::shared_ptr<mimo::Entity> peek() override { throw mimo::QueueError("Trying to peek from empty queue."); }
     std::shared_ptr<mimo::Entity> pop() override { throw mimo::QueueError("Trying to pop from empty queue."); }
     void push(std::shared_ptr<mimo::Entity> entity) override {}
@@ -19,9 +15,11 @@ class EmptyQueue : public mimo::IQueue {
     bool can_push() const override { return true; }
     bool is_closed() const override { return false; }
     bool is_empty() const override { return true; }
+    bool is_full() const override { return false; }
 };
 
 class FullQueue : public mimo::IQueue {
+public:
     std::shared_ptr<mimo::Entity> peek() override { return std::make_shared<mimo::Entity>(); }
     std::shared_ptr<mimo::Entity> pop() override { throw mimo::QueueError("Trying to pop from empty queue."); }
     void push(std::shared_ptr<mimo::Entity> entity) override {}
@@ -29,6 +27,7 @@ class FullQueue : public mimo::IQueue {
     bool can_push() const override { return false; }
     bool is_closed() const override { return false; }
     bool is_empty() const override { return false; }
+    bool is_full() const override { return true; }
 };
 
 

@@ -33,12 +33,11 @@ std::shared_ptr<mimo::Entity> mimo::Queue::pop() {
     return entity;
 }
 
-bool mimo::Queue::push(std::shared_ptr<mimo::Entity> entity) {
+void mimo::Queue::push(std::shared_ptr<mimo::Entity> entity) {
     if (this->end_of_run) {
         throw QueueError("Can not push to a is_end_of_run queue.");
     }
     this->entities.push(entity);
-    return this->can_push();
 }
 
 bool mimo::Queue::can_pop() const {

@@ -6,12 +6,12 @@
 
 namespace mimo {
 
-    class Entity;
+    class IQueue;
 
     class IQueueFactory {
     public:
 
-        virtual std::unique_ptr<Entity> make() const = 0;
+        virtual std::unique_ptr<IQueue> make() = 0;
 
     };
 }

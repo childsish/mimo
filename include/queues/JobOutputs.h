@@ -6,16 +6,16 @@
 #ifndef MIMO_JOBOUTPUTS_H
 #define MIMO_JOBOUTPUTS_H
 
-#include <string>
 #include <memory>
 #include <unordered_map>
+#include <vector>
 
 
 namespace mimo {
 
     class Entity;
+    class IQueue;
     class IQueueFactory;
-    class Queue;
 
     /**
      * @brief A set of output queues from a step.
@@ -29,10 +29,17 @@ namespace mimo {
             SYNC_QUEUE_FULL
         };
 
-        JobOutputs(
-            const IQueueFactory &factory,
-            const std::unordered_map<std::string, unsigned int> &sync_groups
-        );
+        JobOutputs(IQueueFactory &factory, const std::vector<std::string> &sync_groups);
+
+        /**
+         * @brief Get named queue from outputs.
+         */
+        std::unique_ptr<IQueue> get_queue(const std::string name);
+
+        /**
+         * @brief Synchronise the named queues.
+         */
+        void synchronise_queues(const std::vector<std::string> &queues);
 
         /**
          * @brief Get whether all queues can be pushed.
@@ -61,15 +68,17 @@ namespace mimo {
 
     private:
 
+        unsigned int group_id;
+
         unsigned int run;
 
         bool job_ended;
 
-        std::unordered_map<std::string, std::unique_ptr<Queue>> queues;
+        std::unordered_map<std::string, std::unique_ptr<IQueue>> queues;
 
-        const std::unordered_map<std::string, unsigned int> &sync_groups;
+        std::unordered_map<std::string, unsigned int> sync_groups;
 
-        const IQueueFactory &factory;
+        IQueueFactory &factory;
 
         std::unordered_map<unsigned int, bool> get_group_status() const;
 

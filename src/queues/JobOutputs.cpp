@@ -6,18 +6,28 @@
 #include "queues/JobOutputs.h"
 
 #include <algorithm>
-#include <memory>
 #include "errors.h"
-#include "queues/Queue.h"
+#include "interfaces/IQueue.h"
+#include "interfaces/IQueueFactory.h"
 
 
-mimo::JobOutputs::JobOutputs(
-        const IQueueFactory &factory_,
-        const std::unordered_map<std::string, unsigned int> &sync_groups_
+mimo::JobOutputs::JobOutputs(IQueueFactory &factory_, const std::vector<std::string> &sync_groups_
 ) : run(0),
     job_ended(false),
-    factory(factory_),
-    sync_groups(sync_groups_) {}
+    factory(factory_) {}
+
+std::unique_ptr<mimo::IQueue> mimo::JobOutputs::get_queue(const std::string name) {
+    auto queue = std::move(this->queues.at(name));
+    this->queues[name] = this->factory.make();
+    return queue;
+}
+
+void mimo::JobOutputs::synchronise_queues(const std::vector<std::string> &queues) {
+    for (const auto &name : queues) {
+        this->sync_groups[name] = this->group_id;
+    }
+    this->group_id += 1;
+}
 
 mimo::JobOutputs::PushStatus mimo::JobOutputs::get_status() const {
     auto group_can_push = this->get_group_status();
@@ -53,17 +63,6 @@ void mimo::JobOutputs::push(const std::string &name, std::shared_ptr<mimo::Entit
     this->queues.at(name)->push(entity);
 }
 
-std::unordered_map<unsigned int, bool> mimo::JobOutputs::get_group_status() const {
-    std::unordered_map<unsigned int, bool> groups;
-    for (const auto &item : this->sync_groups) {
-        if (groups.find(item.second) == groups.end()) {
-            groups[item.second] = true;
-        }
-        groups[item.second] &= this->queues.at(item.first)->can_push();
-    }
-    return groups;
-}
-
 void mimo::JobOutputs::end_run() {
     this->run += 1;
 }
@@ -74,4 +73,17 @@ void mimo::JobOutputs::end_job() {
 
 bool mimo::JobOutputs::is_job_ended() const {
     return this->job_ended;
+}
+
+// private:
+
+std::unordered_map<unsigned int, bool> mimo::JobOutputs::get_group_status() const {
+    std::unordered_map<unsigned int, bool> groups;
+    for (const auto &item : this->sync_groups) {
+        if (groups.find(item.second) == groups.end()) {
+            groups[item.second] = true;
+        }
+        groups[item.second] &= this->queues.at(item.first)->can_push();
+    }
+    return groups;
 }

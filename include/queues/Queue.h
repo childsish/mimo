@@ -7,13 +7,14 @@
 
 #include <memory>
 #include <queue>
+#include "interfaces/IQueue.h"
 
 
 namespace mimo {
 
     class Entity;
 
-    class Queue {
+    class Queue : public IQueue {
     public:
 
         static unsigned int CAPACITY;
@@ -42,13 +43,13 @@ namespace mimo {
          * @param entity entity to push
          * @return true if queue size is less than threshold
          */
-        bool push(std::shared_ptr<mimo::Entity> entity);
+        void push(std::shared_ptr<mimo::Entity> entity);
 
         /**
          * Check if queue can be popped from
          * @return true if entities in queue
          */
-        bool can_pop() const;
+        bool can_pop() const override;
 
         /**
          * Check if queue can be pushed to

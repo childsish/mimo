@@ -1,35 +1,83 @@
 #include "gtest/gtest.h"
-
 #include "queues/Outputs.h"
 
+#include <queue>
+#include "errors.h"
+#include "Entity.h"
+#include "interfaces/IQueue.h"
+#include "interfaces/IQueueFactory.h"
+
+
+class EmptyQueue : public mimo::IQueue {
+public:
+    std::shared_ptr<mimo::Entity> peek() override { throw mimo::QueueError("Trying to peek from empty queue."); }
+    std::shared_ptr<mimo::Entity> pop() override { throw mimo::QueueError("Trying to pop from empty queue."); }
+    void push(std::shared_ptr<mimo::Entity> entity) override {}
+    bool can_pop() const override { return false; }
+    bool can_push() const override { return true; }
+    bool is_closed() const override { return false; }
+    bool is_empty() const override { return true; }
+    bool is_full() const override { return false; }
+};
+
+class FullQueue : public mimo::IQueue {
+public:
+    std::shared_ptr<mimo::Entity> peek() override { return std::make_shared<mimo::Entity>(); }
+    std::shared_ptr<mimo::Entity> pop() override { throw mimo::QueueError("Trying to pop from empty queue."); }
+    void push(std::shared_ptr<mimo::Entity> entity) override {}
+    bool can_pop() const override { return true; }
+    bool can_push() const override { return false; }
+    bool is_closed() const override { return false; }
+    bool is_empty() const override { return false; }
+    bool is_full() const override { return true; }
+};
+
+class QueueFactory : public mimo::IQueueFactory {
+public:
+
+    explicit QueueFactory(std::queue<std::unique_ptr<mimo::IQueue>> &queues_) : queues(std::move(queues_)) {}
+
+    std::unique_ptr<mimo::IQueue> make() override {
+        auto queue = std::move(this->queues.front());
+        this->queues.pop();
+        return queue;
+    };
+
+private:
+
+    std::queue<std::unique_ptr<mimo::IQueue>> queues;
+};
 
 TEST(OutputsTest, test_asynced_queues) {
-    std::unordered_map<std::string, std::shared_ptr<workflow::Output>> output_map;
-    output_map.emplace("queue1", std::make_shared<workflow::Output>(0, "queue1"));
-    output_map.emplace("queue2", std::make_shared<workflow::Output>(1, "queue2"));
+    std::queue<std::unique_ptr<mimo::IQueue>> queues;
+    queues.push(std::make_unique<EmptyQueue>());
+    queues.push(std::make_unique<FullQueue>());
+    QueueFactory factory(queues);
 
-    mimo::Outputs outputs(output_map);
-
-    outputs.add_queue("queue1", std::move(queue1));
-    outputs.add_queue("queue2", std::move(queue2));
-    EXPECT_TRUE(outputs.can_push());
+    mimo::JobOutputs outputs(factory, {"queue1", "queue2"});
+    EXPECT_EQ(outputs.get_status(), mimo::JobOutputs::PushStatus::CAN_PUSH);
+    EXPECT_EQ(outputs.get_status("queue1"), mimo::JobOutputs::PushStatus::CAN_PUSH);
+    EXPECT_EQ(outputs.get_status("queue2"), mimo::JobOutputs::PushStatus::QUEUE_FULL);
 
     outputs.synchronise_queues({"queue1", "queue2"});
-    EXPECT_FALSE(outputs.can_push());
-
-    outputs.add_queue("queue3", std::move(queue3));
-    EXPECT_TRUE(outputs.can_push());
+    EXPECT_EQ(outputs.get_status(), mimo::JobOutputs::PushStatus::SYNC_QUEUE_FULL);
+    EXPECT_EQ(outputs.get_status("queue1"), mimo::JobOutputs::PushStatus::QUEUE_FULL);
+    EXPECT_EQ(outputs.get_status("queue2"), mimo::JobOutputs::PushStatus::SYNC_QUEUE_FULL);
 }
 
 TEST(OutputsTest, test_synced_queues) {
-    mimo::Outputs outputs;
-    std::unique_ptr<mimo::Queue> queue1 = std::make_unique<mimo::Queue>(0, 1);
-    std::unique_ptr<mimo::Queue> queue2 = std::make_unique<mimo::Queue>(0, 1);
+    std::queue<std::unique_ptr<mimo::IQueue>> queues;
+    queues.push(std::make_unique<EmptyQueue>());
+    queues.push(std::make_unique<FullQueue>());
+    QueueFactory factory(queues);
 
-    outputs.add_queue("queue1", std::move(queue1));
-    outputs.add_queue("queue2", std::move(queue2));
-    EXPECT_TRUE(outputs.can_push());
+    mimo::JobOutputs outputs(factory, {"queue1", "queue2"});
+    EXPECT_EQ(outputs.get_status(), mimo::JobOutputs::PushStatus::CAN_PUSH);
+    EXPECT_EQ(outputs.get_status("queue1"), mimo::JobOutputs::PushStatus::CAN_PUSH);
+    EXPECT_EQ(outputs.get_status("queue2"), mimo::JobOutputs::PushStatus::CAN_PUSH);
 
     outputs.synchronise_queues({"queue1", "queue2"});
-    EXPECT_TRUE(outputs.can_push());
+    EXPECT_EQ(outputs.get_status(), mimo::JobOutputs::PushStatus::CAN_PUSH);
+    EXPECT_EQ(outputs.get_status("queue1"), mimo::JobOutputs::PushStatus::CAN_PUSH);
+    EXPECT_EQ(outputs.get_status("queue2"), mimo::JobOutputs::PushStatus::CAN_PUSH);
 }

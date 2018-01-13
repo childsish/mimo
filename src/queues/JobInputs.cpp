@@ -20,7 +20,7 @@ void mimo::JobInputs::synchronise_queues(const std::vector<std::string> &queues)
     for (const auto &name : queues) {
         this->sync_groups[name] = this->group_id;
     }
-    group_id += 1;
+    this->group_id += 1;
 }
 
 mimo::JobInputs::PopStatus mimo::JobInputs::get_status() const {
