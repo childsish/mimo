@@ -34,7 +34,9 @@ std::shared_ptr<mimo::Entity> mimo::Queue::pop() {
 }
 
 void mimo::Queue::push(std::shared_ptr<mimo::Entity> entity) {
-    if (this->end_of_run) {
+    if (this->entities.size() >= this->capacity) {
+        throw QueueError("Queue is full.");
+    } else if (this->end_of_run) {
         throw QueueError("Can not push to a is_end_of_run queue.");
     }
     this->entities.push(entity);

@@ -10,7 +10,8 @@ add_executable(test_mimo
         ../include/Entity.h
         ../include/entities/Integer.h
         test_JobInputs.cpp
-        test_JobOutputs.cpp)
+        test_JobOutputs.cpp
+        test_Queue.cpp)
 target_include_directories(test_mimo PRIVATE
     ${gtest_SOURCE_DIR}/include
     ../include
