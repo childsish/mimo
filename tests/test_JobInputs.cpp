@@ -1,39 +1,38 @@
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 #include "queues/JobInputs.h"
 
 #include "Entity.h"
 #include "errors.h"
-#include "interfaces/IQueue.h"
+#include "queues/IQueue.h"
 
 
-class EmptyQueue : public mimo::IQueue {
+using ::testing::Return;
+
+class MockQueue : public mimo::IQueue {
 public:
-    std::shared_ptr<mimo::Entity> peek() override { throw mimo::QueueError("Trying to peek from empty queue."); }
-    std::shared_ptr<mimo::Entity> pop() override { throw mimo::QueueError("Trying to pop from empty queue."); }
-    void push(std::shared_ptr<mimo::Entity> entity) override {}
-    bool can_pop() const override { return false; }
-    bool can_push() const override { return true; }
-    bool is_closed() const override { return false; }
-    bool is_empty() const override { return true; }
-    bool is_full() const override { return false; }
+    MOCK_METHOD0(peek, std::shared_ptr<mimo::Entity>());
+    MOCK_METHOD0(pop, std::shared_ptr<mimo::Entity>());
+    MOCK_METHOD1(push, void(std::shared_ptr<mimo::Entity> entity));
+    MOCK_CONST_METHOD0(can_pop, bool());
+    MOCK_CONST_METHOD0(can_push, bool());
+    MOCK_CONST_METHOD0(is_closed, bool());
+    MOCK_CONST_METHOD0(is_empty, bool());
+    MOCK_CONST_METHOD0(is_full, bool());
 };
-
-class FullQueue : public mimo::IQueue {
-public:
-    std::shared_ptr<mimo::Entity> peek() override { return std::make_shared<mimo::Entity>(); }
-    std::shared_ptr<mimo::Entity> pop() override { throw mimo::QueueError("Trying to pop from empty queue."); }
-    void push(std::shared_ptr<mimo::Entity> entity) override {}
-    bool can_pop() const override { return true; }
-    bool can_push() const override { return false; }
-    bool is_closed() const override { return false; }
-    bool is_empty() const override { return false; }
-    bool is_full() const override { return true; }
-};
-
 
 TEST(InputsTest, test_asynced_queues) {
-    auto queue1 = std::make_unique<EmptyQueue>();
-    auto queue2 = std::make_unique<FullQueue>();
+    auto queue1 = std::make_unique<MockQueue>();
+    EXPECT_CALL(*queue1, can_pop())
+        .WillRepeatedly(Return(false));
+    EXPECT_CALL(*queue1, is_empty())
+        .WillRepeatedly(Return(true));
+
+    auto queue2 = std::make_unique<MockQueue>();
+    EXPECT_CALL(*queue2, can_pop())
+        .WillRepeatedly(Return(true));
+    EXPECT_CALL(*queue2, is_empty())
+        .WillRepeatedly(Return(false));
 
     mimo::JobInputs inputs;
     inputs.add_queue("queue1", std::move(queue1));
@@ -50,8 +49,17 @@ TEST(InputsTest, test_asynced_queues) {
 }
 
 TEST(InputsTest, test_synced_queues) {
-    auto queue1 = std::make_unique<FullQueue>();
-    auto queue2 = std::make_unique<FullQueue>();
+    auto queue1 = std::make_unique<MockQueue>();
+    EXPECT_CALL(*queue1, can_pop())
+        .WillRepeatedly(Return(true));
+    EXPECT_CALL(*queue1, is_empty())
+        .WillRepeatedly(Return(false));
+
+    auto queue2 = std::make_unique<MockQueue>();
+    EXPECT_CALL(*queue2, can_pop())
+        .WillRepeatedly(Return(true));
+    EXPECT_CALL(*queue2, is_empty())
+        .WillRepeatedly(Return(false));
 
     mimo::JobInputs inputs;
     inputs.add_queue("queue1", std::move(queue1));

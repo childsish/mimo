@@ -7,8 +7,8 @@
 
 #include <algorithm>
 #include "errors.h"
-#include "interfaces/IQueue.h"
-#include "interfaces/IQueueFactory.h"
+#include "IQueueFactory.h"
+#include "queues/IQueue.h"
 
 
 mimo::JobOutputs::JobOutputs(IQueueFactory &factory_, const std::vector<std::string> &outputs) :

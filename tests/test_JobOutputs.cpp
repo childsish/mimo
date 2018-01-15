@@ -1,58 +1,54 @@
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 #include "queues/Outputs.h"
 
 #include <queue>
 #include "errors.h"
 #include "Entity.h"
-#include "interfaces/IQueue.h"
-#include "interfaces/IQueueFactory.h"
+#include "IQueueFactory.h"
+#include "queues/IQueue.h"
 
 
-class EmptyQueue : public mimo::IQueue {
+using ::testing::Return;
+
+class MockQueue : public mimo::IQueue {
 public:
-    std::shared_ptr<mimo::Entity> peek() override { throw mimo::QueueError("Trying to peek from empty queue."); }
-    std::shared_ptr<mimo::Entity> pop() override { throw mimo::QueueError("Trying to pop from empty queue."); }
-    void push(std::shared_ptr<mimo::Entity> entity) override {}
-    bool can_pop() const override { return false; }
-    bool can_push() const override { return true; }
-    bool is_closed() const override { return false; }
-    bool is_empty() const override { return true; }
-    bool is_full() const override { return false; }
+    MOCK_METHOD0(peek, std::shared_ptr<mimo::Entity>());
+    MOCK_METHOD0(pop, std::shared_ptr<mimo::Entity>());
+    MOCK_METHOD1(push, void(std::shared_ptr<mimo::Entity> entity));
+    MOCK_CONST_METHOD0(can_pop, bool());
+    MOCK_CONST_METHOD0(can_push, bool());
+    MOCK_CONST_METHOD0(is_closed, bool());
+    MOCK_CONST_METHOD0(is_empty, bool());
+    MOCK_CONST_METHOD0(is_full, bool());
 };
 
-class FullQueue : public mimo::IQueue {
+class MockFactory : public mimo::IQueueFactory {
 public:
-    std::shared_ptr<mimo::Entity> peek() override { return std::make_shared<mimo::Entity>(); }
-    std::shared_ptr<mimo::Entity> pop() override { throw mimo::QueueError("Trying to pop from empty queue."); }
-    void push(std::shared_ptr<mimo::Entity> entity) override {}
-    bool can_pop() const override { return true; }
-    bool can_push() const override { return false; }
-    bool is_closed() const override { return false; }
-    bool is_empty() const override { return false; }
-    bool is_full() const override { return true; }
-};
+    virtual std::unique_ptr<mimo::IQueue> make() {
+        return std::unique_ptr<mimo::IQueue>(this->make_proxy());
+    }
 
-class QueueFactory : public mimo::IQueueFactory {
-public:
-
-    explicit QueueFactory(std::queue<std::unique_ptr<mimo::IQueue>> &queues_) : queues(std::move(queues_)) {}
-
-    std::unique_ptr<mimo::IQueue> make() override {
-        auto queue = std::move(this->queues.front());
-        this->queues.pop();
-        return queue;
-    };
-
-private:
-
-    std::queue<std::unique_ptr<mimo::IQueue>> queues;
+    MOCK_METHOD0(make_proxy, mimo::IQueue*());
 };
 
 TEST(OutputsTest, test_asynced_queues) {
-    std::queue<std::unique_ptr<mimo::IQueue>> queues;
-    queues.push(std::make_unique<EmptyQueue>());
-    queues.push(std::make_unique<FullQueue>());
-    QueueFactory factory(queues);
+    auto queue1 = new MockQueue();
+    EXPECT_CALL(*queue1, can_push())
+        .WillRepeatedly(Return(true));
+    EXPECT_CALL(*queue1, is_full())
+            .WillRepeatedly(Return(false));
+
+    auto queue2 = new MockQueue();
+    EXPECT_CALL(*queue2, can_push())
+        .WillRepeatedly(Return(false));
+    EXPECT_CALL(*queue2, is_full())
+        .WillRepeatedly(Return(true));
+
+    MockFactory factory;
+    EXPECT_CALL(factory, make_proxy())
+        .WillOnce(Return(queue1))
+        .WillOnce(Return(queue2));
 
     mimo::JobOutputs outputs(factory, {"queue1", "queue2"});
     EXPECT_EQ(outputs.get_status(), mimo::JobOutputs::PushStatus::CAN_PUSH);
@@ -66,10 +62,22 @@ TEST(OutputsTest, test_asynced_queues) {
 }
 
 TEST(OutputsTest, test_synced_queues) {
-    std::queue<std::unique_ptr<mimo::IQueue>> queues;
-    queues.push(std::make_unique<EmptyQueue>());
-    queues.push(std::make_unique<EmptyQueue>());
-    QueueFactory factory(queues);
+    auto queue1 = new MockQueue();
+    EXPECT_CALL(*queue1, can_push())
+        .WillRepeatedly(Return(true));
+    EXPECT_CALL(*queue1, is_full())
+        .WillRepeatedly(Return(false));
+
+    auto queue2 = new MockQueue();
+    EXPECT_CALL(*queue2, can_push())
+        .WillRepeatedly(Return(true));
+    EXPECT_CALL(*queue2, is_full())
+        .WillRepeatedly(Return(false));
+
+    MockFactory factory;
+    EXPECT_CALL(factory, make_proxy())
+        .WillOnce(Return(queue1))
+        .WillOnce(Return(queue2));
 
     mimo::JobOutputs outputs(factory, {"queue1", "queue2"});
     EXPECT_EQ(outputs.get_status(), mimo::JobOutputs::PushStatus::CAN_PUSH);

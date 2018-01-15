@@ -7,7 +7,7 @@
 
 #include <algorithm>
 #include "errors.h"
-#include "interfaces/IQueue.h"
+#include "queues/IQueue.h"
 
 
 mimo::JobInputs::JobInputs() : group_id(0) {}
