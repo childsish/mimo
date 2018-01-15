@@ -7,16 +7,19 @@ add_subdirectory(googletest)
 
 
 add_executable(test_mimo
-        ../include/Entity.h
-        ../include/entities/Integer.h
-        test_JobInputs.cpp
-        test_JobOutputs.cpp
-        test_Queue.cpp)
+    ../include/Entity.h
+    ../include/entities/Integer.h
+    test_JobInputs.cpp
+    test_JobOutputs.cpp
+    test_Queue.cpp)
 target_include_directories(test_mimo PRIVATE
     ${gtest_SOURCE_DIR}/include
+    ${gmock_SOURCE_DIR}/include
     ../include
+    mocks
 )
 target_link_libraries(test_mimo
     gtest_main
+    gmock
     mimo)
 add_test(test_mimo test_units)

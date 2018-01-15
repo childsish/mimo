@@ -7,7 +7,7 @@
 
 #include <memory>
 #include <queue>
-#include "interfaces/IQueue.h"
+#include "queues/IQueue.h"
 
 
 namespace mimo {
@@ -30,20 +30,20 @@ namespace mimo {
          * Get the next entity, but don't remove it from the queue.
          * @return next entity
          */
-        std::shared_ptr<mimo::Entity> peek();
+        std::shared_ptr<Entity> peek();
 
         /**
          * Get the next entity and remove it from the queue.
          * @return next entity
          */
-        std::shared_ptr<mimo::Entity> pop();
+        std::shared_ptr<Entity> pop();
 
         /**
          * Push an entity into the queue. Return true if there is still space for more.
          * @param entity entity to push
          * @return true if queue size is less than threshold
          */
-        void push(std::shared_ptr<mimo::Entity> entity);
+        void push(std::shared_ptr<Entity> entity);
 
         /**
          * Check if queue can be popped from
@@ -90,7 +90,7 @@ namespace mimo {
 
         unsigned int capacity;
 
-        std::queue<std::shared_ptr<mimo::Entity>> entities;
+        std::queue<std::shared_ptr<Entity>> entities;
 
         bool end_of_run;
 

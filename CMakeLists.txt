@@ -20,14 +20,15 @@ add_library(mimo
         include/errors.h
         include/Entity.h
         include/Step.h
-        include/interfaces/IQueue.h
-        include/interfaces/IQueueFactory.h
+        include/queues/IQueue.h
+        include/IQueueFactory.h
         src/queues/Inputs.cpp include/queues/Inputs.h
         src/queues/JobInputs.cpp include/queues/JobInputs.h
         src/queues/JobOutputs.cpp include/queues/JobOutputs.h
         src/queues/Outputs.cpp include/queues/Outputs.h
         src/queues/Queue.cpp include/queues/Queue.h)
 target_include_directories(mimo PRIVATE
+        interfaces
         include)
 target_link_libraries(mimo
         workflow)
