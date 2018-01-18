@@ -8,7 +8,7 @@
 
 #include <memory>
 #include <string>
-#include "queues/JobOutputs.h"
+#include "queues/IJobOutputs.h"
 
 namespace workflow {
     class Output;
@@ -26,12 +26,12 @@ namespace mimo {
     public:
 
         enum class PushStatus {
-            CAN_PUSH = static_cast<int>(JobOutputs::PushStatus::CAN_PUSH),
-            QUEUE_FULL = static_cast<int>(JobOutputs::PushStatus::QUEUE_FULL),
-            SYNC_QUEUE_FULL = static_cast<int>(JobOutputs::PushStatus::SYNC_QUEUE_FULL)
+            CAN_PUSH = static_cast<int>(IJobOutputs::PushStatus::CAN_PUSH),
+            QUEUE_FULL = static_cast<int>(IJobOutputs::PushStatus::QUEUE_FULL),
+            SYNC_QUEUE_FULL = static_cast<int>(IJobOutputs::PushStatus::SYNC_QUEUE_FULL)
         };
 
-        explicit Outputs(std::unique_ptr<JobOutputs> &outputs);
+        explicit Outputs(std::unique_ptr<IJobOutputs> &outputs);
 
         PushStatus get_status() const;
         PushStatus get_status(const std::string &name) const;
@@ -40,7 +40,7 @@ namespace mimo {
 
     private:
 
-        std::unique_ptr<JobOutputs> &outputs;
+        std::unique_ptr<IJobOutputs> &outputs;
 
     };
 }

@@ -8,7 +8,7 @@
 
 #include <memory>
 #include <string>
-#include "queues/JobInputs.h"
+#include "queues/IJobInputs.h"
 
 namespace workflow {
     class Input;
@@ -26,12 +26,12 @@ namespace mimo {
     public:
 
         enum class PopStatus {
-            CAN_POP = static_cast<int>(JobInputs::PopStatus::CAN_POP),
-            QUEUE_EMPTY = static_cast<int>(JobInputs::PopStatus::QUEUE_EMPTY),
-            SYNC_QUEUE_EMPTY = static_cast<int>(JobInputs::PopStatus::SYNC_QUEUE_EMPTY)
+            CAN_POP = static_cast<int>(IJobInputs::PopStatus::CAN_POP),
+            QUEUE_EMPTY = static_cast<int>(IJobInputs::PopStatus::QUEUE_EMPTY),
+            SYNC_QUEUE_EMPTY = static_cast<int>(IJobInputs::PopStatus::SYNC_QUEUE_EMPTY)
         };
 
-        explicit Inputs(std::unique_ptr<JobInputs> &inputs);
+        explicit Inputs(std::unique_ptr<IJobInputs> &inputs);
 
         PopStatus get_status() const;
         PopStatus get_status(const std::string &name) const;
@@ -41,7 +41,7 @@ namespace mimo {
 
     private:
 
-        std::unique_ptr<JobInputs> &inputs;
+        std::unique_ptr<IJobInputs> &inputs;
 
     };
 }

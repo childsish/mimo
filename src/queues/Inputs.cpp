@@ -6,7 +6,7 @@
 #include "queues/Inputs.h"
 
 
-mimo::Inputs::Inputs(std::unique_ptr<mimo::JobInputs> &inputs_) : inputs(inputs_) {}
+mimo::Inputs::Inputs(std::unique_ptr<mimo::IJobInputs> &inputs_) : inputs(inputs_) {}
 
 mimo::Inputs::PopStatus mimo::Inputs::get_status() const {
     return static_cast<PopStatus>(this->inputs->get_status());
