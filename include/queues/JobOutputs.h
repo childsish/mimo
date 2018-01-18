@@ -6,28 +6,16 @@
 #ifndef MIMO_JOBOUTPUTS_H
 #define MIMO_JOBOUTPUTS_H
 
-#include <memory>
-#include <unordered_map>
-#include <vector>
+#include "queues/IJobOutputs.h"
 
 
 namespace mimo {
 
-    class Entity;
-    class IQueue;
-    class IQueueFactory;
-
     /**
      * @brief A set of output queues from a step.
      */
-    class JobOutputs {
+    class JobOutputs : public IJobOutputs {
     public:
-
-        enum class PushStatus {
-            CAN_PUSH,
-            QUEUE_FULL,
-            SYNC_QUEUE_FULL
-        };
 
         JobOutputs(IQueueFactory &factory, const std::vector<std::string> &sync_groups);
 
@@ -44,13 +32,13 @@ namespace mimo {
         /**
          * @brief Get whether all queues can be pushed.
          */
-        PushStatus get_status() const;
+        IJobOutputs::PushStatus get_status() const;
 
         /**
          * @brief Get whether a queue can be pushed or if it, or a synchronised queue, is full.
          * @param name Queue to query.
          */
-        PushStatus get_status(const std::string &name) const;
+        IJobOutputs::PushStatus get_status(const std::string &name) const;
 
         /**
          * @brief Push an entity onto the specified queue.
@@ -62,9 +50,9 @@ namespace mimo {
 
         void end_run();
 
-        void end_job();
+        void close();
 
-        bool is_job_ended() const;
+        bool is_closed() const;
 
     private:
 

@@ -3,10 +3,12 @@
  * @brief:
  */
 
-#ifndef MIMO_JOBINPUT_H
-#define MIMO_JOBINPUT_H
+#ifndef MIMO_IJOBINPUTS_H
+#define MIMO_IJOBINPUTS_H
 
-#include "queues/IJobInputs.h"
+#include <memory>
+#include <unordered_map>
+#include <vector>
 
 
 namespace mimo {
@@ -17,66 +19,60 @@ namespace mimo {
     /**
      * @brief: A set of input queues to a step.
      */
-    class JobInputs : public IJobInputs {
+    class IJobInputs {
     public:
 
-        JobInputs();
+        enum class PopStatus {
+            CAN_POP,
+            QUEUE_EMPTY,
+            SYNC_QUEUE_EMPTY
+        };
 
         /**
          * @brief Add a queue to the inputs.
          * @param name Name of the queue.
          * @param queue The queue.
          */
-        void add_queue(const std::string &name, std::unique_ptr<IQueue> queue) override;
+        virtual void add_queue(const std::string &name, std::unique_ptr<IQueue> queue) = 0;
 
         /**
          * @brief Synchronise the named queues.
          */
-        void synchronise_queues(const std::vector<std::string> &queues) override;
+        virtual void synchronise_queues(const std::vector<std::string> &queues) = 0;
 
         /**
          * Get whether all queues can be popped.
          * @return
          */
-        IJobInputs::PopStatus get_status() const override;
+        virtual PopStatus get_status() const = 0;
 
         /**
          * @brief Get whether a queue can be popped or if it, or a synchronised queue, is empty.
          * @param name Queue to query.
          */
-        IJobInputs::PopStatus get_status(const std::string &name) const override;
+        virtual PopStatus get_status(const std::string &name) const = 0;
 
         /**
          * @brief Peek at the first item in the named queue but do not pop it.
          */
-        std::shared_ptr<Entity> peek(const std::string &name) override;
+        virtual std::shared_ptr<Entity> peek(const std::string &name) = 0;
 
         /**
          * @brief Pop and return the first item of the named queue.
          */
-        std::shared_ptr<Entity> pop(const std::string &name) override;
+        virtual std::shared_ptr<Entity> pop(const std::string &name) = 0;
 
         /**
          * @brief Get whether there are any queues in the inputs.
          */
-        bool is_empty() const override;
+        virtual bool is_empty() const = 0;
 
         /**
          * @brief Get whether all queues are closed.
          */
-        bool is_closed() const override;
-
-    private:
-
-        unsigned int group_id;
-
-        std::unordered_map<std::string, std::unique_ptr<IQueue>> queues;
-
-        std::unordered_map<std::string, unsigned int> sync_groups;
-
-        std::unordered_map<unsigned int, bool> get_group_status() const;
+        virtual bool is_closed() const = 0;
     };
 }
 
 
-#endif //MIMO_JOBINPUT_H
+#endif //MIMO_IJOBINPUTS_H

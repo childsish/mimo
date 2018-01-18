@@ -1,8 +1,3 @@
-/**
- * @author: Liam Childs (liam.h.childs@gmail.com)
- * @brief:
- */
-
 #include "queues/JobOutputs.h"
 
 #include <algorithm>
@@ -37,7 +32,7 @@ void mimo::JobOutputs::synchronise_queues(const std::vector<std::string> &queues
     this->group_id += 1;
 }
 
-mimo::JobOutputs::PushStatus mimo::JobOutputs::get_status() const {
+mimo::IJobOutputs::PushStatus mimo::JobOutputs::get_status() const {
     auto group_can_push = this->get_group_status();
     if (std::any_of(
         group_can_push.begin(),
@@ -49,7 +44,7 @@ mimo::JobOutputs::PushStatus mimo::JobOutputs::get_status() const {
     return PushStatus::SYNC_QUEUE_FULL;
 }
 
-mimo::JobOutputs::PushStatus mimo::JobOutputs::get_status(const std::string &name) const {
+mimo::IJobOutputs::PushStatus mimo::JobOutputs::get_status(const std::string &name) const {
     if (this->queues.at(name)->is_full()) {
         return PushStatus::QUEUE_FULL;
     }
@@ -75,11 +70,11 @@ void mimo::JobOutputs::end_run() {
     this->run += 1;
 }
 
-void mimo::JobOutputs::end_job() {
+void mimo::JobOutputs::close() {
     this->job_ended = true;
 }
 
-bool mimo::JobOutputs::is_job_ended() const {
+bool mimo::JobOutputs::is_closed() const {
     return this->job_ended;
 }
 

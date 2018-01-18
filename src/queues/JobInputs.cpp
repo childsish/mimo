@@ -1,8 +1,3 @@
-/**
- * @author: Liam Childs (liam.h.childs@gmail.com)
- * @brief:
- */
-
 #include "queues/JobInputs.h"
 
 #include <algorithm>
@@ -25,7 +20,7 @@ void mimo::JobInputs::synchronise_queues(const std::vector<std::string> &queues)
     this->group_id += 1;
 }
 
-mimo::JobInputs::PopStatus mimo::JobInputs::get_status() const {
+mimo::IJobInputs::PopStatus mimo::JobInputs::get_status() const {
     auto group_can_pop = this->get_group_status();
     if (std::any_of(
         group_can_pop.begin(),
@@ -37,7 +32,7 @@ mimo::JobInputs::PopStatus mimo::JobInputs::get_status() const {
     return PopStatus::SYNC_QUEUE_EMPTY;
 }
 
-mimo::JobInputs::PopStatus mimo::JobInputs::get_status(const std::string &name) const {
+mimo::IJobInputs::PopStatus mimo::JobInputs::get_status(const std::string &name) const {
     if (this->queues.at(name)->is_empty()) {
         return PopStatus::QUEUE_EMPTY;
     }
