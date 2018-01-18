@@ -19,7 +19,7 @@ mimo::JobOutputs::JobOutputs(IQueueFactory &factory_, const std::vector<std::str
     }
 }
 
-std::unique_ptr<mimo::IQueue> mimo::JobOutputs::get_queue(const std::string name) {
+std::unique_ptr<mimo::IQueue> mimo::JobOutputs::get_queue(const std::string &name) {
     auto queue = std::move(this->queues.at(name));
     this->queues[name] = this->factory.make();
     return queue;

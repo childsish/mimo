@@ -29,12 +29,12 @@ namespace mimo {
         /**
          * @brief Get named queue from outputs.
          */
-        virtual std::unique_ptr <IQueue> get_queue(const std::string name) = 0;
+        virtual std::unique_ptr<IQueue> get_queue(const std::string &name) = 0;
 
         /**
          * @brief Synchronise the named queues.
          */
-        virtual void synchronise_queues(const std::vector <std::string> &queues) = 0;
+        virtual void synchronise_queues(const std::vector<std::string> &queues) = 0;
 
         /**
          * @brief Get whether all queues can be pushed.

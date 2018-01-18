@@ -22,7 +22,7 @@ namespace mimo {
         /**
          * @brief Get named queue from outputs.
          */
-        std::unique_ptr<IQueue> get_queue(const std::string name);
+        std::unique_ptr<IQueue> get_queue(const std::string &name);
 
         /**
          * @brief Synchronise the named queues.
