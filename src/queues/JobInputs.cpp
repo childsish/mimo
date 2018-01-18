@@ -65,12 +65,9 @@ std::shared_ptr<mimo::Entity> mimo::JobInputs::pop(const std::string &name) {
     return this->queues.at(name)->pop();
 }
 
-bool mimo::JobInputs::is_empty() const {
-    return this->queues.empty();
-}
-
 bool mimo::JobInputs::is_closed() const {
-    return std::all_of(
+    return this->queues.empty() ||
+        std::all_of(
         this->queues.begin(),
         this->queues.end(),
         [](const auto &item){ return item.second->is_closed(); }

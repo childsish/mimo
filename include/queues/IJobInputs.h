@@ -63,11 +63,6 @@ namespace mimo {
         virtual std::shared_ptr<Entity> pop(const std::string &name) = 0;
 
         /**
-         * @brief Get whether there are any queues in the inputs.
-         */
-        virtual bool is_empty() const = 0;
-
-        /**
          * @brief Get whether all queues are closed.
          */
         virtual bool is_closed() const = 0;

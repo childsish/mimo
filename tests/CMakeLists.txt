@@ -9,6 +9,7 @@ add_subdirectory(googletest)
 add_executable(test_mimo
     ../include/Entity.h
     ../include/entities/Integer.h
+    test_Job.cpp
     test_JobInputs.cpp
     test_JobOutputs.cpp
     test_Queue.cpp)
@@ -21,5 +22,6 @@ target_include_directories(test_mimo PRIVATE
 target_link_libraries(test_mimo
     gtest_main
     gmock
-    mimo)
+    mimo
+    workflow)
 add_test(test_mimo test_units)

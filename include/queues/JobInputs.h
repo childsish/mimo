@@ -57,11 +57,6 @@ namespace mimo {
         std::shared_ptr<Entity> pop(const std::string &name) override;
 
         /**
-         * @brief Get whether there are any queues in the inputs.
-         */
-        bool is_empty() const override;
-
-        /**
          * @brief Get whether all queues are closed.
          */
         bool is_closed() const override;

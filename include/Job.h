@@ -15,8 +15,8 @@ namespace workflow {
 
 namespace mimo {
 
-    class JobInputs;
-    class JobOutputs;
+    class IJobInputs;
+    class IJobOutputs;
     class Step;
 
     /**
@@ -30,17 +30,15 @@ namespace mimo {
         explicit Job(
             const std::shared_ptr<workflow::Step> identifier,
             std::unique_ptr<Step> step,
-            std::unique_ptr<JobInputs> inputs,
-            std::unique_ptr<JobOutputs> outputs
+            std::unique_ptr<IJobInputs> inputs,
+            std::unique_ptr<IJobOutputs> outputs
         );
 
-        std::unique_ptr<JobInputs> &ins();
+        std::unique_ptr<IJobInputs> &ins();
 
-        std::unique_ptr<JobOutputs> &outs();
+        std::unique_ptr<IJobOutputs> &outs();
 
         void run();
-
-        bool is_complete() const;
 
     private:
 
@@ -48,8 +46,8 @@ namespace mimo {
 
         std::unique_ptr<mimo::Step> step;
 
-        std::unique_ptr<JobInputs> inputs;
-        std::unique_ptr<JobOutputs> outputs;
+        std::unique_ptr<IJobInputs> inputs;
+        std::unique_ptr<IJobOutputs> outputs;
     };
 }
 

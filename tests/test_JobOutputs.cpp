@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
-#include "queues/Outputs.h"
+#include "queues/JobOutputs.h"
 
 #include <queue>
 #include "errors.h"
