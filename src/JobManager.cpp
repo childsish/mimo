@@ -1,19 +1,31 @@
 #include "JobManager.h"
 
+#include "errors.h"
+
+
 mimo::JobManager::JobManager(const workflow::Workflow &workflow__, unsigned int capacity_) :
         workflow_(workflow__),
         capacity(capacity_) {}
 
-bool mimo::JobManager::can_make_job(const std::shared_ptr<workflow::Step> &step) const {
-    return this->counts.at(step->identifier) < this->capacity;
+void mimo::JobManager::add_entity(const std::shared_ptr<workflow::Input> identifier,
+                                  std::shared_ptr<mimo::Entity> entity) {
+    this->inputs[identifier->identifier].push(entity);
 }
 
-std::unique_ptr<mimo::Job> mimo::JobManager::make_job(const std::shared_ptr<workflow::Step> &step) {
-    auto job = std::make_unique<mimo::Job>(step);
-    this->counts.at(step->identifier) += 1;
-    return job;
+void mimo::JobManager::add_entity(const std::shared_ptr<workflow::Output> identifier,
+                                  std::shared_ptr<mimo::Entity> entity) {
+    for (const auto &input : this->workflow_.get_connected_inputs(identifier)) {
+        this->add_entity(input, entity);
+    }
 }
 
-void mimo::JobManager::destroy_job(const std::shared_ptr<workflow::Step> &step) {
-    this->counts.at(step->identifier) -= 1;
+bool mimo::JobManager::has_job() const {
+    return false;
+}
+
+std::unique_ptr<mimo::Job> mimo::JobManager::get_job() {
+    if (!this->has_job()) {
+        throw JobManagerError("No jobs available.");
+    }
+    return std::make_unique<mimo::Job>();
 }

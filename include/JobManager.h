@@ -1,25 +1,33 @@
 #ifndef MIMO_JOBMANAGER_H
 #define MIMO_JOBMANAGER_H
 
+#include <queue>
 #include <workflow/Step.h>
 #include <workflow/Workflow.h>
-#include "Job.h"
+#include "IJobManager.h"
 
 
 namespace mimo {
 
+    class Step;
+
     /**
-     * Manages the jobs being run by the system. Prevents too many jobs from being run.
+     * @brief: Manages the jobs being run by the system. Prevents too many jobs from being run.
      */
-    class JobManager {
+    class JobManager : public IJobManager {
     public:
+
         JobManager(const workflow::Workflow &workflow_, unsigned int capacity);
 
-        bool can_make_job(const std::shared_ptr<workflow::Step> &step) const;
+        void add_entity(const std::shared_ptr<workflow::Input> identifier,
+                        std::shared_ptr<Entity> entity) override;
 
-        std::unique_ptr<Job> make_job(const std::shared_ptr<workflow::Step> &step);
+        void add_entity(const std::shared_ptr<workflow::Output> identifier,
+                        std::shared_ptr<Entity> entity) override;
 
-        void destroy_job(const std::shared_ptr<workflow::Step> &step);
+        bool has_job() const override;
+
+        std::unique_ptr<Job> get_job() override;
 
     private:
 
@@ -27,7 +35,9 @@ namespace mimo {
 
         unsigned int capacity;
 
-        std::unordered_map<unsigned int, unsigned int> counts;
+        std::unordered_map<unsigned int, std::shared_ptr<Step>> counts;
+
+        std::unordered_map<unsigned int, std::queue<std::shared_ptr<Entity>>> inputs;
     };
 }
 

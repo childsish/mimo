@@ -17,8 +17,8 @@ namespace mimo {
     class Engine {
     public:
 
-        template<typename T>
-        void register_step<T>(std::shared_ptr<workflow::Step> identifier, args...);
+        template<typename T, typename P>
+        void register_step<T>(std::shared_ptr<workflow::Step> identifier, P&&... args);
 
         void run();
 

@@ -1,5 +1,10 @@
-//
-// Created by liam on 1/13/18.
-//
-
 #include "Engine.h"
+
+template<typename T, typename P>
+void mimo::Engine::register_step<T>(std::shared_ptr<workflow::Step> identifier, P &&... args) {
+
+}
+
+void mimo::Engine::run() {
+
+}

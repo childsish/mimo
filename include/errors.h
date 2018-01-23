@@ -16,6 +16,12 @@ namespace mimo {
 
         explicit QueueError(const std::string &message) : std::runtime_error(message) {}
     };
+
+    class JobManagerError : std::runtime_error {
+    public:
+
+        explicit JobManagerError(const std::string &message) : std::runtime_error(message) {}
+    };
 }
 
 #endif //MIMO_ERRORS_H
