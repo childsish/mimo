@@ -21,6 +21,9 @@ namespace mimo {
     class IJobManager {
     public:
 
+        template<typename T, typename... P>
+        void register_step(std::shared_ptr<workflow::Step> identifier, P&&... args);
+
         virtual void add_entity(const std::shared_ptr<workflow::Input> identifier,
                                 std::shared_ptr<Entity> entity) = 0;
 
