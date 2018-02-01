@@ -2,7 +2,7 @@
 #include "gmock/gmock.h"
 #include "Job.h"
 
-#include <workflow/Step.h>
+#include <workflow/Workflow.h>
 #include "Entity.h"
 #include "Step.h"
 #include "queues/IQueue.h"
@@ -53,7 +53,8 @@ public:
 };
 
 TEST(JobTest, test_job_completes_and_closes) {
-    auto identifier = std::make_shared<workflow::Step>(0, "step");
+    auto workflow = workflow::Workflow();
+    auto identifier = workflow.add_step("step", {}, {});
     auto step = std::make_unique<MockStep>();
     auto inputs = std::make_unique<MockJobInputs>();
     auto outputs = std::make_unique<MockJobOutputs>();
@@ -77,7 +78,8 @@ TEST(JobTest, test_job_completes_and_closes) {
 }
 
 TEST(JobTest, test_job_not_complete) {
-    auto identifier = std::make_shared<workflow::Step>(0, "step");
+    auto workflow = workflow::Workflow();
+    auto identifier = workflow.add_step("step", {}, {});
     auto step = std::make_unique<MockStep>();
     auto inputs = std::make_unique<MockJobInputs>();
     auto outputs = std::make_unique<MockJobOutputs>();
@@ -101,7 +103,8 @@ TEST(JobTest, test_job_not_complete) {
 }
 
 TEST(JobTest, test_job_complete_but_input_open) {
-    auto identifier = std::make_shared<workflow::Step>(0, "step");
+    auto workflow = workflow::Workflow();
+    auto identifier = workflow.add_step("step", {}, {});
     auto step = std::make_unique<MockStep>();
     auto inputs = std::make_unique<MockJobInputs>();
     auto outputs = std::make_unique<MockJobOutputs>();

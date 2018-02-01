@@ -27,7 +27,7 @@ namespace mimo {
 
         const std::shared_ptr<workflow::Step> identifier;
 
-        explicit Job(
+        Job(
             const std::shared_ptr<workflow::Step> identifier,
             std::unique_ptr<Step> step,
             std::unique_ptr<IJobInputs> inputs,
