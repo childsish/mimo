@@ -32,6 +32,9 @@ namespace mimo {
                     identifier->identifier,
                     [&args...](){ return std::make_unique<T>(std::forward<P>(args)...); }
             );
+            if (identifier->get_inputs().empty()) {
+                this->ready_steps.push_back(identifier);
+            }
         };
 
         void add_entity(const std::shared_ptr<workflow::Input> input,
