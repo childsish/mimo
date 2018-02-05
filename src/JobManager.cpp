@@ -37,13 +37,14 @@ bool mimo::JobManager::has_job() const {
 }
 
 std::unique_ptr<mimo::Job> mimo::JobManager::get_job() {
-    if (!this->has_job()) {
+    throw std::logic_error("not implemented");
+    /*if (!this->has_job()) {
         throw JobManagerError("No jobs available.");
     }
     auto identifier = this->ready_steps.front();
     this->ready_steps.pop_front();
     auto step = std::make_shared<Step>();
-    return std::make_unique<mimo::Job>(step, this->constructors[step]);
+    return std::make_unique<mimo::Job>(step, this->constructors[step]);*/
 }
 
 bool mimo::JobManager::step_is_ready(const std::shared_ptr<workflow::Step> step) const {

@@ -8,20 +8,20 @@
 
 #include <queue>
 #include <list>
-#include <workflow/Step.h>
 #include <workflow/Workflow.h>
-#include "IJobManager.h"
 
 
 namespace mimo {
 
+    class Entity;
+    class Job;
     class Step;
     typedef std::function<std::unique_ptr<Step>(void)> StepConstructor;
 
     /**
      * @brief: Manages the jobs being run by the system. Prevents too many jobs from being run.
      */
-    class JobManager : public IJobManager {
+    class JobManager {
     public:
 
         JobManager(const workflow::Workflow &workflow_, unsigned int capacity = 10);
@@ -29,20 +29,20 @@ namespace mimo {
         template<typename T, typename... P>
         void register_step(std::shared_ptr<workflow::Step> identifier, P&&... args) {
             this->constructors.emplace(
-                    identifier,
+                    identifier->identifier,
                     [&args...](){ return std::make_unique<T>(std::forward<P>(args)...); }
             );
         };
 
         void add_entity(const std::shared_ptr<workflow::Input> input,
-                        std::shared_ptr<Entity> entity) override;
+                        std::shared_ptr<Entity> entity);
 
         void add_entity(const std::shared_ptr<workflow::Output> identifier,
-                        std::shared_ptr<Entity> entity) override;
+                        std::shared_ptr<Entity> entity);
 
-        bool has_job() const override;
+        bool has_job() const;
 
-        std::unique_ptr<Job> get_job() override;
+        std::unique_ptr<Job> get_job();
 
     private:
 
