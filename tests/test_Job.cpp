@@ -10,47 +10,13 @@
 #include "queues/IJobOutputs.h"
 #include "queues/Inputs.h"
 #include "queues/Outputs.h"
+#include "mocks/MockJobInputs.h"
+#include "mocks/MockJobOutputs.h"
+#include "mocks/MockStep.h"
 
 
 using ::testing::_;
 using ::testing::Return;
-
-class MockStep : public mimo::Step {
-public:
-    MOCK_METHOD2(run, bool(mimo::Inputs&, mimo::Outputs&));
-};
-
-class MockJobInputs : public mimo::IJobInputs {
-public:
-    virtual void add_queue(const std::string &name, std::unique_ptr<mimo::IQueue> queue) {
-        this->add_queue_proxy(name, queue.get());
-    }
-
-    MOCK_METHOD2(add_queue_proxy, void(const std::string&, mimo::IQueue*));
-    MOCK_METHOD1(synchronise_queues, void(const std::vector<std::string>&));
-    MOCK_CONST_METHOD0(get_status, PopStatus());
-    MOCK_CONST_METHOD1(get_status, PopStatus(const std::string&));
-    MOCK_METHOD1(peek, std::shared_ptr<mimo::Entity>(const std::string&));
-    MOCK_METHOD1(pop, std::shared_ptr<mimo::Entity>(const std::string&));
-    MOCK_CONST_METHOD0(is_empty, bool());
-    MOCK_CONST_METHOD0(is_closed, bool());
-};
-
-class MockJobOutputs : public mimo::IJobOutputs {
-public:
-    virtual std::unique_ptr<mimo::IQueue> get_queue(const std::string &name) {
-        return std::unique_ptr<mimo::IQueue>(this->get_queue_proxy(name));
-    }
-
-    MOCK_METHOD1(get_queue_proxy, mimo::IQueue*(const std::string&));
-    MOCK_METHOD1(synchronise_queues, void(const std::vector<std::string>&));
-    MOCK_CONST_METHOD0(get_status, PushStatus());
-    MOCK_CONST_METHOD1(get_status, PushStatus(const std::string&));
-    MOCK_METHOD2(push, void(const std::string&, std::shared_ptr<mimo::Entity>));
-    MOCK_METHOD0(end_run, void());
-    MOCK_METHOD0(close, void());
-    MOCK_CONST_METHOD0(is_closed, bool());
-};
 
 TEST(JobTest, test_job_completes_and_closes) {
     auto workflow = workflow::Workflow();

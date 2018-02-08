@@ -15,7 +15,7 @@ public:
     bool run(mimo::Inputs& ins, mimo::Outputs& outs) override {}
 };
 
-TEST(JobManagerTest, test_register_step) {
+TEST(JobManagerTest, test_register_step_with_no_input) {
     workflow::Workflow workflow;
     mimo::JobManager manager(workflow, 2);
 
@@ -24,4 +24,6 @@ TEST(JobManagerTest, test_register_step) {
     auto step3 = workflow.add_step("step3", {}, {});
 
     manager.register_step<Step1>(step1);
+    EXPECT_TRUE(manager.has_job());
+    auto job = manager.get_job();
 }

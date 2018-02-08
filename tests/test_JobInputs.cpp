@@ -5,21 +5,10 @@
 #include "Entity.h"
 #include "errors.h"
 #include "queues/IQueue.h"
+#include "mocks/MockQueue.h"
 
 
 using ::testing::Return;
-
-class MockQueue : public mimo::IQueue {
-public:
-    MOCK_METHOD0(peek, std::shared_ptr<mimo::Entity>());
-    MOCK_METHOD0(pop, std::shared_ptr<mimo::Entity>());
-    MOCK_METHOD1(push, void(std::shared_ptr<mimo::Entity> entity));
-    MOCK_CONST_METHOD0(can_pop, bool());
-    MOCK_CONST_METHOD0(can_push, bool());
-    MOCK_CONST_METHOD0(is_closed, bool());
-    MOCK_CONST_METHOD0(is_empty, bool());
-    MOCK_CONST_METHOD0(is_full, bool());
-};
 
 TEST(InputsTest, test_asynced_queues) {
     auto queue1 = std::make_unique<MockQueue>();
