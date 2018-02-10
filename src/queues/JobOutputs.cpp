@@ -2,18 +2,18 @@
 
 #include <algorithm>
 #include "errors.h"
-#include "IQueueFactory.h"
 #include "queues/IQueue.h"
 
 
-mimo::JobOutputs::JobOutputs(IQueueFactory &factory_, const std::vector<std::string> &outputs) :
+mimo::JobOutputs::JobOutputs(const std::vector<std::string> &outputs,
+                             std::shared_ptr<IQueueFactory> factory) :
     group_id(0),
     run(0),
     job_ended(false),
-    factory(factory_)
+    factory(std::move(factory))
 {
     for (const auto &output : outputs) {
-        this->queues.emplace(output, this->factory.make());
+        this->queues.emplace(output, this->factory->make_unique());
         this->sync_groups.emplace(output, this->group_id);
         this->group_id += 1;
     }
@@ -21,7 +21,7 @@ mimo::JobOutputs::JobOutputs(IQueueFactory &factory_, const std::vector<std::str
 
 std::unique_ptr<mimo::IQueue> mimo::JobOutputs::get_queue(const std::string &name) {
     auto queue = std::move(this->queues.at(name));
-    this->queues[name] = this->factory.make();
+    this->queues[name] = this->factory->make_unique();
     return queue;
 }
 

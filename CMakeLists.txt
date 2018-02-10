@@ -17,15 +17,15 @@ add_subdirectory(lib/workflow)
 # Add mimo library
 
 add_library(mimo
-        include/IQueueFactory.h
         include/errors.h
         include/Entity.h
+        include/Factory.h
+        include/IFactory.h
         include/Step.h
         include/queues/IQueue.h
         include/queues/IJobInputs.h
         include/queues/IJobOutputs.h
         src/Job.cpp include/Job.h
-        src/JobManager.cpp include/JobManager.h
         src/queues/Inputs.cpp include/queues/Inputs.h
         src/queues/JobInputs.cpp include/queues/JobInputs.h
         src/queues/JobOutputs.cpp include/queues/JobOutputs.h

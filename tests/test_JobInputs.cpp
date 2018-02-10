@@ -11,13 +11,13 @@
 using ::testing::Return;
 
 TEST(InputsTest, test_asynced_queues) {
-    auto queue1 = std::make_unique<MockQueue>();
+    auto queue1 = std::make_unique<mimo::MockQueue>();
     EXPECT_CALL(*queue1, can_pop())
         .WillRepeatedly(Return(false));
     EXPECT_CALL(*queue1, is_empty())
         .WillRepeatedly(Return(true));
 
-    auto queue2 = std::make_unique<MockQueue>();
+    auto queue2 = std::make_unique<mimo::MockQueue>();
     EXPECT_CALL(*queue2, can_pop())
         .WillRepeatedly(Return(true));
     EXPECT_CALL(*queue2, is_empty())
@@ -38,13 +38,13 @@ TEST(InputsTest, test_asynced_queues) {
 }
 
 TEST(InputsTest, test_synced_queues) {
-    auto queue1 = std::make_unique<MockQueue>();
+    auto queue1 = std::make_unique<mimo::MockQueue>();
     EXPECT_CALL(*queue1, can_pop())
         .WillRepeatedly(Return(true));
     EXPECT_CALL(*queue1, is_empty())
         .WillRepeatedly(Return(false));
 
-    auto queue2 = std::make_unique<MockQueue>();
+    auto queue2 = std::make_unique<mimo::MockQueue>();
     EXPECT_CALL(*queue2, can_pop())
         .WillRepeatedly(Return(true));
     EXPECT_CALL(*queue2, is_empty())

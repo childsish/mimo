@@ -11,24 +11,24 @@
 using ::testing::Return;
 
 TEST(JobOutputsTest, test_asynced_queues) {
-    auto queue1 = std::make_unique<MockQueue>();
+    auto queue1 = new mimo::MockQueue();
     EXPECT_CALL(*queue1, can_push())
         .WillRepeatedly(Return(true));
     EXPECT_CALL(*queue1, is_full())
         .WillRepeatedly(Return(false));
 
-    auto queue2 = std::make_unique<MockQueue>();
+    auto queue2 = new mimo::MockQueue();
     EXPECT_CALL(*queue2, can_push())
         .WillRepeatedly(Return(false));
     EXPECT_CALL(*queue2, is_full())
         .WillRepeatedly(Return(true));
 
-    auto factory = std::make_shared<MockQueueFactory>();
+    auto factory = std::make_shared<mimo::MockQueueFactory>();
     EXPECT_CALL(*factory, make_shared_proxy())
         .Times(0);
     EXPECT_CALL(*factory, make_unique_proxy())
-        .WillOnce(Return(std::move(queue1)))
-        .WillOnce(Return(std::move(queue2)));
+        .WillOnce(Return(queue1))
+        .WillOnce(Return(queue2));
 
     mimo::JobOutputs outputs({"queue1", "queue2"}, factory);
     EXPECT_EQ(outputs.get_status(), mimo::JobOutputs::PushStatus::CAN_PUSH);
@@ -42,24 +42,24 @@ TEST(JobOutputsTest, test_asynced_queues) {
 }
 
 TEST(JobOutputsTest, test_synced_queues) {
-    auto queue1 = std::make_unique<MockQueue>();
+    auto queue1 = new mimo::MockQueue();
     EXPECT_CALL(*queue1, can_push())
         .WillRepeatedly(Return(true));
     EXPECT_CALL(*queue1, is_full())
         .WillRepeatedly(Return(false));
 
-    auto queue2 = std::make_unique<MockQueue>();
+    auto queue2 = new mimo::MockQueue();
     EXPECT_CALL(*queue2, can_push())
         .WillRepeatedly(Return(true));
     EXPECT_CALL(*queue2, is_full())
         .WillRepeatedly(Return(false));
 
-    auto factory = std::make_shared<MockQueueFactory>();
+    auto factory = std::make_shared<mimo::MockQueueFactory>();
     EXPECT_CALL(*factory, make_shared_proxy())
         .Times(0);
     EXPECT_CALL(*factory, make_unique_proxy())
-        .WillOnce(Return(std::move(queue1)))
-        .WillOnce(Return(std::move(queue2)));
+        .WillOnce(Return(queue1))
+        .WillOnce(Return(queue2));
 
     mimo::JobOutputs outputs({"queue1", "queue2"}, factory);
     EXPECT_EQ(outputs.get_status(), mimo::JobOutputs::PushStatus::CAN_PUSH);

@@ -6,10 +6,18 @@
 #ifndef MIMO_JOBOUTPUTS_H
 #define MIMO_JOBOUTPUTS_H
 
+#include "Factory.h"
+#include "IFactory.h"
+#include "queues/Queue.h"
+
 #include "queues/IJobOutputs.h"
 
 
 namespace mimo {
+
+    class IQueue;
+    using IQueueFactory = IFactory<IQueue>;
+    using QueueFactory = Factory<IQueue, Queue>;
 
     /**
      * @brief A set of output queues from a step.
@@ -17,42 +25,37 @@ namespace mimo {
     class JobOutputs : public IJobOutputs {
     public:
 
-        JobOutputs(IQueueFactory &factory, const std::vector<std::string> &sync_groups);
+        JobOutputs(const std::vector<std::string> &sync_groups,
+                   std::shared_ptr<IQueueFactory> factory = std::make_shared<QueueFactory>());
 
-        /**
-         * @brief Get named queue from outputs.
-         */
-        std::unique_ptr<IQueue> get_queue(const std::string &name);
+        /** @brief Get named queue from outputs. */
+        std::unique_ptr<IQueue> get_queue(const std::string &name) override;
 
-        /**
-         * @brief Synchronise the named queues.
-         */
-        void synchronise_queues(const std::vector<std::string> &queues);
+        /** @brief Synchronise the named queues. */
+        void synchronise_queues(const std::vector<std::string> &queues) override;
 
-        /**
-         * @brief Get whether all queues can be pushed.
-         */
-        IJobOutputs::PushStatus get_status() const;
+        /** @brief Get whether all queues can be pushed. */
+        IJobOutputs::PushStatus get_status() const override;
 
         /**
          * @brief Get whether a queue can be pushed or if it, or a synchronised queue, is full.
-         * @param name Queue to query.
          */
-        IJobOutputs::PushStatus get_status(const std::string &name) const;
+        IJobOutputs::PushStatus get_status(const std::string &name) const override;
 
         /**
          * @brief Push an entity onto the specified queue.
          * If the queue is full or a synchronised queue is full, an exception is thrown.
-         * @param name
-         * @param entity
          */
-        void push(const std::string &name, std::shared_ptr<Entity> entity);
+        void push(const std::string &name, std::shared_ptr<Entity> entity) override;
 
-        void end_run();
+        /** @brief End the current run. */
+        void end_run() override;
 
-        void close();
+        /** @brief Close the job output. */
+        void close() override;
 
-        bool is_closed() const;
+        /** @brief Test if job output is closed. */
+        bool is_closed() const override;
 
     private:
 
@@ -66,7 +69,7 @@ namespace mimo {
 
         std::unordered_map<std::string, unsigned int> sync_groups;
 
-        IQueueFactory &factory;
+        std::shared_ptr<IQueueFactory> factory;
 
         std::unordered_map<unsigned int, bool> get_group_status() const;
 

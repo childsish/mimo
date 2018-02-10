@@ -15,7 +15,6 @@ namespace mimo {
 
     class Entity;
     class IQueue;
-    class IQueueFactory;
 
     class IJobOutputs {
     public:
