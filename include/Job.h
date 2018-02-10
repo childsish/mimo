@@ -8,6 +8,8 @@
 
 #include <memory>
 
+#include "IJob.h"
+
 
 namespace workflow {
     class Step;
@@ -19,13 +21,8 @@ namespace mimo {
     class IJobOutputs;
     class Step;
 
-    /**
-     * @brief:
-     */
-    class Job {
+    class Job : public IJob {
     public:
-
-        const std::shared_ptr<workflow::Step> identifier;
 
         Job(
             const std::shared_ptr<workflow::Step> identifier,
@@ -34,13 +31,17 @@ namespace mimo {
             std::unique_ptr<IJobOutputs> outputs
         );
 
-        std::unique_ptr<IJobInputs> &ins();
+        const std::shared_ptr<workflow::Step> get_identifier() override;
 
-        std::unique_ptr<IJobOutputs> &outs();
+        std::unique_ptr<IJobInputs> &get_inputs() override;
 
-        void run();
+        std::unique_ptr<IJobOutputs> &get_outputs() override;
+
+        void run() override;
 
     private:
+
+        const std::shared_ptr<workflow::Step> identifier;
 
         bool completed;
 

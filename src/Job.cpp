@@ -15,20 +15,24 @@
 
 
 mimo::Job::Job(
-        const std::shared_ptr<workflow::Step> identifier_,
-        std::unique_ptr<Step> step_,
-        std::unique_ptr<IJobInputs> inputs_,
-        std::unique_ptr<IJobOutputs> outputs_
-) : identifier(identifier_),
-    step(std::move(step_)),
-    inputs(std::move(inputs_)),
-    outputs(std::move(outputs_)) {}
+        const std::shared_ptr<workflow::Step> identifier,
+        std::unique_ptr<Step> step,
+        std::unique_ptr<IJobInputs> inputs,
+        std::unique_ptr<IJobOutputs> outputs
+) : identifier(identifier),
+    step(std::move(step)),
+    inputs(std::move(inputs)),
+    outputs(std::move(outputs)) {}
 
-std::unique_ptr<mimo::IJobInputs> &mimo::Job::ins() {
+const std::shared_ptr<workflow::Step> mimo::Job::get_identifier() {
+    return this->identifier;
+}
+
+std::unique_ptr<mimo::IJobInputs> &mimo::Job::get_inputs() {
     return this->inputs;
 }
 
-std::unique_ptr<mimo::IJobOutputs> &mimo::Job::outs() {
+std::unique_ptr<mimo::IJobOutputs> &mimo::Job::get_outputs() {
     return this->outputs;
 }
 
