@@ -25,6 +25,8 @@ namespace mimo {
             SYNC_QUEUE_FULL
         };
 
+        virtual ~IJobOutputs() = default;
+
         /**
          * @brief Get named queue from outputs.
          */

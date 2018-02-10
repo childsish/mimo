@@ -28,6 +28,8 @@ namespace mimo {
             SYNC_QUEUE_EMPTY
         };
 
+        virtual ~IJobInputs() = default;
+
         /**
          * @brief Add a queue to the inputs.
          * @param name Name of the queue.

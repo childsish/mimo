@@ -14,6 +14,7 @@ namespace mimo {
     template<typename T, typename ... Args>
     class IFactory {
     public:
+        virtual ~IFactory() = default;
 
         virtual T* make_raw(Args ... args) const = 0;
 
