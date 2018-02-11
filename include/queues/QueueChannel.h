@@ -26,8 +26,8 @@ namespace mimo {
         enum PushStatus {
             CAN_PUSH, // can push to channel
             PUSH_FULL, // no space left in channel for push
-            PUSH_NEXT, // last place must be pushed by next run
-            PUSH_ENDED // queue is from run that has ended
+            PUSH_NEXT, // last place must be pushed by next task
+            PUSH_ENDED // queue is from task that has ended
         };
 
         enum PopStatus {
@@ -46,8 +46,8 @@ namespace mimo {
 
         /**
          * Push a queue to the QueueChannel
-         * Queues from the same run are expected to be pushed in-order. The last queue must be ended with
-         * Queue::end_run.
+         * Queues from the same task are expected to be pushed in-order. The last queue must be ended with
+         * Queue::end_task.
          * @param queue queue being pushed
          */
         void push(OutputQueue &queue);
@@ -67,15 +67,15 @@ namespace mimo {
         std::unique_ptr<Queue> pop();
 
         /**
-         * A queue can only be pushed if there is sufficient space or there is only one space left and the run being
-         * pushed is the next run. If you can't push, it is also a good idea to check if the run has a reservation.
-         * @param run run to push
+         * A queue can only be pushed if there is sufficient space or there is only one space left and the task being
+         * pushed is the next task. If you can't push, it is also a good idea to check if the task has a reservation.
+         * @param task task to push
          * @return if queue can be pushed
          */
-        PushStatus get_push_status(unsigned int run) const;
+        PushStatus get_push_status(unsigned int task) const;
 
         /**
-         * A queue can only be popped from the channel if it has a run number one more than the previous pop.
+         * A queue can only be popped from the channel if it has a task number one more than the previous pop.
          * @return
          */
         PopStatus get_pop_status() const;

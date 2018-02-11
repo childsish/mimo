@@ -21,21 +21,21 @@ mimo::QueueChannel::QueueChannel(unsigned int capacity_) :
 }
 
 void mimo::QueueChannel::push(mimo::OutputQueue &queue) {
-    PushStatus status = this->get_push_status(queue.get_run());
+    PushStatus status = this->get_push_status(queue.get_task());
     if (status == PUSH_FULL) {
         throw std::runtime_error("Can not push: no space left in channel for push.");
     }
     else if (status == PUSH_NEXT) {
-        throw std::runtime_error("Can not push: last place must be pushed by next run.");
+        throw std::runtime_error("Can not push: last place must be pushed by next task.");
     }
     else if (status == PUSH_ENDED) {
-        throw std::runtime_error("Can not push: queue is from run that has ended");
+        throw std::runtime_error("Can not push: queue is from task that has ended");
     }
 
-    if (queue.is_end_of_run()) {
-        this->ended_queues.insert(queue.get_run());
+    if (queue.is_end_of_task()) {
+        this->ended_queues.insert(queue.get_task());
     }
-    this->queues[queue.get_run()].push(std::move(queue.release()));
+    this->queues[queue.get_task()].push(std::move(queue.release()));
 }
 
 const std::unique_ptr<mimo::Queue> &mimo::QueueChannel::peek() const {
@@ -59,14 +59,14 @@ std::unique_ptr<mimo::Queue> mimo::QueueChannel::pop() {
     return queue;
 }
 
-mimo::QueueChannel::PushStatus mimo::QueueChannel::get_push_status(unsigned int run) const {
-    if (this->ended_queues.find(run) != this->ended_queues.end() || run < this->current_push) {
+mimo::QueueChannel::PushStatus mimo::QueueChannel::get_push_status(unsigned int task) const {
+    if (this->ended_queues.find(task) != this->ended_queues.end() || task < this->current_push) {
         return PUSH_ENDED;
     }
     else if (this->usage() >= this->capacity) {
         return PUSH_FULL;
     }
-    else if (this->usage() == this->capacity - 1 && run != this->current_push) {
+    else if (this->usage() == this->capacity - 1 && task != this->current_push) {
         return PUSH_NEXT;
     }
     return CAN_PUSH;

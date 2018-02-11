@@ -12,7 +12,7 @@ unsigned int mimo::Queue::CAPACITY = 100;
 
 mimo::Queue::Queue(unsigned int capacity) :
     capacity(capacity),
-    end_of_run(false),
+    end_of_task(false),
     closed(false) {}
 
 std::shared_ptr<mimo::Entity> mimo::Queue::peek() {
@@ -36,8 +36,8 @@ std::shared_ptr<mimo::Entity> mimo::Queue::pop() {
 void mimo::Queue::push(std::shared_ptr<mimo::Entity> entity) {
     if (this->entities.size() >= this->capacity) {
         throw QueueError("Queue is full.");
-    } else if (this->end_of_run) {
-        throw QueueError("Can not push to a is_end_of_run queue.");
+    } else if (this->end_of_task) {
+        throw QueueError("Can not push to a is_end_of_task queue.");
     }
     this->entities.push(entity);
 }
@@ -47,15 +47,15 @@ bool mimo::Queue::can_pop() const {
 }
 
 bool mimo::Queue::can_push() const {
-    return !this->end_of_run && this->entities.size() < this->capacity;
+    return !this->end_of_task && this->entities.size() < this->capacity;
 }
 
-void mimo::Queue::end_run() {
-    this->end_of_run = true;
+void mimo::Queue::end_task() {
+    this->end_of_task = true;
 }
 
-bool mimo::Queue::is_end_of_run() const {
-    return this->end_of_run;
+bool mimo::Queue::is_end_of_task() const {
+    return this->end_of_task;
 }
 
 void mimo::Queue::close() {

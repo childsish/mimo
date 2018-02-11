@@ -58,12 +58,12 @@ namespace mimo {
         bool can_push() const;
 
         /**
-         * @brief flag queue as end-of-run
-         * Indicate that this queue is the last to be produced in this run.
+         * @brief flag queue as end-of-task
+         * Indicate that this queue is the last to be produced in this task.
          * Queue can no longer be pushed to and can only be popped until it's empty.
          */
-        void end_run();
-        bool is_end_of_run() const;
+        void end_task();
+        bool is_end_of_task() const;
 
         /**
          * @brief flag queue as end-of-stream
@@ -92,7 +92,7 @@ namespace mimo {
 
         std::queue<std::shared_ptr<Entity>> entities;
 
-        bool end_of_run;
+        bool end_of_task;
 
         bool closed;
 
