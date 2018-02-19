@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "Factory.h"
 #include "IJob.h"
 
 
@@ -26,7 +27,9 @@ namespace mimo {
 
         Job(
             const std::shared_ptr<workflow::Step> identifier,
-            std::unique_ptr<Step> step,
+            std::shared_ptr<Step> step,
+            std::shared_ptr<IJobInputFactory> input_factory,
+            std::shared_ptr<IJobOutputFactory> output_factory,
             std::unique_ptr<IJobInputs> inputs,
             std::unique_ptr<IJobOutputs> outputs
         );
@@ -37,6 +40,8 @@ namespace mimo {
 
         std::unique_ptr<IJobOutputs> &get_outputs() override;
 
+        bool can_run() const override;
+
         void run() override;
 
     private:
@@ -45,11 +50,22 @@ namespace mimo {
 
         bool completed;
 
-        std::unique_ptr<mimo::Step> step;
+        std::shared_ptr<mimo::Step> step;
 
         std::unique_ptr<IJobInputs> inputs;
         std::unique_ptr<IJobOutputs> outputs;
     };
+
+    using IJobFactory = IFactory<IJob,
+            const std::shared_ptr<workflow::Step>,
+            std::shared_ptr<Step>,
+            std::unique_ptr<IJobInputs>,
+            std::unique_ptr<IJobOutputs>>;
+    using JobFactory = Factory<IJob, Job,
+            const std::shared_ptr<workflow::Step>,
+            std::shared_ptr<Step>,
+            std::unique_ptr<IJobInputs>,
+            std::unique_ptr<IJobOutputs>>
 }
 
 #endif //MIMO_JOB_H

@@ -1,10 +1,3 @@
-/**
- * @author: Liam Childs (liam.h.childs@gmail.com)
- * @brief:
- */
-
-#include "Job.h"
-
 #include <workflow/Step.h>
 #include "Step.h"
 #include "queues/IQueue.h"
@@ -13,10 +6,12 @@
 #include "queues/Inputs.h"
 #include "queues/Outputs.h"
 
+#include "Job.h"
+
 
 mimo::Job::Job(
         const std::shared_ptr<workflow::Step> identifier,
-        std::unique_ptr<Step> step,
+        std::shared_ptr<Step> step,
         std::unique_ptr<IJobInputs> inputs,
         std::unique_ptr<IJobOutputs> outputs
 ) : identifier(identifier),
@@ -34,6 +29,11 @@ std::unique_ptr<mimo::IJobInputs> &mimo::Job::get_inputs() {
 
 std::unique_ptr<mimo::IJobOutputs> &mimo::Job::get_outputs() {
     return this->outputs;
+}
+
+bool mimo::Job::can_run() const {
+    return this->inputs->get_status() == IJobInputs::PopStatus::CAN_POP
+           && this->outputs->get_status() == IJobOutputs::PushStatus::CAN_PUSH;
 }
 
 void mimo::Job::run() {
