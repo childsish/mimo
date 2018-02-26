@@ -6,13 +6,14 @@
 #ifndef MIMO_JOBINPUT_H
 #define MIMO_JOBINPUT_H
 
+#include <workflow/Step.h>
+#include "queues/Queue.h"
 #include "queues/IJobInputs.h"
 
 
 namespace mimo {
 
     class Entity;
-    class IQueue;
 
     /**
      * @brief: A set of input queues to a step.
@@ -20,19 +21,10 @@ namespace mimo {
     class JobInputs : public IJobInputs {
     public:
 
-        JobInputs();
-
-        /**
-         * @brief Add a queue to the inputs.
-         * @param name Name of the queue.
-         * @param queue The queue.
-         */
-        void add_queue(const std::string &name, std::unique_ptr<IQueue> queue) override;
-
-        /**
-         * @brief Synchronise the named queues.
-         */
-        void synchronise_queues(const std::vector<std::string> &queues) override;
+        JobInputs(
+            const workflow::InputMap inputs,
+            std::shared_ptr<IQueueFactory> factory
+        );
 
         /**
          * Get whether all queues can be popped.
@@ -64,9 +56,7 @@ namespace mimo {
     private:
 
         unsigned int group_id;
-
         std::unordered_map<std::string, std::unique_ptr<IQueue>> queues;
-
         std::unordered_map<std::string, unsigned int> sync_groups;
 
         std::unordered_map<unsigned int, bool> get_group_status() const;

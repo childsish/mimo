@@ -5,19 +5,21 @@
 #include "queues/IJobOutputs.h"
 #include "queues/Inputs.h"
 #include "queues/Outputs.h"
-
+#include "JobInputFactory.h"
+#include "JobOutputFactory.h"
 #include "Job.h"
 
 
 mimo::Job::Job(
         const std::shared_ptr<workflow::Step> identifier,
         std::shared_ptr<Step> step,
-        std::unique_ptr<IJobInputs> inputs,
-        std::unique_ptr<IJobOutputs> outputs
+        std::shared_ptr<IJobInputsFactory> inputs_factory,
+        std::shared_ptr<IJobOutputsFactory> outputs_factory
 ) : identifier(identifier),
     step(std::move(step)),
-    inputs(std::move(inputs)),
-    outputs(std::move(outputs)) {}
+    inputs(inputs_factory->make_unique(identifier->get_inputs())),
+    outputs(outputs_factory->make_unique(identifier->get_outputs())),
+    outputs_factory(outputs_factory) {}
 
 const std::shared_ptr<workflow::Step> mimo::Job::get_identifier() {
     return this->identifier;
@@ -37,8 +39,8 @@ bool mimo::Job::can_run() const {
 }
 
 void mimo::Job::run() {
-    mimo::Inputs inputs_(this->inputs);
-    mimo::Outputs outputs_(this->outputs);
+    Inputs inputs_(this->inputs);
+    Outputs outputs_(this->outputs);
     this->completed = this->step->run(inputs_, outputs_);
     this->outputs->end_run();
     if (this->completed && this->inputs->is_closed()) {

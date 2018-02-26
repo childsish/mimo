@@ -6,27 +6,21 @@
 #ifndef MIMO_JOBOUTPUTS_H
 #define MIMO_JOBOUTPUTS_H
 
-#include "Factory.h"
-#include "IFactory.h"
+#include <workflow/Step.h>
 #include "queues/Queue.h"
-
 #include "queues/IJobOutputs.h"
 
 
 namespace mimo {
 
-    class IQueue;
-    using IQueueFactory = IFactory<IQueue>;
-    using QueueFactory = Factory<IQueue, Queue>;
-
-    /**
-     * @brief A set of output queues from a step.
-     */
+    /** @brief A set of output queues from a step. */
     class JobOutputs : public IJobOutputs {
     public:
 
-        JobOutputs(const std::vector<std::string> &sync_groups,
-                   std::shared_ptr<IQueueFactory> factory = std::make_shared<QueueFactory>());
+        JobOutputs(
+            const workflow::OutputMap outputs,
+            std::shared_ptr<IQueueFactory> factory
+        );
 
         /** @brief Get named queue from outputs. */
         std::unique_ptr<IQueue> get_queue(const std::string &name) override;

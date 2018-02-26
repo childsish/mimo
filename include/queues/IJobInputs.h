@@ -31,18 +31,6 @@ namespace mimo {
         virtual ~IJobInputs() = default;
 
         /**
-         * @brief Add a queue to the inputs.
-         * @param name Name of the queue.
-         * @param queue The queue.
-         */
-        virtual void add_queue(const std::string &name, std::unique_ptr<IQueue> queue) = 0;
-
-        /**
-         * @brief Synchronise the named queues.
-         */
-        virtual void synchronise_queues(const std::vector<std::string> &queues) = 0;
-
-        /**
          * Get whether all queues can be popped.
          * @return
          */

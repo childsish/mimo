@@ -54,7 +54,7 @@ namespace mimo {
          * @param name
          * @param entity
          */
-        virtual void push(const std::string &name, std::shared_ptr <Entity> entity) = 0;
+        virtual void push(const std::string &name, std::shared_ptr<Entity> entity) = 0;
 
         virtual void end_run() = 0;
 

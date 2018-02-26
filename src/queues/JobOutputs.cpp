@@ -5,7 +5,7 @@
 #include "queues/IQueue.h"
 
 
-mimo::JobOutputs::JobOutputs(const std::vector<std::string> &outputs,
+mimo::JobOutputs::JobOutputs(const workflow::OutputMap outputs,
                              std::shared_ptr<IQueueFactory> factory) :
     group_id(0),
     run(0),
@@ -13,15 +13,15 @@ mimo::JobOutputs::JobOutputs(const std::vector<std::string> &outputs,
     factory(std::move(factory))
 {
     for (const auto &output : outputs) {
-        this->queues.emplace(output, this->factory->make_unique());
-        this->sync_groups.emplace(output, this->group_id);
+        //this->queues.emplace(name, this->factory->make_unique());
+        //this->sync_groups.emplace(output, this->group_id);
         this->group_id += 1;
     }
 }
 
 std::unique_ptr<mimo::IQueue> mimo::JobOutputs::get_queue(const std::string &name) {
     auto queue = std::move(this->queues.at(name));
-    this->queues[name] = this->factory->make_unique();
+    //this->queues[name] = this->factory->make_unique();
     return queue;
 }
 

@@ -5,9 +5,18 @@
 #include "queues/IQueue.h"
 
 
-mimo::JobInputs::JobInputs() : group_id(0) {}
+mimo::JobInputs::JobInputs(
+    const workflow::InputMap inputs,
+    std::shared_ptr<IQueueFactory> factory
+) :
+    group_id(0)
+{
+    for (const auto &item : inputs) {
+        //this->queues.emplace(item.first, factory->make_unique());
+    }
+}
 
-void mimo::JobInputs::add_queue(const std::string &name, std::unique_ptr<mimo::IQueue> queue) {
+/*void mimo::JobInputs::add_queue(const std::string &name, std::unique_ptr<mimo::IQueue> queue) {
     this->queues.emplace(name, std::move(queue));
     this->sync_groups.emplace(name, this->group_id);
     this->group_id += 1;
@@ -18,7 +27,7 @@ void mimo::JobInputs::synchronise_queues(const std::vector<std::string> &queues)
         this->sync_groups[name] = this->group_id;
     }
     this->group_id += 1;
-}
+}*/
 
 mimo::IJobInputs::PopStatus mimo::JobInputs::get_status() const {
     auto group_can_pop = this->get_group_status();
