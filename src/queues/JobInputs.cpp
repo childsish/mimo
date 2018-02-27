@@ -1,33 +1,19 @@
-#include "queues/JobInputs.h"
-
 #include <algorithm>
+#include <workflow/Input.h>
+#include "queues/JobInputs.h"
 #include "errors.h"
-#include "queues/IQueue.h"
 
 
 mimo::JobInputs::JobInputs(
     const workflow::InputMap inputs,
     std::shared_ptr<IQueueFactory> factory
 ) :
-    group_id(0)
+    inputs(inputs)
 {
     for (const auto &item : inputs) {
-        //this->queues.emplace(item.first, factory->make_unique());
+        this->queues.emplace(item.first, factory->make_unique());
     }
 }
-
-/*void mimo::JobInputs::add_queue(const std::string &name, std::unique_ptr<mimo::IQueue> queue) {
-    this->queues.emplace(name, std::move(queue));
-    this->sync_groups.emplace(name, this->group_id);
-    this->group_id += 1;
-}
-
-void mimo::JobInputs::synchronise_queues(const std::vector<std::string> &queues) {
-    for (const auto &name : queues) {
-        this->sync_groups[name] = this->group_id;
-    }
-    this->group_id += 1;
-}*/
 
 mimo::IJobInputs::PopStatus mimo::JobInputs::get_status() const {
     auto group_can_pop = this->get_group_status();
@@ -46,7 +32,7 @@ mimo::IJobInputs::PopStatus mimo::JobInputs::get_status(const std::string &name)
         return PopStatus::QUEUE_EMPTY;
     }
     auto groups = this->get_group_status();
-    if (!groups.at(this->sync_groups.at(name))) {
+    if (!groups.at(this->inputs.at(name)->sync_group)) {
         return PopStatus ::SYNC_QUEUE_EMPTY;
     }
     return PopStatus::CAN_POP;
@@ -87,11 +73,11 @@ bool mimo::JobInputs::is_closed() const {
 
 std::unordered_map<unsigned int, bool> mimo::JobInputs::get_group_status() const {
     std::unordered_map<unsigned int, bool> groups;
-    for (const auto &item : this->sync_groups) {
-        if (groups.find(item.second) == groups.end()) {
-            groups[item.second] = true;
+    for (const auto &item : this->inputs) {
+        if (groups.find(item.second->sync_group) == groups.end()) {
+            groups[item.second->sync_group] = true;
         }
-        groups[item.second] &= this->queues.at(item.first)->can_pop();
+        groups[item.second->sync_group] &= this->queues.at(item.first)->can_pop();
     }
     return groups;
 }

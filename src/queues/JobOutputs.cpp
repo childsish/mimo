@@ -1,35 +1,20 @@
-#include "queues/JobOutputs.h"
-
 #include <algorithm>
+#include <workflow/Output.h>
+#include "queues/JobOutputs.h"
 #include "errors.h"
-#include "queues/IQueue.h"
 
 
-mimo::JobOutputs::JobOutputs(const workflow::OutputMap outputs,
+
+mimo::JobOutputs::JobOutputs(const workflow::OutputMap &outputs,
                              std::shared_ptr<IQueueFactory> factory) :
-    group_id(0),
     run(0),
     job_ended(false),
+    outputs(outputs),
     factory(std::move(factory))
 {
     for (const auto &output : outputs) {
-        //this->queues.emplace(name, this->factory->make_unique());
-        //this->sync_groups.emplace(output, this->group_id);
-        this->group_id += 1;
+        this->queues.emplace(output.first, this->factory->make_unique());
     }
-}
-
-std::unique_ptr<mimo::IQueue> mimo::JobOutputs::get_queue(const std::string &name) {
-    auto queue = std::move(this->queues.at(name));
-    //this->queues[name] = this->factory->make_unique();
-    return queue;
-}
-
-void mimo::JobOutputs::synchronise_queues(const std::vector<std::string> &queues) {
-    for (const auto &name : queues) {
-        this->sync_groups[name] = this->group_id;
-    }
-    this->group_id += 1;
 }
 
 mimo::IJobOutputs::PushStatus mimo::JobOutputs::get_status() const {
@@ -49,7 +34,7 @@ mimo::IJobOutputs::PushStatus mimo::JobOutputs::get_status(const std::string &na
         return PushStatus::QUEUE_FULL;
     }
     auto group_status = this->get_group_status();
-    if (!group_status.at(this->sync_groups.at(name))) {
+    if (!group_status.at(this->outputs.at(name)->sync_group)) {
         return PushStatus::SYNC_QUEUE_FULL;
     }
     return PushStatus::CAN_PUSH;
@@ -82,11 +67,11 @@ bool mimo::JobOutputs::is_closed() const {
 
 std::unordered_map<unsigned int, bool> mimo::JobOutputs::get_group_status() const {
     std::unordered_map<unsigned int, bool> groups;
-    for (const auto &item : this->sync_groups) {
-        if (groups.find(item.second) == groups.end()) {
-            groups[item.second] = true;
+    for (const auto &item : this->outputs) {
+        if (groups.find(item.second->sync_group) == groups.end()) {
+            groups[item.second->sync_group] = true;
         }
-        groups[item.second] &= this->queues.at(item.first)->can_push();
+        groups[item.second->sync_group] &= this->queues.at(item.first)->can_push();
     }
     return groups;
 }

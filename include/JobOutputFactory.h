@@ -4,13 +4,13 @@
 #define MIMO_JOBOUTPUTFACTORY_H
 
 #include <workflow/Step.h>
-#include <queues/JobOutputs.h>
-#include <queues/Queue.h>
+#include "QueueFactory.h"
 #include "IFactory.h"
 
 
 namespace mimo {
 
+    class IJobOutputs;
     using IJobOutputsFactory = IFactory<IJobOutputs, const workflow::OutputMap &>;
 
     class JobOutputFactory : public IJobOutputsFactory {

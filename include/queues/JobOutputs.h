@@ -9,35 +9,29 @@
 #include <workflow/Step.h>
 #include "queues/Queue.h"
 #include "queues/IJobOutputs.h"
+#include "QueueFactory.h"
 
 
 namespace mimo {
+
+    class IQueue;
 
     /** @brief A set of output queues from a step. */
     class JobOutputs : public IJobOutputs {
     public:
 
         JobOutputs(
-            const workflow::OutputMap outputs,
+            const workflow::OutputMap &outputs,
             std::shared_ptr<IQueueFactory> factory
         );
-
-        /** @brief Get named queue from outputs. */
-        std::unique_ptr<IQueue> get_queue(const std::string &name) override;
-
-        /** @brief Synchronise the named queues. */
-        void synchronise_queues(const std::vector<std::string> &queues) override;
 
         /** @brief Get whether all queues can be pushed. */
         IJobOutputs::PushStatus get_status() const override;
 
-        /**
-         * @brief Get whether a queue can be pushed or if it, or a synchronised queue, is full.
-         */
+        /** @brief Get whether a queue can be pushed or if it, or a synchronised queue, is full. */
         IJobOutputs::PushStatus get_status(const std::string &name) const override;
 
-        /**
-         * @brief Push an entity onto the specified queue.
+        /** @brief Push an entity onto the specified queue.
          * If the queue is full or a synchronised queue is full, an exception is thrown.
          */
         void push(const std::string &name, std::shared_ptr<Entity> entity) override;
@@ -53,16 +47,11 @@ namespace mimo {
 
     private:
 
-        unsigned int group_id;
-
         unsigned int run;
-
         bool job_ended;
 
+        const workflow::OutputMap &outputs;
         std::unordered_map<std::string, std::unique_ptr<IQueue>> queues;
-
-        std::unordered_map<std::string, unsigned int> sync_groups;
-
         std::shared_ptr<IQueueFactory> factory;
 
         std::unordered_map<unsigned int, bool> get_group_status() const;

@@ -1,3 +1,5 @@
+#include <queues/IQueue.h>
+#include <queues/JobOutputs.h>
 #include "JobOutputFactory.h"
 
 mimo::JobOutputFactory::JobOutputFactory(std::shared_ptr<mimo::IQueueFactory> queue_factory) :

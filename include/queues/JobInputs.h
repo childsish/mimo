@@ -9,6 +9,7 @@
 #include <workflow/Step.h>
 #include "queues/Queue.h"
 #include "queues/IJobInputs.h"
+#include "QueueFactory.h"
 
 
 namespace mimo {
@@ -26,38 +27,25 @@ namespace mimo {
             std::shared_ptr<IQueueFactory> factory
         );
 
-        /**
-         * Get whether all queues can be popped.
-         * @return
-         */
+        /** @brief Get whether all queues can be popped. */
         IJobInputs::PopStatus get_status() const override;
 
-        /**
-         * @brief Get whether a queue can be popped or if it, or a synchronised queue, is empty.
-         * @param name Queue to query.
-         */
+        /** @brief Get whether a queue can be popped or if it, or a synchronised queue, is empty. */
         IJobInputs::PopStatus get_status(const std::string &name) const override;
 
-        /**
-         * @brief Peek at the first item in the named queue but do not pop it.
-         */
+        /** @brief Peek at the first item in the named queue but do not pop it. */
         std::shared_ptr<Entity> peek(const std::string &name) override;
 
-        /**
-         * @brief Pop and return the first item of the named queue.
-         */
+        /** @brief Pop and return the first item of the named queue. */
         std::shared_ptr<Entity> pop(const std::string &name) override;
 
-        /**
-         * @brief Get whether all queues are closed.
-         */
+        /** @brief Get whether all queues are closed. */
         bool is_closed() const override;
 
     private:
 
-        unsigned int group_id;
+        const workflow::InputMap &inputs;
         std::unordered_map<std::string, std::unique_ptr<IQueue>> queues;
-        std::unordered_map<std::string, unsigned int> sync_groups;
 
         std::unordered_map<unsigned int, bool> get_group_status() const;
     };

@@ -21,11 +21,14 @@ add_library(mimo
         include/Entity.h
         include/Factory.h
         include/IFactory.h
+        include/IJob.h
         include/Step.h
         include/queues/IQueue.h
         include/queues/IJobInputs.h
         include/queues/IJobOutputs.h
         src/Job.cpp include/Job.h
+        src/JobInputFactory.cpp include/JobInputFactory.h
+        src/JobOutputFactory.cpp include/JobOutputFactory.h
         src/queues/Inputs.cpp include/queues/Inputs.h
         src/queues/JobInputs.cpp include/queues/JobInputs.h
         src/queues/JobOutputs.cpp include/queues/JobOutputs.h
