@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <queue>
+#include "Factory.h"
 #include "queues/IQueue.h"
 
 
@@ -30,20 +31,20 @@ namespace mimo {
          * Get the next entity, but don't remove it from the queue.
          * @return next entity
          */
-        std::shared_ptr<Entity> peek();
+        std::shared_ptr<Entity> peek() override;
 
         /**
          * Get the next entity and remove it from the queue.
          * @return next entity
          */
-        std::shared_ptr<Entity> pop();
+        std::shared_ptr<Entity> pop() override;
 
         /**
          * Push an entity into the queue. Return true if there is still space for more.
          * @param entity entity to push
          * @return true if queue size is less than threshold
          */
-        void push(std::shared_ptr<Entity> entity);
+        void push(std::shared_ptr<Entity> entity) override;
 
         /**
          * Check if queue can be popped from
@@ -55,7 +56,7 @@ namespace mimo {
          * Check if queue can be pushed to
          * @return true if fewer entities in queue than threshold
          */
-        bool can_push() const;
+        bool can_push() const override;
 
         /**
          * @brief flag queue as end-of-task
@@ -71,20 +72,20 @@ namespace mimo {
          * Queue can no longer be pushed to and can only be popped until it's empty.
          */
         void close();
-        bool is_closed() const;
+        bool is_closed() const override;
 
         /**
          * Check if the queue is empty
          * @return true if the queue is empty
          */
-        bool is_empty() const;
+        bool is_empty() const override;
 
         /**
          * Check if the queue is full
          * @return true if the queue is full
          * @return
          */
-        bool is_full() const;
+        bool is_full() const override;
 
     private:
 
