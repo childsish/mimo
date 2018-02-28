@@ -29,6 +29,7 @@ add_library(mimo
         src/Job.cpp include/Job.h
         src/JobInputFactory.cpp include/JobInputFactory.h
         src/JobOutputFactory.cpp include/JobOutputFactory.h
+        src/QueueFactory.cpp include/QueueFactory.h
         src/queues/Inputs.cpp include/queues/Inputs.h
         src/queues/JobInputs.cpp include/queues/JobInputs.h
         src/queues/JobOutputs.cpp include/queues/JobOutputs.h
