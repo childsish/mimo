@@ -3,23 +3,25 @@
 #include "queues/JobInputs.h"
 #include "errors.h"
 
+#include <iostream>
+
 
 mimo::JobInputs::JobInputs(
-    const workflow::InputMap inputs,
+    const workflow::InputMap &inputs,
     std::shared_ptr<IQueueFactory> factory
 ) :
     inputs(inputs)
 {
-    for (const auto &item : inputs) {
+    for (const auto &item : this->inputs) {
         this->queues.emplace(item.first, factory->make_unique());
     }
 }
 
 mimo::IJobInputs::PopStatus mimo::JobInputs::get_status() const {
-    auto group_can_pop = this->get_group_status();
+    auto groups = this->get_group_status();
     if (std::any_of(
-        group_can_pop.begin(),
-        group_can_pop.end(),
+        groups.begin(),
+        groups.end(),
         [](const auto &item){ return item.second; })
     ) {
         return PopStatus::CAN_POP;
@@ -28,7 +30,7 @@ mimo::IJobInputs::PopStatus mimo::JobInputs::get_status() const {
 }
 
 mimo::IJobInputs::PopStatus mimo::JobInputs::get_status(const std::string &name) const {
-    if (this->queues.at(name)->is_empty()) {
+    if (!this->queues.at(name)->can_pop()) {
         return PopStatus::QUEUE_EMPTY;
     }
     auto groups = this->get_group_status();

@@ -23,7 +23,7 @@ namespace mimo {
     public:
 
         JobInputs(
-            const workflow::InputMap inputs,
+            const workflow::InputMap &inputs,
             std::shared_ptr<IQueueFactory> factory
         );
 

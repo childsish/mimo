@@ -75,12 +75,6 @@ namespace mimo {
         bool is_closed() const override;
 
         /**
-         * Check if the queue is empty
-         * @return true if the queue is empty
-         */
-        bool is_empty() const override;
-
-        /**
          * Check if the queue is full
          * @return true if the queue is full
          * @return

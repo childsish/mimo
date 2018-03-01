@@ -31,9 +31,6 @@ namespace mimo {
         /** @brief Return true if the the queue has been closed. */
         virtual bool is_closed() const = 0;
 
-        /** @brief Return true if the queue has no items. */
-        virtual bool is_empty() const = 0;
-
         /** @brief Return true if the queue has no more capacity. */
         virtual bool is_full() const = 0;
     };
