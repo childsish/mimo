@@ -13,5 +13,5 @@ TEST(StepFactoryTest, test_register_and_create_step) {
     mimo::StepFactory factory;
 
     factory.register_step<mimo::MockStep>(step);
-    std::unique_ptr<mimo::Step> generic_step(factory.make_step(step));
+    std::shared_ptr<mimo::Step> generic_step(factory.make_step(step));
 }

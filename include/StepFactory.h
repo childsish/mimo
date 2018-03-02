@@ -10,7 +10,7 @@
 
 namespace mimo {
 
-    using StepConstructor = std::function<std::unique_ptr<Step>()>;
+    using StepConstructor = std::function<std::shared_ptr<Step>()>;
 
     class StepFactory {
     public:
@@ -19,11 +19,11 @@ namespace mimo {
         void register_step(std::shared_ptr<workflow::Step> identifier, Args ... args) {
             this->step_constructors.emplace(
                 identifier,
-                [&]{ return std::make_unique<T>(std::forward<Args>(args)...); }
+                [&]{ return std::make_shared<T>(std::forward<Args>(args)...); }
             );
         }
 
-        std::unique_ptr<Step> make_step(std::shared_ptr<workflow::Step> identifier) const {
+        std::shared_ptr<Step> make_step(std::shared_ptr<workflow::Step> identifier) const {
             return this->step_constructors.at(identifier)();
         }
 
