@@ -12,9 +12,9 @@ namespace mimo {
     class IQueue;
     using IQueueFactory = IFactory<IQueue>;
 
-    class QueueFactory : IQueueFactory {
+    class QueueFactory : public IQueueFactory {
     public:
-        explicit QueueFactory(unsigned int capacity);
+        explicit QueueFactory(unsigned int capacity = 10);
 
         IQueue *make_raw() const override;
 

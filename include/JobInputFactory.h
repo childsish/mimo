@@ -5,7 +5,6 @@
 
 #include <workflow/Step.h>
 #include "QueueFactory.h"
-#include "IFactory.h"
 
 
 namespace mimo {
@@ -15,7 +14,7 @@ namespace mimo {
 
     class JobInputFactory : public IJobInputsFactory {
     public:
-        explicit JobInputFactory(std::shared_ptr<IQueueFactory> queue_factory);
+        explicit JobInputFactory(std::shared_ptr<IQueueFactory> queue_factory = std::make_shared<QueueFactory>());
 
         IJobInputs *make_raw(const workflow::InputMap &inputs) const override;
 

@@ -5,6 +5,7 @@
 
 #include <gmock/gmock.h>
 #include "IFactory.h"
+#include "JobOutputFactory.h"
 
 
 namespace mimo {

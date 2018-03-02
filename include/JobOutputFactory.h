@@ -15,7 +15,7 @@ namespace mimo {
 
     class JobOutputFactory : public IJobOutputsFactory {
     public:
-        explicit JobOutputFactory(std::shared_ptr<IQueueFactory> queue_factory);
+        explicit JobOutputFactory(std::shared_ptr<IQueueFactory> queue_factory = std::make_shared<QueueFactory>());
 
         IJobOutputs *make_raw(const workflow::OutputMap &outputs) const override;
 
