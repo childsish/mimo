@@ -54,12 +54,6 @@ namespace mimo {
         std::unique_ptr<IJobInputs> inputs;
         std::unique_ptr<IJobOutputs> outputs;
     };
-
-    using IJobFactory = IFactory<IJob,
-            const std::shared_ptr<workflow::Step>,
-            std::shared_ptr<Step>,
-            std::unique_ptr<IJobInputs>,
-            std::unique_ptr<IJobOutputs>>;
 }
 
 #endif //MIMO_JOB_H
