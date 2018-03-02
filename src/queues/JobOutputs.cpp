@@ -30,7 +30,7 @@ mimo::IJobOutputs::PushStatus mimo::JobOutputs::get_status() const {
 }
 
 mimo::IJobOutputs::PushStatus mimo::JobOutputs::get_status(const std::string &name) const {
-    if (this->queues.at(name)->is_full()) {
+    if (!this->queues.at(name)->can_push()) {
         return PushStatus::QUEUE_FULL;
     }
     auto group_status = this->get_group_status();
