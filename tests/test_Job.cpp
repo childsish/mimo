@@ -19,7 +19,7 @@ using ::testing::Return;
 
 TEST(JobTest, test_job_completes_and_closes) {
     auto identifier = std::make_shared<workflow::Step>("step");
-    auto step = std::make_unique<MockStep>();
+    auto step = std::make_unique<mimo::MockStep>();
     auto input_factory = std::make_shared<mimo::MockJobInputsFactory>();
     auto output_factory = std::make_shared<mimo::MockJobOutputsFactory>();
     auto *job_inputs = new mimo::MockJobInputs();
@@ -48,7 +48,7 @@ TEST(JobTest, test_job_completes_and_closes) {
 
 TEST(JobTest, test_job_not_complete) {
     auto identifier = std::make_shared<workflow::Step>("step");
-    auto step = std::make_unique<MockStep>();
+    auto step = std::make_unique<mimo::MockStep>();
     auto input_factory = std::make_shared<mimo::MockJobInputsFactory>();
     auto output_factory = std::make_shared<mimo::MockJobOutputsFactory>();
     auto *job_inputs = new mimo::MockJobInputs();
@@ -77,7 +77,7 @@ TEST(JobTest, test_job_not_complete) {
 
 TEST(JobTest, test_job_complete_but_input_open) {
     auto identifier = std::make_shared<workflow::Step>("step");
-    auto step = std::make_unique<MockStep>();
+    auto step = std::make_unique<mimo::MockStep>();
     auto input_factory = std::make_shared<mimo::MockJobInputsFactory>();
     auto output_factory = std::make_shared<mimo::MockJobOutputsFactory>();
     auto *job_inputs = new mimo::MockJobInputs();

@@ -11,9 +11,11 @@
 #include "Step.h"
 
 
-class MockStep : public mimo::Step {
-public:
-    MOCK_METHOD2(run, bool(mimo::Inputs&, mimo::Outputs&));
-};
+namespace mimo {
+    class MockStep : public mimo::Step {
+    public:
+        MOCK_METHOD2(run, bool(mimo::Inputs&, mimo::Outputs&));
+    };
+}
 
 #endif //MIMO_MOCKSTEP_H

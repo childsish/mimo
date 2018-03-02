@@ -13,9 +13,13 @@ add_executable(test_mimo
     test_JobInputs.cpp
     test_JobOutputs.cpp
     test_Queue.cpp
+    test_StepFactory.cpp
+    mocks/MockJobInputsFactory.h
+    mocks/MockJobOutputsFactory.h
     mocks/MockJobInputs.h
     mocks/MockJobOutputs.h
     mocks/MockQueue.h
+    mocks/MockQueueFactory.h
     mocks/MockStep.h)
 target_include_directories(test_mimo PRIVATE
     ${gtest_SOURCE_DIR}/include
