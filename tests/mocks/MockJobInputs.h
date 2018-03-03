@@ -1,5 +1,3 @@
-/** @author: Liam Childs (liam.h.childs@gmail.com) */
-
 #ifndef MIMO_MOCKJOBINPUTS_H
 #define MIMO_MOCKJOBINPUTS_H
 
@@ -12,6 +10,7 @@ namespace mimo {
 
     class MockJobInputs : public mimo::IJobInputs {
     public:
+        MOCK_METHOD2(push, void(const std::string&, std::shared_ptr<Entity>));
         MOCK_CONST_METHOD0(get_status, PopStatus());
         MOCK_CONST_METHOD1(get_status, PopStatus(const std::string&));
         MOCK_METHOD1(peek, std::shared_ptr<mimo::Entity>(const std::string&));

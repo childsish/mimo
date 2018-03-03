@@ -27,19 +27,16 @@ namespace mimo {
             std::shared_ptr<IQueueFactory> factory
         );
 
-        /** @brief Get whether all queues can be popped. */
+        void push(const std::string &name, std::shared_ptr<Entity>) override;
+
         IJobInputs::PopStatus get_status() const override;
 
-        /** @brief Get whether a queue can be popped or if it, or a synchronised queue, is empty. */
         IJobInputs::PopStatus get_status(const std::string &name) const override;
 
-        /** @brief Peek at the first item in the named queue but do not pop it. */
         std::shared_ptr<Entity> peek(const std::string &name) override;
 
-        /** @brief Pop and return the first item of the named queue. */
         std::shared_ptr<Entity> pop(const std::string &name) override;
 
-        /** @brief Get whether all queues are closed. */
         bool is_closed() const override;
 
     private:

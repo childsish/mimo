@@ -30,31 +30,22 @@ namespace mimo {
 
         virtual ~IJobInputs() = default;
 
-        /**
-         * Get whether all queues can be popped.
-         * @return
-         */
+        /** @brief Push an entity to the queue */
+        virtual void push(const std::string &name, std::shared_ptr<Entity> entity) = 0;
+
+        /** Get whether all queues can be popped. */
         virtual PopStatus get_status() const = 0;
 
-        /**
-         * @brief Get whether a queue can be popped or if it, or a synchronised queue, is empty.
-         * @param name Queue to query.
-         */
+        /** @brief Get whether a queue can be popped or if it, or a synchronised queue, is empty. */
         virtual PopStatus get_status(const std::string &name) const = 0;
 
-        /**
-         * @brief Peek at the first item in the named queue but do not pop it.
-         */
+        /** @brief Peek at the first item in the named queue but do not pop it. */
         virtual std::shared_ptr<Entity> peek(const std::string &name) = 0;
 
-        /**
-         * @brief Pop and return the first item of the named queue.
-         */
+        /** @brief Pop and return the first item of the named queue. */
         virtual std::shared_ptr<Entity> pop(const std::string &name) = 0;
 
-        /**
-         * @brief Get whether all queues are closed.
-         */
+        /** @brief Get whether all queues are closed. */
         virtual bool is_closed() const = 0;
     };
 }

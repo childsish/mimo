@@ -22,10 +22,12 @@ add_library(mimo
         include/Factory.h
         include/IFactory.h
         include/IJob.h
+        include/IJobManager.h
         include/Step.h
         include/queues/IQueue.h
         include/queues/IJobInputs.h
         include/queues/IJobOutputs.h
+        src/AsynchronousJobManager.cpp include/AsynchronousJobManager.h
         src/Job.cpp include/Job.h
         src/JobFactory.cpp include/JobFactory.h
         src/JobInputFactory.cpp include/JobInputFactory.h

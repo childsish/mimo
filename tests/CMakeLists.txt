@@ -7,14 +7,14 @@ add_subdirectory(googletest)
 
 
 add_executable(test_mimo
-    ../include/Entity.h
-    ../include/entities/Integer.h
+    test_AsynchronousJobManager.cpp
     test_Job.cpp
     test_JobFactory.cpp
     test_JobInputs.cpp
     test_JobOutputs.cpp
     test_Queue.cpp
     test_StepFactory.cpp
+    mocks/MockJob.h
     mocks/MockJobInputsFactory.h
     mocks/MockJobOutputsFactory.h
     mocks/MockJobInputs.h
