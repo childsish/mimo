@@ -3,10 +3,8 @@
 #ifndef MIMO_ASYNCHRONOUSJOBMANAGER_H
 #define MIMO_ASYNCHRONOUSJOBMANAGER_H
 
-#include <vector>
 #include "IJobManager.h"
 #include "JobFactory.h"
-#include "Job.h"
 
 
 namespace workflow {
@@ -31,7 +29,7 @@ namespace mimo {
 
         std::shared_ptr<IJob> get_runnable_job() override;
 
-        void return_runnable_job(std::shared_ptr<IJob> job) override;
+        void return_complete_job(std::shared_ptr<IJob> job) override;
 
     private:
 

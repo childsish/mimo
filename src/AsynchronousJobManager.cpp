@@ -1,6 +1,6 @@
 #include <workflow/Input.h>
 #include "AsynchronousJobManager.h"
-#include "JobFactory.h"
+#include "IJob.h"
 #include "queues/IJobInputs.h"
 
 mimo::AsynchronousJobManager::AsynchronousJobManager(
@@ -31,8 +31,8 @@ std::shared_ptr<mimo::IJob> mimo::AsynchronousJobManager::get_runnable_job() {
     return this->job;
 }
 
-void mimo::AsynchronousJobManager::return_runnable_job(std::shared_ptr<mimo::IJob> job) {
-    if (job->get_identifier() != this->job->get_identifier())
+void mimo::AsynchronousJobManager::return_complete_job(std::shared_ptr<mimo::IJob> job) {
+    if (job->get_step_id() != this->job->get_step_id())
         throw std::runtime_error("Returned job does not belong to manager.");
     this->available = true;
 }
