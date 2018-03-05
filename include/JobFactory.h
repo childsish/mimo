@@ -12,7 +12,7 @@ namespace mimo {
 
     class IJob;
     class Step;
-    using IJobFactory = IFactory<IJob, const std::shared_ptr<workflow::Step>, std::shared_ptr<Step>>;
+    using IJobFactory = IFactory<IJob, const std::shared_ptr<workflow::Step>&, std::shared_ptr<Step>>;
 
     class JobFactory : public IJobFactory {
     public:
@@ -20,11 +20,11 @@ namespace mimo {
         JobFactory(std::shared_ptr<IJobInputsFactory> inputs_factory = std::make_shared<JobInputFactory>(),
                    std::shared_ptr<IJobOutputsFactory> outputs_factory = std::make_shared<JobOutputFactory>());
 
-        IJob *make_raw(const std::shared_ptr<workflow::Step> identifier, std::shared_ptr<Step> step) const override;
+        IJob *make_raw(const std::shared_ptr<workflow::Step> &step_id, std::shared_ptr<Step> step) const override;
 
-        std::shared_ptr<IJob> make_shared(const std::shared_ptr<workflow::Step> identifier, std::shared_ptr<Step> step) const override;
+        std::shared_ptr<IJob> make_shared(const std::shared_ptr<workflow::Step> &step_id, std::shared_ptr<Step> step) const override;
 
-        std::unique_ptr<IJob> make_unique(const std::shared_ptr<workflow::Step> identifier, std::shared_ptr<Step> step) const override;
+        std::unique_ptr<IJob> make_unique(const std::shared_ptr<workflow::Step> &step_id, std::shared_ptr<Step> step) const override;
 
     private:
         const std::shared_ptr<IJobInputsFactory> inputs_factory;

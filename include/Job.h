@@ -26,13 +26,15 @@ namespace mimo {
     public:
 
         Job(
-            const std::shared_ptr<workflow::Step> identifier,
+            const std::shared_ptr<workflow::Step> &step_id,
             std::shared_ptr<Step> step,
             std::shared_ptr<IJobInputsFactory> inputs_factory,
             std::shared_ptr<IJobOutputsFactory> outputs_factory
         );
 
-        const std::shared_ptr<workflow::Step> get_identifier() override;
+        const std::shared_ptr<workflow::Step> get_step_id() const override;
+
+        unsigned int get_job_id() const override;
 
         std::unique_ptr<IJobInputs> &get_inputs() override;
 
@@ -44,7 +46,8 @@ namespace mimo {
 
     private:
 
-        const std::shared_ptr<workflow::Step> identifier;
+        const std::shared_ptr<workflow::Step> step_id;
+        unsigned int job_id;
 
         bool completed;
 

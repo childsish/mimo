@@ -13,5 +13,5 @@ TEST(JobFactoryTest, test_make_job) {;
     mimo::JobFactory factory;
     auto job = factory.make_unique(identifier, step);
 
-    EXPECT_EQ(job->get_identifier(), identifier);
+    EXPECT_EQ(job->get_step_id(), identifier);
 }

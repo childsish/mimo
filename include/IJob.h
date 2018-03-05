@@ -24,7 +24,10 @@ namespace mimo {
         virtual ~IJob() = default;
 
         /** @brief Gets the identifier for the step this job executes. */
-        virtual const std::shared_ptr<workflow::Step> get_identifier() = 0;
+        virtual const std::shared_ptr<workflow::Step> get_step_id() const = 0;
+
+        /** @brief Gets the identifier for the job. */
+        virtual unsigned int get_job_id() const = 0;
 
         /** @brief Gets the inputs for the job. */
         virtual std::unique_ptr<IJobInputs> &get_inputs() = 0;
