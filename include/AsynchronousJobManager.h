@@ -22,7 +22,7 @@ namespace mimo {
                                std::shared_ptr<Step> step,
                                std::shared_ptr<IJobFactory> job_factory = std::make_shared<JobFactory>());
 
-        void add_entity(const std::shared_ptr<workflow::Input> input,
+        void add_entity(const std::shared_ptr<workflow::Input> &input,
                         std::shared_ptr<Entity> entity) override;
 
         bool has_runnable_job() const override;
