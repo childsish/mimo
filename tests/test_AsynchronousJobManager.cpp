@@ -19,18 +19,18 @@ TEST(AsynchronousJobManagerTest, test_only_one_job_allowed) {
         .WillOnce(Return(true))
         .WillOnce(Return(true))
         .WillOnce(Return(true));
-    auto identifier1 = workflow.add_step("step1", {}, {});
+    auto identifier = workflow.add_step("step1", {}, {});
     EXPECT_CALL(*job_proxy, get_step_id())
-        .WillOnce(Return(identifier1))
-        .WillOnce(Return(identifier1))
-        .WillOnce(Return(identifier1));
+        .WillOnce(Return(identifier))
+        .WillOnce(Return(identifier))
+        .WillOnce(Return(identifier));
 
     auto factory = std::make_shared<mimo::MockJobFactory>();
     std::shared_ptr<mimo::Step> step = std::make_shared<mimo::MockStep>();
-    EXPECT_CALL(*factory, make_shared_proxy(identifier1, step))
+    EXPECT_CALL(*factory, make_shared_proxy(identifier, step))
         .WillOnce(Return(job_proxy));
 
-    mimo::AsynchronousJobManager manager(identifier1, step, factory);
+    mimo::AsynchronousJobManager manager(identifier, step, factory);
 
     EXPECT_FALSE(manager.has_runnable_job());
     EXPECT_TRUE(manager.has_runnable_job());
@@ -38,9 +38,9 @@ TEST(AsynchronousJobManagerTest, test_only_one_job_allowed) {
     EXPECT_FALSE(manager.has_runnable_job());
 
     auto wrong_job = std::make_shared<mimo::MockJob>();
-    auto identifier2 = workflow.add_step("step2", {}, {});
+    auto wrong_identifier = workflow.add_step("step2", {}, {});
     EXPECT_CALL(*wrong_job, get_step_id())
-        .WillOnce(Return(identifier2));
+        .WillOnce(Return(wrong_identifier));
     EXPECT_THROW(manager.return_complete_job(wrong_job), std::runtime_error);
 
     manager.return_complete_job(job);
