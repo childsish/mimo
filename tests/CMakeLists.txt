@@ -14,7 +14,9 @@ add_executable(test_mimo
     test_JobOutputs.cpp
     test_Queue.cpp
     test_StepFactory.cpp
+    test_SynchronousJobManager.cpp
     mocks/MockJob.h
+    mocks/MockJobFactory.h
     mocks/MockJobInputsFactory.h
     mocks/MockJobOutputsFactory.h
     mocks/MockJobInputs.h
