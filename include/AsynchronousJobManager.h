@@ -3,13 +3,10 @@
 #ifndef MIMO_ASYNCHRONOUSJOBMANAGER_H
 #define MIMO_ASYNCHRONOUSJOBMANAGER_H
 
+#include <workflow/Step.h>
 #include "IJobManager.h"
 #include "JobFactory.h"
 
-
-namespace workflow {
-    class Step;
-}
 
 namespace mimo {
 
