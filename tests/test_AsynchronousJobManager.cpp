@@ -31,10 +31,10 @@ TEST(AsynchronousJobManagerTest, test_empty_job_not_runnable) {
 TEST(AsynchronousJobManagerTest, test_only_one_job_allowed) {
     workflow::Workflow workflow;
 
+    auto identifier = workflow.add_step("step1", {}, {});
     auto job_proxy = new mimo::MockJob();
     EXPECT_CALL(*job_proxy, can_run())
         .WillRepeatedly(Return(true));
-    auto identifier = workflow.add_step("step1", {}, {});
     EXPECT_CALL(*job_proxy, get_step_id())
         .WillRepeatedly(Return(identifier));
 
@@ -55,10 +55,10 @@ TEST(AsynchronousJobManagerTest, test_only_one_job_allowed) {
 TEST(AsynchronousJobManagerTest, test_return_wrong_job) {
     workflow::Workflow workflow;
 
+    auto identifier = workflow.add_step("step1", {}, {});
     auto job_proxy = new mimo::MockJob();
     EXPECT_CALL(*job_proxy, can_run())
         .WillRepeatedly(Return(true));
-    auto identifier = workflow.add_step("step1", {}, {});
     EXPECT_CALL(*job_proxy, get_step_id())
         .WillRepeatedly(Return(identifier));
 
