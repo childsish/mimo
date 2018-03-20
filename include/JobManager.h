@@ -1,69 +1,46 @@
-/**
- * @author: Liam Childs (liam.h.childs@gmail.com)
- * @brief:
- */
+/** @author: Liam Childs (liam.h.childs@gmail.com) */
 
 #ifndef MIMO_JOBMANAGER_H
 #define MIMO_JOBMANAGER_H
 
 #include <queue>
-#include <list>
 #include <workflow/Workflow.h>
+#include "IJobManager.h"
+#include "JobManagerFactory.h"
 
 
 namespace mimo {
 
-    class Entity;
-    class Job;
     class Step;
-    typedef std::function<std::unique_ptr<Step>(void)> StepConstructor;
 
-    /**
-     * @brief: Manages the jobs being run by the system. Prevents too many jobs from being run.
-     */
-    class JobManager {
+    /** @brief: Manages the jobs being run by the system. Prevents too many jobs from being run. */
+    class JobManager : public IJobManager {
     public:
 
-        JobManager(const workflow::Workflow &workflow_, unsigned int capacity = 10);
+        explicit JobManager(const workflow::Workflow &workflow_,
+                            std::shared_ptr<IJobManagerFactory> factory = std::make_shared<JobManagerFactory>(5));
 
-        template<typename T, typename... P>
-        void register_step(std::shared_ptr<workflow::Step> identifier, P&&... args) {
-            this->constructors.emplace(
-                    identifier->identifier,
-                    [&args...](){ return std::make_unique<T>(std::forward<P>(args)...); }
-            );
-            if (identifier->get_inputs().empty()) {
-                this->ready_steps.push_back(identifier);
-            }
-        };
+        void add_entity(const std::shared_ptr<workflow::Input> &input,
+                        std::shared_ptr<Entity> entity) override;
 
-        void add_entity(const std::shared_ptr<workflow::Input> input,
+        void add_entity(const std::shared_ptr<workflow::Output> &identifier,
                         std::shared_ptr<Entity> entity);
 
-        void add_entity(const std::shared_ptr<workflow::Output> identifier,
-                        std::shared_ptr<Entity> entity);
+        bool has_runnable_job() const override;
 
-        bool has_job() const;
+        std::shared_ptr<IJob> get_runnable_job() override;
 
-        std::unique_ptr<Job> get_job();
+        void return_complete_job(std::shared_ptr<IJob> job) override;
 
     private:
 
         const workflow::Workflow &workflow_;
 
-        unsigned int capacity;
+        std::unordered_map<std::shared_ptr<workflow::Step>, std::unique_ptr<IJobManager>> jobs;
 
-        std::unordered_map<unsigned int, StepConstructor> constructors;
+        std::queue<std::shared_ptr<workflow::Step>> runnable_jobs;
 
-        std::list<std::shared_ptr<workflow::Step>> ready_steps;
-
-        std::unordered_map<unsigned int, std::shared_ptr<Step>> counts;
-
-        std::unordered_map<unsigned int, std::queue<std::shared_ptr<Entity>>> inputs;
-
-        bool step_is_ready(const std::shared_ptr<workflow::Step> step) const;
     };
 }
-
 
 #endif //MIMO_JOBMANAGER_H

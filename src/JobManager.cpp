@@ -1,59 +1,54 @@
+#include <algorithm>
+#include <workflow/Step.h>
+#include "AsynchronousJobManager.h"
+#include "IJob.h"
+#include "SynchronousJobManager.h"
+#include "queues/JobInputs.h"
+#include "queues/JobOutputs.h"
+
 #include "JobManager.h"
 
-#include <algorithm>
-#include "errors.h"
-#include "Job.h"
 
-
-mimo::JobManager::JobManager(const workflow::Workflow &workflow__, unsigned int capacity_) :
-        workflow_(workflow__),
-        capacity(capacity_) {}
-
-void mimo::JobManager::add_entity(const std::shared_ptr<workflow::Input> input,
-                                  std::shared_ptr<mimo::Entity> entity) {
-    this->inputs[input->identifier].push(entity);
-    for (const auto &step : this->workflow_.get_connected_steps(input)) {
-        if (this->step_is_ready(step)) {
-            this->ready_steps.push_back(step);
-        }
+mimo::JobManager::JobManager(
+    const workflow::Workflow &workflow_,
+    std::shared_ptr<IJobManagerFactory> factory
+) :
+    workflow_(workflow_)
+{
+    for (const auto &step : workflow_.get_steps()) {
+        this->jobs.emplace(step.second, std::move(factory->make_manager(step.second)));
     }
 }
 
-void mimo::JobManager::add_entity(const std::shared_ptr<workflow::Output> identifier,
+void mimo::JobManager::add_entity(const std::shared_ptr<workflow::Input> &input,
+                                  std::shared_ptr<mimo::Entity> entity) {
+    auto &step = this->workflow_.get_connected_step(input);
+    this->jobs[step]->add_entity(input, entity);
+    if (this->jobs[step]->has_runnable_job()) {
+        this->runnable_jobs.push(step);
+    }
+}
+
+void mimo::JobManager::add_entity(const std::shared_ptr<workflow::Output> &identifier,
                                   std::shared_ptr<mimo::Entity> entity) {
     for (const auto &input : this->workflow_.get_connected_inputs(identifier)) {
         this->add_entity(input, entity);
     }
 }
 
-bool mimo::JobManager::has_job() const {
-    return std::any_of(
-        this->ready_steps.begin(),
-        this->ready_steps.end(),
-        [=](const std::shared_ptr<workflow::Step> &step) {
-            return this->counts.at(step->identifier).use_count() < this->capacity;
-        }
-    );
+bool mimo::JobManager::has_runnable_job() const {
+    return !this->runnable_jobs.empty();
 }
 
-std::unique_ptr<mimo::Job> mimo::JobManager::get_job() {
-    throw std::logic_error("not implemented");
-    /*if (!this->has_job()) {
-        throw JobManagerError("No jobs available.");
+std::shared_ptr<mimo::IJob> mimo::JobManager::get_runnable_job() {
+    if (!this->has_runnable_job()) {
+        throw std::runtime_error("No jobs available.");
     }
-    auto identifier = this->ready_steps.front();
-    this->ready_steps.pop_front();
-    auto step = std::make_shared<Step>();
-    return std::make_unique<mimo::Job>(step, this->constructors[step]);*/
+    auto &step = this->runnable_jobs.front();
+    this->runnable_jobs.pop();
+    return this->jobs[step]->get_runnable_job();
 }
 
-bool mimo::JobManager::step_is_ready(const std::shared_ptr<workflow::Step> step) const {
-    auto inputs = this->workflow_.get_connected_inputs(step);
-    return std::all_of(
-        inputs.begin(),
-        inputs.end(),
-        [=](const std::shared_ptr<workflow::Input> &input) {
-            return !this->inputs.at(input->identifier).empty();
-        }
-    );
+void mimo::JobManager::return_complete_job(std::shared_ptr<mimo::IJob> job) {
+    this->jobs[job->get_step_id()]->return_complete_job(job);
 }

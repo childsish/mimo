@@ -11,13 +11,16 @@ add_executable(test_mimo
     test_Job.cpp
     test_JobFactory.cpp
     test_JobInputs.cpp
+    test_JobManager.cpp
+    test_JobManagerFactory.cpp
     test_JobOutputs.cpp
     test_Queue.cpp
-    test_StepFactory.cpp
     test_SynchronousJobManager.cpp
     mocks/MockJob.h
     mocks/MockJobFactory.h
     mocks/MockJobInputsFactory.h
+    mocks/MockJobManager.h
+    mocks/MockJobManagerFactory.h
     mocks/MockJobOutputsFactory.h
     mocks/MockJobInputs.h
     mocks/MockJobOutputs.h

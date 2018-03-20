@@ -12,7 +12,7 @@ namespace mimo {
 
     class Step;
 
-    class SynchronousJobManager : IJobManager {
+    class SynchronousJobManager : public IJobManager {
     public:
 
         SynchronousJobManager(unsigned int capacity,
