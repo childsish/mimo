@@ -19,10 +19,6 @@ namespace mimo {
 
         IJobOutputs *make_raw(const workflow::OutputMap &outputs) const override;
 
-        std::shared_ptr<IJobOutputs> make_shared(const workflow::OutputMap &outputs) const override;
-
-        std::unique_ptr<IJobOutputs> make_unique(const workflow::OutputMap &outputs) const override;
-
     private:
         std::shared_ptr<IQueueFactory> queue_factory;
     };

@@ -22,10 +22,6 @@ namespace mimo {
 
         IJob *make_raw(const std::shared_ptr<workflow::Step> &step_id, std::shared_ptr<Step> step) const override;
 
-        std::shared_ptr<IJob> make_shared(const std::shared_ptr<workflow::Step> &step_id, std::shared_ptr<Step> step) const override;
-
-        std::unique_ptr<IJob> make_unique(const std::shared_ptr<workflow::Step> &step_id, std::shared_ptr<Step> step) const override;
-
     private:
         const std::shared_ptr<IJobInputsFactory> inputs_factory;
         const std::shared_ptr<IJobOutputsFactory> outputs_factory;

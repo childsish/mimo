@@ -13,15 +13,3 @@ mimo::JobFactory::make_raw(const std::shared_ptr<workflow::Step> &step_id,
                            std::shared_ptr<Step> step) const {
     return new Job(step_id, std::move(step), this->inputs_factory, this->outputs_factory);
 }
-
-std::shared_ptr<mimo::IJob>
-mimo::JobFactory::make_shared(const std::shared_ptr<workflow::Step> &step_id,
-                              std::shared_ptr<Step> step) const {
-    return std::make_shared<Job>(step_id, std::move(step), this->inputs_factory, this->outputs_factory);
-}
-
-std::unique_ptr<mimo::IJob>
-mimo::JobFactory::make_unique(const std::shared_ptr<workflow::Step> &step_id,
-                              std::shared_ptr<Step> step) const {
-    return std::make_unique<Job>(step_id, std::move(step), this->inputs_factory, this->outputs_factory);
-}

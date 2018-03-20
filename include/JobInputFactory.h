@@ -18,10 +18,6 @@ namespace mimo {
 
         IJobInputs *make_raw(const workflow::InputMap &inputs) const override;
 
-        std::shared_ptr<IJobInputs> make_shared(const workflow::InputMap &inputs) const override;
-
-        std::unique_ptr<IJobInputs> make_unique(const workflow::InputMap &inputs) const override;
-
     private:
         std::shared_ptr<IQueueFactory> queue_factory;
     };

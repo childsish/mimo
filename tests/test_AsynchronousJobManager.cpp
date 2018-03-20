@@ -20,7 +20,7 @@ TEST(AsynchronousJobManagerTest, test_empty_job_not_runnable) {
     auto factory = std::make_shared<mimo::MockJobFactory>();
     auto identifier = workflow.add_step("step1", {}, {});
     std::shared_ptr<mimo::Step> step = std::make_shared<mimo::MockStep>();
-    EXPECT_CALL(*factory, make_shared_proxy(identifier, step))
+    EXPECT_CALL(*factory, make_raw(identifier, step))
         .WillOnce(Return(job_proxy));
 
     mimo::AsynchronousJobManager manager(identifier, step, factory);
@@ -40,7 +40,7 @@ TEST(AsynchronousJobManagerTest, test_only_one_job_allowed) {
 
     auto factory = std::make_shared<mimo::MockJobFactory>();
     std::shared_ptr<mimo::Step> step = std::make_shared<mimo::MockStep>();
-    EXPECT_CALL(*factory, make_shared_proxy(identifier, step))
+    EXPECT_CALL(*factory, make_raw(identifier, step))
         .WillOnce(Return(job_proxy));
 
     mimo::AsynchronousJobManager manager(identifier, step, factory);
@@ -64,7 +64,7 @@ TEST(AsynchronousJobManagerTest, test_return_wrong_job) {
 
     auto factory = std::make_shared<mimo::MockJobFactory>();
     std::shared_ptr<mimo::Step> step = std::make_shared<mimo::MockStep>();
-    EXPECT_CALL(*factory, make_shared_proxy(identifier, step))
+    EXPECT_CALL(*factory, make_raw(identifier, step))
         .WillOnce(Return(job_proxy));
 
     mimo::AsynchronousJobManager manager(identifier, step, factory);

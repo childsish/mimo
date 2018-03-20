@@ -1,7 +1,4 @@
-/**
- * @author: Liam Childs (liam.h.childs@gmail.com)
- * @brief:
- */
+/** @author: Liam Childs (liam.h.childs@gmail.com) */
 
 #include "gtest/gtest.h"
 #include "queues/QueueChannel.h"

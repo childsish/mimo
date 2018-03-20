@@ -4,7 +4,7 @@
 #define MIMO_QUEUEFACTORY_H
 
 #include <memory>
-#include "IFactory.h"
+#include "Factory.h"
 
 
 namespace mimo {
@@ -17,10 +17,6 @@ namespace mimo {
         explicit QueueFactory(unsigned int capacity = 10);
 
         IQueue *make_raw() const override;
-
-        std::shared_ptr<IQueue> make_shared() const override;
-
-        std::unique_ptr<IQueue> make_unique() const override;
 
     private:
         unsigned int capacity;

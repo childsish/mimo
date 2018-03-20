@@ -4,13 +4,8 @@
 #define MIMO_IJOBMANAGER_H
 
 #include <memory>
+#include <workflow/Input.h>
 
-
-namespace workflow {
-    class Input;
-    class Output;
-    class Step;
-}
 
 namespace mimo {
 

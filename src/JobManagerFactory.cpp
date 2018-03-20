@@ -10,16 +10,27 @@ mimo::JobManagerFactory::JobManagerFactory(
     capacity(capacity),
     job_factory(std::move(job_factory)) {}
 
-std::unique_ptr<mimo::AsynchronousJobManager> mimo::JobManagerFactory::make_asynchronous(
-    const std::shared_ptr<workflow::Step> &identifier,
-    std::shared_ptr<Step> step
-) const {
-    return std::make_unique<AsynchronousJobManager>(identifier, step, this->job_factory);
-}
 
-std::unique_ptr<mimo::SynchronousJobManager> mimo::JobManagerFactory::make_synchronous(
-    const std::shared_ptr<workflow::Step> &identifier,
-    std::shared_ptr<Step> step
+mimo::JobManagerFactory::~JobManagerFactory() {}
+
+std::unique_ptr<mimo::IJobManager> mimo::JobManagerFactory::make_manager(
+    const std::shared_ptr<workflow::Step> &identifier
 ) const {
-    return std::make_unique<SynchronousJobManager>(this->capacity, identifier, step, this->job_factory);
+    std::unique_ptr<IJobManager> manager;
+    if (identifier->is_synchronous()) {
+        manager = std::make_unique<SynchronousJobManager>(
+            this->capacity,
+            identifier,
+            this->step_constructors.at(identifier)(),
+            this->job_factory
+        );
+    }
+    else {
+        manager = std::make_unique<AsynchronousJobManager>(
+            identifier,
+            this->step_constructors.at(identifier)(),
+            this->job_factory
+        );
+    }
+    return manager;
 }

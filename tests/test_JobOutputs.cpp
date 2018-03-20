@@ -20,7 +20,7 @@ TEST(JobOutputsTest, test_get_status_two_empty_outputs) {
     auto *output1 = new mimo::MockQueue();
     auto *output2 = new mimo::MockQueue();
 
-    EXPECT_CALL(*factory, make_unique_proxy())
+    EXPECT_CALL(*factory, make_raw())
         .WillOnce(Return(output1))
         .WillOnce(Return(output2));
 
@@ -47,7 +47,7 @@ TEST(JobOutputsTest, test_get_status_one_full_one_empty_output) {
     auto *output1 = new mimo::MockQueue();
     auto *output2 = new mimo::MockQueue();
 
-    EXPECT_CALL(*factory, make_unique_proxy())
+    EXPECT_CALL(*factory, make_raw())
         .WillOnce(Return(output1))
         .WillOnce(Return(output2));
 
@@ -75,7 +75,7 @@ TEST(JobOutputsTest, test_get_status_two_full_outputs) {
     auto *output1 = new mimo::MockQueue();
     auto *output2 = new mimo::MockQueue();
 
-    EXPECT_CALL(*factory, make_unique_proxy())
+    EXPECT_CALL(*factory, make_raw())
         .WillOnce(Return(output1))
         .WillOnce(Return(output2));
 

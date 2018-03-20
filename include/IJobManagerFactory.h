@@ -4,26 +4,19 @@
 #define MIMO_IJOBMANAGERFACTORY_H
 
 #include <memory>
+#include <workflow/Step.h>
 
 
 namespace mimo {
 
-    class AsynchronousJobManager;
-    class SynchronousJobManager;
+    class IJobManager;
 
     class IJobManagerFactory {
     public:
+        virtual ~IJobManagerFactory() = default;
 
-        ~IJobManagerFactory() = default;
-
-        virtual std::unique_ptr<AsynchronousJobManager> make_asynchronous(
-            const std::shared_ptr<workflow::Step> &identifier,
-            std::shared_ptr<Step> step
-        ) const = 0;
-
-        virtual std::unique_ptr<SynchronousJobManager> make_synchronous(
-            const std::shared_ptr<workflow::Step> &identifier,
-            std::shared_ptr<Step> step
+        virtual std::unique_ptr<IJobManager> make_manager(
+            const std::shared_ptr<workflow::Step> &identifier
         ) const = 0;
     };
 }

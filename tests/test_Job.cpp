@@ -2,7 +2,6 @@
 #include "gmock/gmock.h"
 #include "Job.h"
 
-#include <workflow/Step.h>
 #include "Entity.h"
 #include "Step.h"
 #include "queues/Inputs.h"
@@ -27,17 +26,9 @@ TEST(JobTest, test_job_completes_and_closes) {
 
     EXPECT_CALL(*step, run(_, _))
         .WillOnce(Return(true));
-    EXPECT_CALL(*input_factory, make_raw_proxy(identifier->get_inputs()))
-        .Times(0);
-    EXPECT_CALL(*input_factory, make_shared_proxy(identifier->get_inputs()))
-        .Times(0);
-    EXPECT_CALL(*input_factory, make_unique_proxy(identifier->get_inputs()))
+    EXPECT_CALL(*input_factory, make_raw(identifier->get_inputs()))
         .WillOnce(Return(job_inputs));
-    EXPECT_CALL(*output_factory, make_raw_proxy(identifier->get_outputs()))
-        .Times(0);
-    EXPECT_CALL(*output_factory, make_shared_proxy(identifier->get_outputs()))
-        .Times(0);
-    EXPECT_CALL(*output_factory, make_unique_proxy(identifier->get_outputs()))
+    EXPECT_CALL(*output_factory, make_raw(identifier->get_outputs()))
         .WillOnce(Return(job_outputs));
 
     EXPECT_CALL(*job_outputs, end_run());
@@ -56,17 +47,9 @@ TEST(JobTest, test_job_not_complete) {
 
     EXPECT_CALL(*step, run(_, _))
         .WillOnce(Return(false));
-    EXPECT_CALL(*input_factory, make_raw_proxy(identifier->get_inputs()))
-        .Times(0);
-    EXPECT_CALL(*input_factory, make_shared_proxy(identifier->get_inputs()))
-        .Times(0);
-    EXPECT_CALL(*input_factory, make_unique_proxy(identifier->get_inputs()))
+    EXPECT_CALL(*input_factory, make_raw(identifier->get_inputs()))
         .WillOnce(Return(job_inputs));
-    EXPECT_CALL(*output_factory, make_raw_proxy(identifier->get_outputs()))
-        .Times(0);
-    EXPECT_CALL(*output_factory, make_shared_proxy(identifier->get_outputs()))
-        .Times(0);
-    EXPECT_CALL(*output_factory, make_unique_proxy(identifier->get_outputs()))
+    EXPECT_CALL(*output_factory, make_raw(identifier->get_outputs()))
         .WillOnce(Return(job_outputs));
 
     EXPECT_CALL(*job_outputs, end_run());
@@ -85,17 +68,9 @@ TEST(JobTest, test_job_complete_but_input_open) {
 
     EXPECT_CALL(*step, run(_, _))
         .WillOnce(Return(false));
-    EXPECT_CALL(*input_factory, make_raw_proxy(identifier->get_inputs()))
-        .Times(0);
-    EXPECT_CALL(*input_factory, make_shared_proxy(identifier->get_inputs()))
-        .Times(0);
-    EXPECT_CALL(*input_factory, make_unique_proxy(identifier->get_inputs()))
+    EXPECT_CALL(*input_factory, make_raw(identifier->get_inputs()))
         .WillOnce(Return(job_inputs));
-    EXPECT_CALL(*output_factory, make_raw_proxy(identifier->get_outputs()))
-        .Times(0);
-    EXPECT_CALL(*output_factory, make_shared_proxy(identifier->get_outputs()))
-        .Times(0);
-    EXPECT_CALL(*output_factory, make_unique_proxy(identifier->get_outputs()))
+    EXPECT_CALL(*output_factory, make_raw(identifier->get_outputs()))
         .WillOnce(Return(job_outputs));
 
     EXPECT_CALL(*job_outputs, end_run());
