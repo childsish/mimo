@@ -7,8 +7,8 @@
 #define MIMO_JOB_H
 
 #include <memory>
-#include <JobInputFactory.h>
-#include <JobOutputFactory.h>
+#include <queues/JobInputFactory.h>
+#include <queues/JobOutputFactory.h>
 #include "IJob.h"
 
 

@@ -5,8 +5,8 @@
 #include "queues/IJobOutputs.h"
 #include "queues/Inputs.h"
 #include "queues/Outputs.h"
-#include "JobInputFactory.h"
-#include "JobOutputFactory.h"
+#include "queues/JobInputFactory.h"
+#include "queues/JobOutputFactory.h"
 #include "Job.h"
 
 

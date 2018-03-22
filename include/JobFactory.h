@@ -4,8 +4,8 @@
 #define MIMO_JOBFACTORY_H
 
 #include "IFactory.h"
-#include "JobInputFactory.h"
-#include "JobOutputFactory.h"
+#include "queues/JobInputFactory.h"
+#include "queues/JobOutputFactory.h"
 
 
 namespace mimo {
