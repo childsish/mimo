@@ -4,7 +4,7 @@
 #define MIMO_MOCKJOBMANAGER_H
 
 #include <gmock/gmock.h>
-#include "IJobManager.h"
+#include "job_managers/IJobManager.h"
 
 
 namespace mimo {

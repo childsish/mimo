@@ -1,5 +1,5 @@
 #include <workflow/Input.h>
-#include "SynchronousJobManager.h"
+#include "job_managers/SynchronousJobManager.h"
 #include "IJob.h"
 #include "queues/IJobInputs.h"
 

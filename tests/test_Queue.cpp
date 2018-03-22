@@ -3,8 +3,12 @@
 
 #include "Entity.h"
 #include "errors.h"
-#include "entities/Integer.h"
 
+class Integer : public mimo::Entity {
+public:
+    int value;
+    explicit Integer(int value_) : value(value_) {}
+};
 
 TEST(QueueTest, test_fifo) {
     mimo::Queue queue(2);

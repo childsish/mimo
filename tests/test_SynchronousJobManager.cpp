@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <workflow/Workflow.h>
-#include <SynchronousJobManager.h>
+#include <job_managers/SynchronousJobManager.h>
 #include "mocks/MockJob.h"
 #include "mocks/MockJobFactory.h"
 #include "mocks/MockStep.h"

@@ -14,6 +14,7 @@ namespace mimo {
 
     class IJobManager {
     public:
+
         virtual ~IJobManager() = default;
 
         virtual void add_entity(const std::shared_ptr<workflow::Input> &input,
@@ -24,6 +25,7 @@ namespace mimo {
         virtual std::shared_ptr<IJob> get_runnable_job() = 0;
 
         virtual void return_complete_job(std::shared_ptr<IJob> job) = 0;
+
     };
 }
 

@@ -1,5 +1,5 @@
 #include <workflow/Input.h>
-#include "AsynchronousJobManager.h"
+#include "job_managers/AsynchronousJobManager.h"
 #include "IJob.h"
 #include "queues/IJobInputs.h"
 

@@ -20,7 +20,7 @@ add_executable(test_mimo
     mocks/MockJobFactory.h
     mocks/MockJobInputsFactory.h
     mocks/MockJobManager.h
-    mocks/MockJobManagerFactory.h
+    mocks/MockSingleJobManagerFactory.h
     mocks/MockJobOutputsFactory.h
     mocks/MockJobInputs.h
     mocks/MockJobOutputs.h

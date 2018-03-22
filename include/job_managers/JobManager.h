@@ -6,19 +6,17 @@
 #include <queue>
 #include <workflow/Workflow.h>
 #include "IJobManager.h"
-#include "JobManagerFactory.h"
+#include "SingleJobManagerFactory.h"
 
 
 namespace mimo {
-
-    class Step;
 
     /** @brief: Manages the jobs being run by the system. Prevents too many jobs from being run. */
     class JobManager : public IJobManager {
     public:
 
-        explicit JobManager(const workflow::Workflow &workflow_,
-                            std::shared_ptr<IJobManagerFactory> factory = std::make_shared<JobManagerFactory>(5));
+        explicit JobManager(std::shared_ptr<workflow::Workflow> workflow_,
+                            std::shared_ptr<ISingleJobManagerFactory> factory = std::make_shared<SingleJobManagerFactory>(5));
 
         void add_entity(const std::shared_ptr<workflow::Input> &input,
                         std::shared_ptr<Entity> entity) override;
@@ -34,7 +32,7 @@ namespace mimo {
 
     private:
 
-        const workflow::Workflow &workflow_;
+        std::shared_ptr<workflow::Workflow> workflow_;
 
         std::unordered_map<std::shared_ptr<workflow::Step>, std::unique_ptr<IJobManager>> jobs;
 
