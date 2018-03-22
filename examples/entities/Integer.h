@@ -2,16 +2,13 @@
 #define MIMO_INTEGER_H
 
 #include <ostream>
-#include "Entity.h"
+#include <mimo/Entity.h>
 
 
 class Integer : public mimo::Entity {
 public:
-
     int value;
-
     explicit Integer(int value_) : value(value_) {}
-
 };
 
 std::ostream &operator<<(std::ostream &out, const Integer &integer) {

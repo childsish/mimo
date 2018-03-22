@@ -4,7 +4,7 @@
  */
 
 #include <workflow/Workflow.h>
-#include "Engine.h"
+#include <mimo/Engine.h>
 #include "steps/Print.h"
 #include "steps/Range.h"
 
@@ -14,6 +14,8 @@ int main() {
     auto range = workflow->add_step("range", {}, {"output"});
     auto print = workflow->add_step("print", {"input"}, {});
     range->pipe(print);
+
+    auto factory = std::make_unique<mimo::IJobManagerFactory>();
 
     mimo::Engine engine;
     engine.register_step<Range>(range, 0, 10, 1);

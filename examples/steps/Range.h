@@ -2,7 +2,7 @@
 #define MIMO_RANGE_H
 
 #include "Step.h"
-#include "entities/Integer.h"
+#include "../entities/Integer.h"
 
 
 class Range : public mimo::Step {
