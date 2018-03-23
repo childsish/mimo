@@ -23,22 +23,23 @@ add_library(mimo
     include/IFactory.h
     include/IJob.h
     include/Step.h
-    include/job_managers/IJobManager.h
-    include/job_managers/IMultiJobManagerFactory.h
-    include/job_managers/ISingleJobManagerFactory.h
+    include/job_depots/IJobDepot.h
+    include/job_depots/IMultiJobDepotFactory.h
+    include/job_depots/ISingleJobDepotFactory.h
     include/queues/IQueue.h
     include/queues/IJobInputs.h
     include/queues/IJobOutputs.h
+    src/Engine.cpp include/Engine.h
     src/Job.cpp include/Job.h
     src/JobFactory.cpp include/JobFactory.h
     src/queues/JobInputFactory.cpp include/queues/JobInputFactory.h
     src/queues/JobOutputFactory.cpp include/queues/JobOutputFactory.h
     src/QueueFactory.cpp include/QueueFactory.h
-    src/job_managers/AsynchronousJobManager.cpp include/job_managers/AsynchronousJobManager.h
-    src/job_managers/JobManager.cpp include/job_managers/JobManager.h
-    src/job_managers/MultiJobManagerFactory.cpp include/job_managers/MultiJobManagerFactory.h
-    src/job_managers/SingleJobManagerFactory.cpp include/job_managers/SingleJobManagerFactory.h
-    src/job_managers/SynchronousJobManager.cpp include/job_managers/SynchronousJobManager.h
+    src/job_depots/AsynchronousJobDepot.cpp include/job_depots/AsynchronousJobDepot.h
+    src/job_depots/JobDepot.cpp include/job_depots/JobDepot.h
+    src/job_depots/MultiJobDepotFactory.cpp include/job_depots/MultiJobDepotFactory.h
+    src/job_depots/SingleJobDepotFactory.cpp include/job_depots/SingleJobDepotFactory.h
+    src/job_depots/SynchronousJobDepot.cpp include/job_depots/SynchronousJobDepot.h
     src/queues/Inputs.cpp include/queues/Inputs.h
     src/queues/JobInputs.cpp include/queues/JobInputs.h
     src/queues/JobOutputs.cpp include/queues/JobOutputs.h

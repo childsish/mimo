@@ -1,17 +1,17 @@
 #include <algorithm>
 #include <workflow/Step.h>
-#include "job_managers/AsynchronousJobManager.h"
+#include "job_ports/AsynchronousJobDepot.h"
 #include "IJob.h"
-#include "job_managers/SynchronousJobManager.h"
+#include "job_ports/SynchronousJobDepot.h"
 #include "queues/JobInputs.h"
 #include "queues/JobOutputs.h"
 
-#include "job_managers/JobManager.h"
+#include "job_ports/JobDepot.h"
 
 
-mimo::JobManager::JobManager(
+mimo::JobDepot::JobDepot(
     std::shared_ptr<workflow::Workflow> workflow_,
-    std::shared_ptr<ISingleJobManagerFactory> factory
+    std::shared_ptr<ISingleJobDepotFactory> factory
 ) :
     workflow_(workflow_)
 {
@@ -20,7 +20,7 @@ mimo::JobManager::JobManager(
     }
 }
 
-void mimo::JobManager::add_entity(const std::shared_ptr<workflow::Input> &input,
+void mimo::JobDepot::add_entity(const std::shared_ptr<workflow::Input> &input,
                                   std::shared_ptr<mimo::Entity> entity) {
     auto &step = this->workflow_->get_connected_step(input);
     this->jobs[step]->add_entity(input, entity);
@@ -29,18 +29,18 @@ void mimo::JobManager::add_entity(const std::shared_ptr<workflow::Input> &input,
     }
 }
 
-void mimo::JobManager::add_entity(const std::shared_ptr<workflow::Output> &identifier,
+void mimo::JobDepot::add_entity(const std::shared_ptr<workflow::Output> &identifier,
                                   std::shared_ptr<mimo::Entity> entity) {
     for (const auto &input : this->workflow_->get_connected_inputs(identifier)) {
         this->add_entity(input, entity);
     }
 }
 
-bool mimo::JobManager::has_runnable_job() const {
+bool mimo::JobDepot::has_runnable_job() const {
     return !this->runnable_jobs.empty();
 }
 
-std::shared_ptr<mimo::IJob> mimo::JobManager::get_runnable_job() {
+std::shared_ptr<mimo::IJob> mimo::JobDepot::get_runnable_job() {
     if (!this->has_runnable_job()) {
         throw std::runtime_error("No jobs available.");
     }
@@ -49,6 +49,6 @@ std::shared_ptr<mimo::IJob> mimo::JobManager::get_runnable_job() {
     return this->jobs[step]->get_runnable_job();
 }
 
-void mimo::JobManager::return_complete_job(std::shared_ptr<mimo::IJob> job) {
+void mimo::JobDepot::return_complete_job(std::shared_ptr<mimo::IJob> job) {
     this->jobs[job->get_step_id()]->return_complete_job(job);
 }

@@ -1,22 +1,22 @@
 /** @author: Liam Childs (liam.h.childs@gmail.com) */
 
-#ifndef MIMO_JOBMANAGER_H
-#define MIMO_JOBMANAGER_H
+#ifndef MIMO_JOBDEPOT_H
+#define MIMO_JOBDEPOT_H
 
 #include <queue>
 #include <workflow/Workflow.h>
-#include "IJobManager.h"
-#include "SingleJobManagerFactory.h"
+#include "IJobDepot.h"
+#include "SingleJobDepotFactory.h"
 
 
 namespace mimo {
 
     /** @brief: Manages the jobs being run by the system. Prevents too many jobs from being run. */
-    class JobManager : public IJobManager {
+    class JobDepot : public IJobDepot {
     public:
 
-        explicit JobManager(std::shared_ptr<workflow::Workflow> workflow_,
-                            std::shared_ptr<ISingleJobManagerFactory> factory = std::make_shared<SingleJobManagerFactory>(5));
+        explicit JobDepot(std::shared_ptr<workflow::Workflow> workflow_,
+                            std::shared_ptr<ISingleJobDepotFactory> factory = std::make_shared<SingleJobDepotFactory>(5));
 
         void add_entity(const std::shared_ptr<workflow::Input> &input,
                         std::shared_ptr<Entity> entity) override;
@@ -34,11 +34,11 @@ namespace mimo {
 
         std::shared_ptr<workflow::Workflow> workflow_;
 
-        std::unordered_map<std::shared_ptr<workflow::Step>, std::unique_ptr<IJobManager>> jobs;
+        std::unordered_map<std::shared_ptr<workflow::Step>, std::unique_ptr<IJobDepot>> jobs;
 
         std::queue<std::shared_ptr<workflow::Step>> runnable_jobs;
 
     };
 }
 
-#endif //MIMO_JOBMANAGER_H
+#endif //MIMO_JOBDEPOT_H

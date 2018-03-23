@@ -1,7 +1,7 @@
 /** @author: Liam Childs (liam.h.childs@gmail.com) */
 
-#ifndef MIMO_IJOBMANAGER_H
-#define MIMO_IJOBMANAGER_H
+#ifndef MIMO_IJOBDEPOT_H
+#define MIMO_IJOBDEPOT_H
 
 #include <memory>
 #include <workflow/Input.h>
@@ -12,10 +12,10 @@ namespace mimo {
     class Entity;
     class IJob;
 
-    class IJobManager {
+    class IJobDepot {
     public:
 
-        virtual ~IJobManager() = default;
+        virtual ~IJobDepot() = default;
 
         virtual void add_entity(const std::shared_ptr<workflow::Input> &input,
                                 std::shared_ptr<Entity> entity) = 0;
@@ -29,4 +29,4 @@ namespace mimo {
     };
 }
 
-#endif //MIMO_IJOBMANAGER_H
+#endif //MIMO_IJOBDEPOT_H

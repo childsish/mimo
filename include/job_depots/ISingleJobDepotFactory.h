@@ -1,7 +1,7 @@
 /** @author: Liam Childs (liam.h.childs@gmail.com) */
 
-#ifndef MIMO_IJOBMANAGERFACTORY_H
-#define MIMO_IJOBMANAGERFACTORY_H
+#ifndef MIMO_IJOBDEPOTFACTORY_H
+#define MIMO_IJOBDEPOTFACTORY_H
 
 #include <memory>
 #include <workflow/Step.h>
@@ -9,26 +9,26 @@
 
 namespace mimo {
 
-    class IJobManager;
+    class IJobDepot;
     class Step;
     class Step;
     using StepConstructor = std::function<std::shared_ptr<Step>()>;
 
-    class ISingleJobManagerFactory {
+    class ISingleJobDepotFactory {
     public:
 
-        virtual ~ISingleJobManagerFactory() = default;
+        virtual ~ISingleJobDepotFactory() = default;
 
         virtual void register_step(
             const std::shared_ptr<workflow::Step> &identifier,
             StepConstructor step_constructor
         ) = 0;
 
-        virtual std::unique_ptr<IJobManager> make_manager(
+        virtual std::unique_ptr<IJobDepot> make_manager(
             const std::shared_ptr<workflow::Step> &identifier
         ) const = 0;
 
     };
 }
 
-#endif //MIMO_IJOBMANAGERFACTORY_H
+#endif //MIMO_IJOBDEPOTFACTORY_H

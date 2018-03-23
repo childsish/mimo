@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <workflow/Workflow.h>
-#include <job_managers/SynchronousJobManager.h>
+#include <job_ports/SynchronousJobDepot.h>
 #include "mocks/MockJob.h"
 #include "mocks/MockJobFactory.h"
 #include "mocks/MockStep.h"
@@ -25,7 +25,7 @@ TEST(SynchronousJobManagerTest, test_empty_job_not_runnable) {
     EXPECT_CALL(*factory, make_raw(identifier, step))
         .WillOnce(Return(job_proxy));
 
-    mimo::SynchronousJobManager manager(2, identifier, step, factory);
+    mimo::SynchronousJobDepot manager(2, identifier, step, factory);
 
     EXPECT_FALSE(manager.has_runnable_job());
 }
@@ -65,7 +65,7 @@ TEST(SynchronousJobManagerTest, test_capacity) {
         .WillOnce(Return(job_proxy1))
         .WillOnce(Return(job_proxy2));
 
-    mimo::SynchronousJobManager manager(2, identifier, step, factory);
+    mimo::SynchronousJobDepot manager(2, identifier, step, factory);
 
     EXPECT_TRUE(manager.has_runnable_job());
     auto job1 = manager.get_runnable_job();
@@ -100,7 +100,7 @@ TEST(SynchronousJobManagerTest, test_return_wrong_job) {
         .WillOnce(Return(job_proxy0))
         .WillOnce(Return(job_proxy1));
 
-    mimo::SynchronousJobManager manager(1, identifier, step, factory);
+    mimo::SynchronousJobDepot manager(1, identifier, step, factory);
 
     auto wrong_job = std::make_shared<mimo::MockJob>();
     auto wrong_identifier = workflow.add_step("step2", {}, {});

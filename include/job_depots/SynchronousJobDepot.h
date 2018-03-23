@@ -1,10 +1,10 @@
 /** @author: Liam Childs (liam.h.childs@gmail.com) */
 
-#ifndef MIMO_SYNCHRONOUSJOBMANAGER_H
-#define MIMO_SYNCHRONOUSJOBMANAGER_H
+#ifndef MIMO_SYNCHRONOUSJOBDEPOT_H
+#define MIMO_SYNCHRONOUSJOBDEPOT_H
 
 #include <workflow/Step.h>
-#include "IJobManager.h"
+#include "IJobDepot.h"
 #include "JobFactory.h"
 
 
@@ -12,10 +12,10 @@ namespace mimo {
 
     class Step;
 
-    class SynchronousJobManager : public IJobManager {
+    class SynchronousJobDepot : public IJobDepot {
     public:
 
-        SynchronousJobManager(unsigned int capacity,
+        SynchronousJobDepot(unsigned int capacity,
                               const std::shared_ptr<workflow::Step> &identifier,
                               std::shared_ptr<Step> step,
                               std::shared_ptr<IJobFactory> job_factory = std::make_shared<JobFactory>());
@@ -43,4 +43,4 @@ namespace mimo {
 }
 
 
-#endif //MIMO_SYNCHRONOUSJOBMANAGER_H
+#endif //MIMO_SYNCHRONOUSJOBDEPOT_H

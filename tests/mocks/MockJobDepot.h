@@ -1,15 +1,15 @@
 /** @author: Liam Childs (liam.h.childs@gmail.com) */
 
-#ifndef MIMO_MOCKJOBMANAGER_H
-#define MIMO_MOCKJOBMANAGER_H
+#ifndef MIMO_MOCKJOBDEPOT_H
+#define MIMO_MOCKJOBDEPOT_H
 
 #include <gmock/gmock.h>
-#include "job_managers/IJobManager.h"
+#include "job_ports/IJobDepot.h"
 
 
 namespace mimo {
 
-    class MockJobManager : public mimo::IJobManager {
+    class MockJobDepot : public mimo::IJobDepot {
     public:
         MOCK_METHOD2(add_entity, void(const std::shared_ptr<workflow::Input> &input, std::shared_ptr<Entity> entity));
         MOCK_CONST_METHOD0(has_runnable_job, bool());

@@ -1,31 +1,31 @@
 /** @author: Liam Childs (liam.h.childs@gmail.com) */
 
-#ifndef MIMO_SINGLEJOBMANAGERFACTORY_H
-#define MIMO_SINGLEJOBMANAGERFACTORY_H
+#ifndef MIMO_SINGLEJOBDEPOTFACTORY_H
+#define MIMO_SINGLEJOBDEPOTFACTORY_H
 
 #include <workflow/Step.h>
-#include "ISingleJobManagerFactory.h"
+#include "ISingleJobDepotFactory.h"
 #include "JobFactory.h"
 
 
 namespace mimo {
 
-    class SingleJobManagerFactory : public ISingleJobManagerFactory {
+    class SingleJobDepotFactory : public ISingleJobDepotFactory {
     public:
 
-        explicit SingleJobManagerFactory(
+        explicit SingleJobDepotFactory(
             unsigned int capacity,
             std::shared_ptr<IJobFactory> job_factory = std::make_shared<JobFactory>()
         );
 
-        ~SingleJobManagerFactory();
+        ~SingleJobDepotFactory();
 
         void register_step(
             const std::shared_ptr<workflow::Step> &identifier,
             StepConstructor step_constructor
         ) override;
 
-        std::unique_ptr<IJobManager> make_manager(
+        std::unique_ptr<IJobDepot> make_manager(
             const std::shared_ptr<workflow::Step> &identifier
         ) const override;
 
@@ -38,4 +38,4 @@ namespace mimo {
     };
 }
 
-#endif //MIMO_SINGLEJOBMANAGERFACTORY_H
+#endif //MIMO_SINGLEJOBDEPOTFACTORY_H

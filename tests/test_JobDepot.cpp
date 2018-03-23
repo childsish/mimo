@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
 #include <workflow/Workflow.h>
-#include "mocks/MockJobManager.h"
-#include "MockSingleJobManagerFactory.h"
-#include "job_managers/JobManager.h"
+#include "MockJobDepot.h"
+#include "MockSingleJobDepotFactory.h"
+#include "job_ports/JobDepot.h"
 #include "Step.h"
 
 
@@ -14,13 +14,13 @@ TEST(JobManagerTest, test_correct_factory_is_used) {
     step1->synchronise_inputs({"input1", "input2"});
     auto step2 = workflow->add_step("step2", {}, {});
 
-    auto sync_manager = new mimo::MockJobManager();
-    auto async_manager = new mimo::MockJobManager();
-    auto factory = std::make_shared<mimo::MockSingleJobManagerFactory>();
+    auto sync_manager = new mimo::MockJobDepot();
+    auto async_manager = new mimo::MockJobDepot();
+    auto factory = std::make_shared<mimo::MockSingleJobDepotFactory>();
     EXPECT_CALL(*factory, make_manager_proxy(step1))
         .WillOnce(Return(sync_manager));
     EXPECT_CALL(*factory, make_manager_proxy(step2))
         .WillOnce(Return(async_manager));
 
-    mimo::JobManager manager(workflow, factory);
+    mimo::JobDepot manager(workflow, factory);
 }

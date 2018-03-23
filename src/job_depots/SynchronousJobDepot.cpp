@@ -1,10 +1,10 @@
 #include <workflow/Input.h>
-#include "job_managers/SynchronousJobManager.h"
+#include "job_ports/SynchronousJobDepot.h"
 #include "IJob.h"
 #include "queues/IJobInputs.h"
 
 
-mimo::SynchronousJobManager::SynchronousJobManager(
+mimo::SynchronousJobDepot::SynchronousJobDepot(
     unsigned int capacity,
     const std::shared_ptr<workflow::Step> &identifier,
     std::shared_ptr<mimo::Step> step,
@@ -21,16 +21,16 @@ mimo::SynchronousJobManager::SynchronousJobManager(
     this->jobs.emplace(this->current_job, job);
 }
 
-void mimo::SynchronousJobManager::add_entity(const std::shared_ptr<workflow::Input> &input,
+void mimo::SynchronousJobDepot::add_entity(const std::shared_ptr<workflow::Input> &input,
                                              std::shared_ptr<mimo::Entity> entity) {
     this->jobs.at(this->current_job)->get_inputs()->push(input->name, entity);
 }
 
-bool mimo::SynchronousJobManager::has_runnable_job() const {
+bool mimo::SynchronousJobDepot::has_runnable_job() const {
     return this->available && this->jobs.size() <= this->capacity && this->jobs.at(this->current_job)->can_run();
 }
 
-std::shared_ptr<mimo::IJob> mimo::SynchronousJobManager::get_runnable_job() {
+std::shared_ptr<mimo::IJob> mimo::SynchronousJobDepot::get_runnable_job() {
     if (!this->has_runnable_job()) {
         throw std::runtime_error("Job is not available.");
     }
@@ -42,7 +42,7 @@ std::shared_ptr<mimo::IJob> mimo::SynchronousJobManager::get_runnable_job() {
     return old_job;
 }
 
-void mimo::SynchronousJobManager::return_complete_job(std::shared_ptr<mimo::IJob> job) {
+void mimo::SynchronousJobDepot::return_complete_job(std::shared_ptr<mimo::IJob> job) {
     if (job->get_step_id() != this->identifier) {
         throw std::runtime_error("Returned job does not belong to manager.");
     }
