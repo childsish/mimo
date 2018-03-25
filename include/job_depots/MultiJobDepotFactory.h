@@ -23,7 +23,7 @@ namespace mimo {
             StepConstructor step_constructor
         ) override;
 
-        std::unique_ptr<IJobDepot> make_manager(
+        std::unique_ptr<IJobDepot> make_depot(
             std::shared_ptr<workflow::Workflow> workflow
         ) const override;
 

@@ -23,7 +23,7 @@ namespace mimo {
             StepConstructor step_constructor
         ) = 0;
 
-        virtual std::unique_ptr<IJobDepot> make_manager(
+        virtual std::unique_ptr<IJobDepot> make_depot(
             std::shared_ptr<workflow::Workflow> workflow
         ) const = 0;
 
