@@ -1,9 +1,9 @@
 #include <gtest/gtest.h>
 #include <workflow/Workflow.h>
-#include <job_ports/SynchronousJobDepot.h>
 #include "mocks/MockJob.h"
 #include "mocks/MockJobFactory.h"
 #include "mocks/MockStep.h"
+#include "job_depots/SynchronousJobDepot.h"
 #include "queues/Inputs.h"
 #include "queues/Outputs.h"
 

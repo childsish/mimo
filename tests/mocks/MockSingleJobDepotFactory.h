@@ -5,7 +5,7 @@
 
 #include <gmock/gmock.h>
 #include <workflow/Step.h>
-#include "job_ports/ISingleJobDepotFactory.h"
+#include "job_depots/ISingleJobDepotFactory.h"
 
 
 namespace mimo {

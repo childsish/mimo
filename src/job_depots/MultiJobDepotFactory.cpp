@@ -1,7 +1,5 @@
-/** @author: Liam Childs (liam.h.childs@gmail.com) */
-
-#include "job_ports/JobDepot.h"
-#include "job_ports/MultiJobDepotFactory.h"
+#include "job_depots/JobDepot.h"
+#include "job_depots/MultiJobDepotFactory.h"
 
 mimo::MultiJobDepotFactory::MultiJobDepotFactory(
     std::shared_ptr<mimo::ISingleJobDepotFactory> factory
@@ -17,7 +15,7 @@ void mimo::MultiJobDepotFactory::register_step(
 }
 
 std::unique_ptr<mimo::IJobDepot>
-mimo::MultiJobDepotFactory::make_manager(
+mimo::MultiJobDepotFactory::make_depot(
     std::shared_ptr<workflow::Workflow> workflow
 ) const {
     return std::make_unique<JobDepot>(workflow, this->factory);

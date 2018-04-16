@@ -1,7 +1,7 @@
 #include <workflow/Input.h>
-#include "job_ports/SynchronousJobDepot.h"
+#include "job_depots/SynchronousJobDepot.h"
+#include "queues/IQueueBundle.h"
 #include "IJob.h"
-#include "queues/IJobInputs.h"
 
 
 mimo::SynchronousJobDepot::SynchronousJobDepot(

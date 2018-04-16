@@ -1,12 +1,10 @@
-/** @author: Liam Childs (liam.h.childs@gmail.com) */
-
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 #include <workflow/Workflow.h>
-#include "job_ports/IJobDepot.h"
+#include "job_depots/IJobDepot.h"
 #include "mocks/MockStep.h"
 #include "queues/Inputs.h"
 #include "queues/Outputs.h"
-#include "job_ports/SingleJobDepotFactory.h"
+#include "job_depots/SingleJobDepotFactory.h"
 
 TEST(JobManagerFactoryTest, test_register_and_create_step) {
     workflow::Workflow workflow;

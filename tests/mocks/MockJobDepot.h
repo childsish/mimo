@@ -4,7 +4,7 @@
 #define MIMO_MOCKJOBDEPOT_H
 
 #include <gmock/gmock.h>
-#include "job_ports/IJobDepot.h"
+#include "job_depots/IJobDepot.h"
 
 
 namespace mimo {

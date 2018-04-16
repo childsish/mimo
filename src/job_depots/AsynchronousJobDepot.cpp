@@ -1,7 +1,7 @@
 #include <workflow/Input.h>
-#include "job_ports/AsynchronousJobDepot.h"
+#include "job_depots/AsynchronousJobDepot.h"
 #include "IJob.h"
-#include "queues/IJobInputs.h"
+#include "queues/IQueueBundle.h"
 
 #include <iostream>
 

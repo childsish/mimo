@@ -2,7 +2,7 @@
 #include <workflow/Workflow.h>
 #include "MockJobDepot.h"
 #include "MockSingleJobDepotFactory.h"
-#include "job_ports/JobDepot.h"
+#include "job_depots/JobDepot.h"
 #include "Step.h"
 
 
