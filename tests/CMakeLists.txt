@@ -10,21 +10,18 @@ add_executable(test_mimo
     test_AsynchronousJobDepot.cpp
     test_Job.cpp
     test_JobFactory.cpp
-    test_JobInputs.cpp
     test_JobDepot.cpp
     test_JobDepotFactory.cpp
-    test_JobOutputs.cpp
     test_Queue.cpp
+    test_QueueBundle.cpp
     test_SynchronousJobDepot.cpp
     mocks/MockJob.h
     mocks/MockJobFactory.h
-    mocks/MockJobInputsFactory.h
     mocks/MockJobDepot.h
     mocks/MockSingleJobDepotFactory.h
-    mocks/MockJobOutputsFactory.h
-    mocks/MockJobInputs.h
-    mocks/MockJobOutputs.h
     mocks/MockQueue.h
+    mocks/MockQueueBundle.h
+    mocks/MockQueueBundleFactory.h
     mocks/MockQueueFactory.h
     mocks/MockStep.h)
 target_include_directories(test_mimo PRIVATE
