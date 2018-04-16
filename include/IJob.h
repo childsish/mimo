@@ -1,7 +1,4 @@
-/**
- * @author: Liam Childs (liam.h.childs@gmail.com)
- * @brief:
- */
+/** @author: Liam Childs (liam.h.childs@gmail.com) */
 
 #ifndef MIMO_IJOB_H
 #define MIMO_IJOB_H
@@ -15,10 +12,9 @@ namespace workflow {
 
 namespace mimo {
 
-    class IJobInputs;
-    class IJobOutputs;
+    class IQueueBundle;
 
-    /** @brief */
+    /** @brief A manager of a step's input, output and readiness. */
     class IJob {
     public:
         virtual ~IJob() = default;
@@ -30,10 +26,10 @@ namespace mimo {
         virtual unsigned int get_job_id() const = 0;
 
         /** @brief Gets the inputs for the job. */
-        virtual std::unique_ptr<IJobInputs> &get_inputs() = 0;
+        virtual std::shared_ptr<IQueueBundle> &get_inputs() = 0;
 
         /** @brief Gets the outputs for the job. */
-        virtual std::unique_ptr<IJobOutputs> &get_outputs() = 0;
+        virtual std::shared_ptr<IQueueBundle> &get_outputs() = 0;
 
         /** @brief Check if the job can be run. */
         virtual bool can_run() const = 0;

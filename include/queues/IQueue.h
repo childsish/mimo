@@ -28,8 +28,13 @@ namespace mimo {
         /** @brief Return true if the queue has sufficient capacity to hold more items. */
         virtual bool can_push() const = 0;
 
+        virtual void close() = 0;
+
         /** @brief Return true if the the queue has been closed. */
         virtual bool is_closed() const = 0;
+
+        /** @brief Return true if the queue no entities. */
+        virtual bool is_empty() const = 0;
 
         /** @brief Return true if the queue has no more capacity. */
         virtual bool is_full() const = 0;

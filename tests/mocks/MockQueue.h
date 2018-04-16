@@ -21,6 +21,7 @@ namespace mimo {
         MOCK_METHOD1(push, void(std::shared_ptr<Entity> entity));
         MOCK_CONST_METHOD0(can_pop, bool());
         MOCK_CONST_METHOD0(can_push, bool());
+        MOCK_METHOD0(close, void());
         MOCK_CONST_METHOD0(is_closed, bool());
         MOCK_CONST_METHOD0(is_empty, bool());
         MOCK_CONST_METHOD0(is_full, bool());

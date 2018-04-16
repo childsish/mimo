@@ -1,14 +1,12 @@
-/**
- * @author: Liam Childs (liam.h.childs@gmail.com)
- * @brief:
- */
+/** @author: Liam Childs (liam.h.childs@gmail.com) */
 
 #ifndef MIMO_INPUTS_H
 #define MIMO_INPUTS_H
 
 #include <memory>
 #include <string>
-#include "queues/IJobInputs.h"
+#include "queues/IQueueBundle.h"
+
 
 namespace workflow {
     class Input;
@@ -17,21 +15,18 @@ namespace workflow {
 namespace mimo {
 
     class Entity;
-    class Queue;
 
-    /**
-     * @brief: Provides access to input queues.
-     */
+    /** @brief: Provides access to input queues. */
     class Inputs {
     public:
 
         enum class PopStatus {
-            CAN_POP = static_cast<int>(IJobInputs::PopStatus::CAN_POP),
-            QUEUE_EMPTY = static_cast<int>(IJobInputs::PopStatus::QUEUE_EMPTY),
-            SYNC_QUEUE_EMPTY = static_cast<int>(IJobInputs::PopStatus::SYNC_QUEUE_EMPTY)
+            CAN_POP = static_cast<int>(IQueueBundle::PopStatus::CAN_POP),
+            QUEUE_EMPTY = static_cast<int>(IQueueBundle::PopStatus::QUEUE_EMPTY),
+            SYNC_QUEUE_EMPTY = static_cast<int>(IQueueBundle::PopStatus::SYNC_QUEUE_EMPTY)
         };
 
-        explicit Inputs(std::unique_ptr<IJobInputs> &inputs);
+        explicit Inputs(std::shared_ptr<IQueueBundle> &inputs);
 
         PopStatus get_status() const;
         PopStatus get_status(const std::string &name) const;
@@ -41,7 +36,7 @@ namespace mimo {
 
     private:
 
-        std::unique_ptr<IJobInputs> &inputs;
+        std::shared_ptr<IQueueBundle> &inputs;
 
     };
 }

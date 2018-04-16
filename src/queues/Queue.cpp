@@ -66,6 +66,10 @@ bool mimo::Queue::is_closed() const {
     return this->closed;
 }
 
+bool mimo::Queue::is_empty() const {
+    return this->entities.empty();
+}
+
 bool mimo::Queue::is_full() const {
     return this->entities.size() >= this->capacity;
 }

@@ -1,14 +1,11 @@
-/**
- * @author: Liam Childs (liam.h.childs@gmail.com)
- * @brief:
- */
+/** @author: Liam Childs (liam.h.childs@gmail.com) */
 
 #ifndef MIMO_OUTPUTS_H
 #define MIMO_OUTPUTS_H
 
 #include <memory>
 #include <string>
-#include "queues/IJobOutputs.h"
+#include "queues/IQueueBundle.h"
 
 namespace workflow {
     class Output;
@@ -17,21 +14,18 @@ namespace workflow {
 namespace mimo {
 
     class Entity;
-    class Queue;
 
-    /**
-     * @brief: Provides access to output queues.
-     */
+    /** @brief: Provides access to output queues. */
     class Outputs {
     public:
 
         enum class PushStatus {
-            CAN_PUSH = static_cast<int>(IJobOutputs::PushStatus::CAN_PUSH),
-            QUEUE_FULL = static_cast<int>(IJobOutputs::PushStatus::QUEUE_FULL),
-            SYNC_QUEUE_FULL = static_cast<int>(IJobOutputs::PushStatus::SYNC_QUEUE_FULL)
+            CAN_PUSH = static_cast<int>(IQueueBundle::PushStatus::CAN_PUSH),
+            QUEUE_FULL = static_cast<int>(IQueueBundle::PushStatus::QUEUE_FULL),
+            SYNC_QUEUE_FULL = static_cast<int>(IQueueBundle::PushStatus::SYNC_QUEUE_FULL)
         };
 
-        explicit Outputs(std::unique_ptr<IJobOutputs> &outputs);
+        explicit Outputs(std::shared_ptr<IQueueBundle> &outputs);
 
         PushStatus get_status() const;
         PushStatus get_status(const std::string &name) const;
@@ -40,7 +34,7 @@ namespace mimo {
 
     private:
 
-        std::unique_ptr<IJobOutputs> &outputs;
+        std::shared_ptr<IQueueBundle> &outputs;
 
     };
 }

@@ -1,18 +1,15 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <workflow/Output.h>
-#include <workflow/Step.h>
 #include <workflow/Workflow.h>
-#include <Entity.h>
-#include <errors.h>
 #include "mocks/MockQueue.h"
 #include "mocks/MockQueueFactory.h"
-#include <queues/JobOutputs.h>
+#include "queues/QueueBundle.h"
 
 
 using ::testing::Return;
 
-TEST(JobOutputsTest, test_get_status_two_empty_outputs) {
+TEST(QueueBundleTest, test_get_status_two_empty_outputs) {
     workflow::Workflow workflow;
     auto step = workflow.add_step("step", {}, {"output1", "output2"});
     auto outputs = step->get_outputs();
@@ -29,17 +26,17 @@ TEST(JobOutputsTest, test_get_status_two_empty_outputs) {
     EXPECT_CALL(*output2, can_push())
         .WillRepeatedly(Return(true));
 
-    mimo::JobOutputs job_outputs(outputs, factory);
-    EXPECT_EQ(job_outputs.get_status(), mimo::JobOutputs::PushStatus::CAN_PUSH);
-    EXPECT_EQ(job_outputs.get_status("output1"), mimo::JobOutputs::PushStatus::CAN_PUSH);
-    EXPECT_EQ(job_outputs.get_status("output2"), mimo::JobOutputs::PushStatus::CAN_PUSH);
+    mimo::QueueBundle bundle(outputs, factory);
+    EXPECT_EQ(bundle.get_push_status(), mimo::QueueBundle::PushStatus::CAN_PUSH);
+    EXPECT_EQ(bundle.get_push_status("output1"), mimo::QueueBundle::PushStatus::CAN_PUSH);
+    EXPECT_EQ(bundle.get_push_status("output2"), mimo::QueueBundle::PushStatus::CAN_PUSH);
     outputs["output1"]->sync_group = 1;
-    EXPECT_EQ(job_outputs.get_status(), mimo::JobOutputs::PushStatus::CAN_PUSH);
-    EXPECT_EQ(job_outputs.get_status("output1"), mimo::JobOutputs::PushStatus::CAN_PUSH);
-    EXPECT_EQ(job_outputs.get_status("output2"), mimo::JobOutputs::PushStatus::CAN_PUSH);
+    EXPECT_EQ(bundle.get_push_status(), mimo::QueueBundle::PushStatus::CAN_PUSH);
+    EXPECT_EQ(bundle.get_push_status("output1"), mimo::QueueBundle::PushStatus::CAN_PUSH);
+    EXPECT_EQ(bundle.get_push_status("output2"), mimo::QueueBundle::PushStatus::CAN_PUSH);
 }
 
-TEST(JobOutputsTest, test_get_status_one_full_one_empty_output) {
+TEST(QueueBundleTest, test_get_status_one_full_one_empty_output) {
     workflow::Workflow workflow;
     auto step = workflow.add_step("step", {}, {"output1", "output2"});
     auto outputs = step->get_outputs();
@@ -57,17 +54,17 @@ TEST(JobOutputsTest, test_get_status_one_full_one_empty_output) {
     EXPECT_CALL(*output2, can_push())
         .WillRepeatedly(Return(!output1_return_value));
 
-    mimo::JobOutputs job_outputs(outputs, factory);
-    EXPECT_EQ(job_outputs.get_status(), mimo::JobOutputs::PushStatus::SYNC_QUEUE_FULL);
-    EXPECT_EQ(job_outputs.get_status("output1"), mimo::JobOutputs::PushStatus::SYNC_QUEUE_FULL);
-    EXPECT_EQ(job_outputs.get_status("output2"), mimo::JobOutputs::PushStatus::QUEUE_FULL);
+    mimo::QueueBundle job_outputs(outputs, factory);
+    EXPECT_EQ(job_outputs.get_push_status(), mimo::QueueBundle::PushStatus::SYNC_QUEUE_FULL);
+    EXPECT_EQ(job_outputs.get_push_status("output1"), mimo::QueueBundle::PushStatus::SYNC_QUEUE_FULL);
+    EXPECT_EQ(job_outputs.get_push_status("output2"), mimo::QueueBundle::PushStatus::QUEUE_FULL);
     outputs["output1"]->sync_group = 1;
-    EXPECT_EQ(job_outputs.get_status(), mimo::JobOutputs::PushStatus::CAN_PUSH);
-    EXPECT_EQ(job_outputs.get_status("output1"), mimo::JobOutputs::PushStatus::CAN_PUSH);
-    EXPECT_EQ(job_outputs.get_status("output2"), mimo::JobOutputs::PushStatus::QUEUE_FULL);
+    EXPECT_EQ(job_outputs.get_push_status(), mimo::QueueBundle::PushStatus::CAN_PUSH);
+    EXPECT_EQ(job_outputs.get_push_status("output1"), mimo::QueueBundle::PushStatus::CAN_PUSH);
+    EXPECT_EQ(job_outputs.get_push_status("output2"), mimo::QueueBundle::PushStatus::QUEUE_FULL);
 }
 
-TEST(JobOutputsTest, test_get_status_two_full_outputs) {
+TEST(QueueBundleTest, test_get_status_two_full_outputs) {
     workflow::Workflow workflow;
     auto step = workflow.add_step("step", {}, {"output1", "output2"});
     auto outputs = step->get_outputs();
@@ -84,12 +81,12 @@ TEST(JobOutputsTest, test_get_status_two_full_outputs) {
     EXPECT_CALL(*output2, can_push())
         .WillRepeatedly(Return(false));
 
-    mimo::JobOutputs job_outputs(outputs, factory);
-    EXPECT_EQ(job_outputs.get_status(), mimo::JobOutputs::PushStatus::SYNC_QUEUE_FULL);
-    EXPECT_EQ(job_outputs.get_status("output1"), mimo::JobOutputs::PushStatus::QUEUE_FULL);
-    EXPECT_EQ(job_outputs.get_status("output2"), mimo::JobOutputs::PushStatus::QUEUE_FULL);
+    mimo::QueueBundle job_outputs(outputs, factory);
+    EXPECT_EQ(job_outputs.get_push_status(), mimo::QueueBundle::PushStatus::SYNC_QUEUE_FULL);
+    EXPECT_EQ(job_outputs.get_push_status("output1"), mimo::QueueBundle::PushStatus::QUEUE_FULL);
+    EXPECT_EQ(job_outputs.get_push_status("output2"), mimo::QueueBundle::PushStatus::QUEUE_FULL);
     outputs["output1"]->sync_group = 1;
-    EXPECT_EQ(job_outputs.get_status(), mimo::JobOutputs::PushStatus::SYNC_QUEUE_FULL);
-    EXPECT_EQ(job_outputs.get_status("output1"), mimo::JobOutputs::PushStatus::QUEUE_FULL);
-    EXPECT_EQ(job_outputs.get_status("output2"), mimo::JobOutputs::PushStatus::QUEUE_FULL);
+    EXPECT_EQ(job_outputs.get_push_status(), mimo::QueueBundle::PushStatus::SYNC_QUEUE_FULL);
+    EXPECT_EQ(job_outputs.get_push_status("output1"), mimo::QueueBundle::PushStatus::QUEUE_FULL);
+    EXPECT_EQ(job_outputs.get_push_status("output2"), mimo::QueueBundle::PushStatus::QUEUE_FULL);
 }

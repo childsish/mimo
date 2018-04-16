@@ -71,8 +71,15 @@ namespace mimo {
          * Indicate that this queue is the last to be produced by this step.
          * Queue can no longer be pushed to and can only be popped until it's empty.
          */
-        void close();
+        void close() override;
         bool is_closed() const override;
+
+        /**
+         * Check if the queue is empty
+         * @return true if the queue is empty
+         * @return
+         */
+        bool is_empty() const override;
 
         /**
          * Check if the queue is full
