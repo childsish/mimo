@@ -1,7 +1,7 @@
 #ifndef MIMO_RANGE_H
 #define MIMO_RANGE_H
 
-#include "Step.h"
+#include <mimo/Step.h>
 #include "../entities/Integer.h"
 
 
