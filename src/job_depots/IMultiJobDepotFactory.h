@@ -9,7 +9,6 @@
 namespace mimo {
 
     class IJobDepot;
-    class ISingleJobDepotFactory;
     class Step;
     using StepConstructor = std::function<std::shared_ptr<Step>()>;
 

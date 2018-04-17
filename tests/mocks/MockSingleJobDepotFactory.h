@@ -12,7 +12,7 @@ namespace mimo {
 
     class MockSingleJobDepotFactory : public ISingleJobDepotFactory {
     public:
-        std::unique_ptr<IJobDepot> make_manager(
+        std::unique_ptr<IJobDepot> make_depot(
             const std::shared_ptr<workflow::Step> &identifier
         ) const override {
             return std::unique_ptr<IJobDepot>(this->make_manager_proxy(identifier));

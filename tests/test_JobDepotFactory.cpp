@@ -15,6 +15,6 @@ TEST(JobManagerFactoryTest, test_register_and_create_step) {
     mimo::SingleJobDepotFactory factory(1);
     factory.register_step(step1, [](){ return std::make_shared<mimo::MockStep>(); });
     factory.register_step(step2, [](){ return std::make_shared<mimo::MockStep>(); });
-    auto asynchronous_manager = factory.make_manager(step1);
-    auto synchronous_manager = factory.make_manager(step2);
+    auto asynchronous_manager = factory.make_depot(step1);
+    auto synchronous_manager = factory.make_depot(step2);
 }

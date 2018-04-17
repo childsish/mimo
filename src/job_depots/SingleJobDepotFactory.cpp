@@ -19,7 +19,7 @@ void mimo::SingleJobDepotFactory::register_step(
     this->steps[identifier] = step_constructor;
 }
 
-std::unique_ptr<mimo::IJobDepot> mimo::SingleJobDepotFactory::make_manager(
+std::unique_ptr<mimo::IJobDepot> mimo::SingleJobDepotFactory::make_depot(
     const std::shared_ptr<workflow::Step> &identifier
 ) const {
     std::unique_ptr<IJobDepot> manager;

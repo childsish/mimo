@@ -14,7 +14,7 @@ mimo::JobDepot::JobDepot(
     workflow_(workflow_)
 {
     for (const auto &step : workflow_->get_steps()) {
-        this->jobs.emplace(step.second, std::move(factory->make_manager(step.second)));
+        this->jobs.emplace(step.second, std::move(factory->make_depot(step.second)));
     }
 }
 
