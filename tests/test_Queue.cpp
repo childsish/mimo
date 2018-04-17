@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
-#include "queues/Queue.h"
+#include "../src/queues/Queue.h"
 
-#include "Entity.h"
-#include "errors.h"
+#include "mimo/Entity.h"
+#include "../src/errors.h"
 
 class Integer : public mimo::Entity {
 public:

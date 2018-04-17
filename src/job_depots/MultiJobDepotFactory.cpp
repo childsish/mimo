@@ -1,5 +1,5 @@
-#include "job_depots/JobDepot.h"
-#include "job_depots/MultiJobDepotFactory.h"
+#include "JobDepot.h"
+#include "MultiJobDepotFactory.h"
 
 mimo::MultiJobDepotFactory::MultiJobDepotFactory(
     std::shared_ptr<mimo::ISingleJobDepotFactory> factory

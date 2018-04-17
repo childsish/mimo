@@ -5,8 +5,8 @@
 
 #include <gmock/gmock.h>
 #include <workflow/Step.h>
-#include "IFactory.h"
-#include "JobFactory.h"
+#include "../../src/IFactory.h"
+#include "../../src/JobFactory.h"
 
 
 namespace mimo {

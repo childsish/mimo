@@ -1,10 +1,10 @@
 #include <algorithm>
 #include <workflow/Step.h>
-#include "job_depots/AsynchronousJobDepot.h"
-#include "job_depots/JobDepot.h"
-#include "job_depots/SynchronousJobDepot.h"
-#include "queues/IQueueBundle.h"
-#include "IJob.h"
+#include "AsynchronousJobDepot.h"
+#include "JobDepot.h"
+#include "SynchronousJobDepot.h"
+#include "../queues/IQueueBundle.h"
+#include "../IJob.h"
 
 
 mimo::JobDepot::JobDepot(

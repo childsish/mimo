@@ -4,7 +4,7 @@
 #define MIMO_MOCKQUEUEBUNDLE_H
 
 #include <gmock/gmock.h>
-#include "queues/IQueueBundle.h"
+#include "../../src/queues/IQueueBundle.h"
 
 
 namespace mimo {

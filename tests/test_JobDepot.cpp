@@ -2,8 +2,8 @@
 #include <workflow/Workflow.h>
 #include "MockJobDepot.h"
 #include "MockSingleJobDepotFactory.h"
-#include "job_depots/JobDepot.h"
-#include "Step.h"
+#include "../src/job_depots/JobDepot.h"
+#include "mimo/Step.h"
 
 
 using ::testing::Return;

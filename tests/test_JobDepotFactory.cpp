@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
 #include <workflow/Workflow.h>
-#include "job_depots/IJobDepot.h"
+#include "../src/job_depots/IJobDepot.h"
 #include "mocks/MockStep.h"
-#include "queues/Inputs.h"
-#include "queues/Outputs.h"
-#include "job_depots/SingleJobDepotFactory.h"
+#include "mimo/Inputs.h"
+#include "mimo/Outputs.h"
+#include "../src/job_depots/SingleJobDepotFactory.h"
 
 TEST(JobManagerFactoryTest, test_register_and_create_step) {
     workflow::Workflow workflow;

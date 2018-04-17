@@ -7,20 +7,19 @@
 #include <mimo/Engine.h>
 #include "steps/Print.h"
 #include "steps/Range.h"
+#include "../src/job_depots/IJobDepot.h"
 
 
 int main() {
-    auto workflow = std::make_unique<workflow::Workflow>();
+    auto workflow = std::make_shared<workflow::Workflow>();
     auto range = workflow->add_step("range", {}, {"output"});
     auto print = workflow->add_step("print", {"input"}, {});
     range->pipe(print);
 
-    auto factory = std::make_unique<mimo::IJobManagerFactory>();
-
     mimo::Engine engine;
     engine.register_step<Range>(range, 0, 10, 1);
     engine.register_step<Print>(print);
-    engine.run(workflow);
+    engine.run(*workflow);
 
     return 0;
 }

@@ -1,7 +1,7 @@
 /** @author: Liam Childs (liam.h.childs@gmail.com) */
 
-#include <queues/Queue.h>
-#include "queues/QueueFactory.h"
+#include "Queue.h"
+#include "QueueFactory.h"
 
 mimo::QueueFactory::QueueFactory(unsigned int capacity) : capacity(capacity) {}
 

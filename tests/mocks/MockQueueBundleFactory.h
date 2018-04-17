@@ -3,7 +3,7 @@
 #ifndef MIMO_MOCKQUEUEBUNDLEFACTORY_H
 #define MIMO_MOCKQUEUEBUNDLEFACTORY_H
 
-#include "queues/IQueueBundleFactory.h"
+#include "../../src/queues/IQueueBundleFactory.h"
 
 
 namespace mimo {

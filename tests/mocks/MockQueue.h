@@ -7,10 +7,10 @@
 #define MIMO_MOCKQUEUE_H
 
 #include <gmock/gmock.h>
-#include "Entity.h"
-#include "Factory.h"
+#include "mimo/Entity.h"
+#include "../../src/Factory.h"
 
-#include "queues/IQueue.h"
+#include "../../src/queues/IQueue.h"
 
 
 namespace mimo {

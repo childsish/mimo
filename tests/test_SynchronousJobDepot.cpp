@@ -3,9 +3,9 @@
 #include "mocks/MockJob.h"
 #include "mocks/MockJobFactory.h"
 #include "mocks/MockStep.h"
-#include "job_depots/SynchronousJobDepot.h"
-#include "queues/Inputs.h"
-#include "queues/Outputs.h"
+#include "../src/job_depots/SynchronousJobDepot.h"
+#include "mimo/Inputs.h"
+#include "mimo/Outputs.h"
 
 
 using ::testing::Return;

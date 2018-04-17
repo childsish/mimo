@@ -1,7 +1,7 @@
 #ifndef MIMO_CAPTURE_H
 #define MIMO_CAPTURE_H
 
-#include "Step.h"
+#include "mimo/Step.h"
 
 
 class Capture : public Step {

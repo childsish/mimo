@@ -4,7 +4,7 @@
 #include <workflow/Workflow.h>
 #include "mocks/MockQueue.h"
 #include "mocks/MockQueueFactory.h"
-#include "queues/QueueBundle.h"
+#include "../src/queues/QueueBundle.h"
 
 
 using ::testing::Return;

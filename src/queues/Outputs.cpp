@@ -3,7 +3,7 @@
  * @brief:
  */
 
-#include "queues/Outputs.h"
+#include "mimo/Outputs.h"
 
 
 mimo::Outputs::Outputs(std::shared_ptr<mimo::IQueueBundle> &outputs_) : outputs(outputs_) {}

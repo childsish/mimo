@@ -4,7 +4,7 @@
  */
 
 #include <iostream>
-#include <queues/QueueChannel.h>
+#include "QueueChannel.h"
 #include <queues/OutputQueue.h>
 
 

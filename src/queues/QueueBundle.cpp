@@ -1,9 +1,9 @@
 #include <algorithm>
 #include <workflow/Input.h>
 #include <workflow/Output.h>
-#include "queues/IQueue.h"
-#include "queues/QueueBundle.h"
-#include "errors.h"
+#include "IQueue.h"
+#include "QueueBundle.h"
+#include "../errors.h"
 
 mimo::QueueBundle::QueueBundle(
     const workflow::InputMap &identifiers,

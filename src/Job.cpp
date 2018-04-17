@@ -1,5 +1,5 @@
 #include <workflow/Step.h>
-#include "Step.h"
+#include "mimo/Step.h"
 #include "Job.h"
 #include "queues/IQueue.h"
 #include "queues/IQueueBundle.h"

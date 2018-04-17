@@ -1,7 +1,7 @@
 /** @author: Liam Childs (liam.h.childs@gmail.com) */
 
 #include "gtest/gtest.h"
-#include "queues/QueueChannel.h"
+#include "../src/queues/QueueChannel.h"
 
 TEST(QueueChannelTest, test_no_capacity) {
     EXPECT_THROW(mimo::QueueChannel(0), std::runtime_error);

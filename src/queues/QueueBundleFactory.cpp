@@ -1,6 +1,6 @@
-#include "queues/IQueue.h"
-#include "queues/QueueBundle.h"
-#include "queues/QueueBundleFactory.h"
+#include "IQueue.h"
+#include "QueueBundle.h"
+#include "QueueBundleFactory.h"
 
 mimo::QueueBundleFactory::QueueBundleFactory(std::shared_ptr<mimo::IQueueFactory> factory) :
     factory(std::move(factory)) {}

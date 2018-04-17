@@ -7,8 +7,8 @@
 
 #include <memory>
 #include <queue>
-#include "Factory.h"
-#include "queues/IQueue.h"
+#include "../Factory.h"
+#include "IQueue.h"
 
 
 namespace mimo {

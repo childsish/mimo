@@ -5,7 +5,7 @@
 
 #include <memory>
 #include <string>
-#include "queues/IQueueBundle.h"
+#include "../../src/queues/IQueueBundle.h"
 
 namespace workflow {
     class Output;

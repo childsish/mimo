@@ -4,7 +4,7 @@
 #define MIMO_QUEUEFACTORY_H
 
 #include <memory>
-#include "Factory.h"
+#include "../Factory.h"
 
 
 namespace mimo {

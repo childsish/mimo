@@ -1,13 +1,10 @@
-/**
- * @author Liam Childs (liam.h.childs@gmail.com)
- * @brief
- */
+/** @author Liam Childs (liam.h.childs@gmail.com) */
 
 #ifndef MIMO_ENGINE_H
 #define MIMO_ENGINE_H
 
 #include <unordered_map>
-#include "workflow/Step.h"
+#include <workflow/Workflow.h>
 
 
 namespace mimo {
@@ -20,7 +17,7 @@ namespace mimo {
         template<typename T, typename P>
         void register_step<T>(std::shared_ptr<workflow::Step> identifier, P&&... args);
 
-        void run();
+        void run(const workflow::Workflow &workflow);
 
     private:
 

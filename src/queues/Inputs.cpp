@@ -3,7 +3,7 @@
  * @brief:
  */
 
-#include "queues/Inputs.h"
+#include "mimo/Inputs.h"
 
 
 mimo::Inputs::Inputs(std::shared_ptr<mimo::IQueueBundle> &inputs_) : inputs(inputs_) {}

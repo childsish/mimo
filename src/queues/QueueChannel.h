@@ -10,7 +10,7 @@
 #include <mutex>
 #include <unordered_set>
 #include <unordered_map>
-#include "queues/Queue.h"
+#include "Queue.h"
 
 namespace mimo {
 

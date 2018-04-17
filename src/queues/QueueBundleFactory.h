@@ -5,7 +5,7 @@
 
 #include <workflow/Connection.h>
 #include <workflow/Step.h>
-#include "queues/IQueueBundleFactory.h"
+#include "IQueueBundleFactory.h"
 #include "QueueFactory.h"
 
 

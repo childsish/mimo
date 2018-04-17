@@ -5,7 +5,7 @@
 
 #include <workflow/Step.h>
 #include "ISingleJobDepotFactory.h"
-#include "JobFactory.h"
+#include "../JobFactory.h"
 
 
 namespace mimo {

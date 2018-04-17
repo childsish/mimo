@@ -1,7 +1,7 @@
 #ifndef MIMO_RELEASE_H
 #define MIMO_RELEASE_H
 
-#include "Step.h"
+#include "mimo/Step.h"
 
 #include <deque>
 

@@ -5,8 +5,8 @@
 
 #include <workflow/Step.h>
 #include <workflow/Connection.h>
-#include "queues/QueueFactory.h"
-#include "queues/IQueueBundle.h"
+#include "QueueFactory.h"
+#include "IQueueBundle.h"
 
 
 namespace mimo {

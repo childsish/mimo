@@ -8,7 +8,7 @@
 
 #include <gmock/gmock.h>
 
-#include "Step.h"
+#include "mimo/Step.h"
 
 
 namespace mimo {

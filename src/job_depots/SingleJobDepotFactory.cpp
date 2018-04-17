@@ -1,6 +1,6 @@
-#include "job_depots/AsynchronousJobDepot.h"
-#include "job_depots/SynchronousJobDepot.h"
-#include "job_depots/SingleJobDepotFactory.h"
+#include "AsynchronousJobDepot.h"
+#include "SynchronousJobDepot.h"
+#include "SingleJobDepotFactory.h"
 
 
 mimo::SingleJobDepotFactory::SingleJobDepotFactory(

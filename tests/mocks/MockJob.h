@@ -2,7 +2,7 @@
 #define MIMO_MOCKJOB_H
 
 #include <gmock/gmock.h>
-#include "IJob.h"
+#include "../../src/IJob.h"
 
 
 namespace mimo {

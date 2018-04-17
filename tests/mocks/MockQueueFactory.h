@@ -4,7 +4,7 @@
 #define MIMO_MOCKQUEUEFACTORY_H
 
 #include <gmock/gmock.h>
-#include "queues/QueueFactory.h"
+#include "../../src/queues/QueueFactory.h"
 
 namespace mimo {
 

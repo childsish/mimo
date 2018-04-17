@@ -1,7 +1,7 @@
 #ifndef MIMO_SINK_H
 #define MIMO_SINK_H
 
-#include "Step.h"
+#include "mimo/Step.h"
 
 
 class Sink : public Step {

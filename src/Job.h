@@ -5,7 +5,7 @@
 
 #include <memory>
 #include <workflow/Step.h>
-#include <queues/QueueBundleFactory.h>
+#include "queues/QueueBundleFactory.h"
 #include "IJob.h"
 
 

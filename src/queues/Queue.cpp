@@ -2,10 +2,10 @@
  * @author Liam Childs (liam.h.childs@gmail.com)
  * A queue for storing entities between steps.
  */
-#include "queues/Queue.h"
+#include "Queue.h"
 
 #include <iostream>
-#include "errors.h"
+#include "../errors.h"
 
 
 unsigned int mimo::Queue::CAPACITY = 100;

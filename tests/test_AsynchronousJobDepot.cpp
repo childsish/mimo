@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 #include <workflow/Workflow.h>
-#include <job_depots/AsynchronousJobDepot.h>
+#include "../src/job_depots/AsynchronousJobDepot.h"
 #include "mocks/MockJob.h"
 #include "mocks/MockJobFactory.h"
 #include "mocks/MockStep.h"
-#include "queues/Inputs.h"
-#include "queues/Outputs.h"
+#include "mimo/Inputs.h"
+#include "mimo/Outputs.h"
 
 
 using ::testing::Return;
