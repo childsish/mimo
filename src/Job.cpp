@@ -3,6 +3,8 @@
 #include "Job.h"
 #include "queues/IQueue.h"
 #include "queues/IQueueBundle.h"
+#include "mimo/Inputs.h"
+#include "mimo/Outputs.h"
 
 
 unsigned int NEXT_JOB_ID = 0;

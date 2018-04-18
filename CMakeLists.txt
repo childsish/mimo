@@ -45,6 +45,7 @@ add_library(mimo
     src/queues/QueueFactory.cpp src/queues/QueueFactory.h
 )
 target_include_directories(mimo PRIVATE
+    src
     include)
 target_link_libraries(mimo
     workflow)

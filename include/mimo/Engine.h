@@ -5,26 +5,33 @@
 
 #include <unordered_map>
 #include <workflow/Workflow.h>
+#include "../src/JobFactory.h"
 
 
 namespace mimo {
 
+    class IMultiJobDepotFactory;
     class Step;
 
     class Engine {
     public:
 
-        template<typename T, typename P>
-        void register_step<T>(std::shared_ptr<workflow::Step> identifier, P&&... args);
+        explicit Engine(
+            unsigned int capacity = 10,
+            std::shared_ptr<IJobFactory> factory = std::make_shared<JobFactory>()
+        );
 
-        void run(const workflow::Workflow &workflow);
+        explicit Engine(std::shared_ptr<IMultiJobDepotFactory> factory);
+
+        void register_step(const std::shared_ptr<workflow::Step> &identifier, std::shared_ptr<Step> step);
+
+        void run(std::shared_ptr<workflow::Workflow> workflow);
 
     private:
 
-        std::unordered_map<unsigned int, std::unique_ptr<Step> (*)()> constructors;
+        std::shared_ptr<IMultiJobDepotFactory> factory;
 
     };
 }
-
 
 #endif //MIMO_ENGINE_H
