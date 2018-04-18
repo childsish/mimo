@@ -5,7 +5,7 @@
 
 #include <workflow/Step.h>
 #include "ISingleJobDepotFactory.h"
-#include "../JobFactory.h"
+#include "JobFactory.h"
 
 
 namespace mimo {
@@ -22,7 +22,7 @@ namespace mimo {
 
         void register_step(
             const std::shared_ptr<workflow::Step> &identifier,
-            StepConstructor step_constructor
+            std::shared_ptr<Step> step_constructor
         ) override;
 
         std::unique_ptr<IJobDepot> make_depot(
@@ -33,7 +33,7 @@ namespace mimo {
 
         unsigned int capacity;
         std::shared_ptr<IJobFactory> job_factory;
-        std::unordered_map<std::shared_ptr<workflow::Step>, StepConstructor> steps;
+        std::unordered_map<std::shared_ptr<workflow::Step>, std::shared_ptr<Step>> steps;
 
     };
 }

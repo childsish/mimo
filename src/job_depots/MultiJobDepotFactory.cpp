@@ -9,9 +9,9 @@ mimo::MultiJobDepotFactory::~MultiJobDepotFactory() {}
 
 void mimo::MultiJobDepotFactory::register_step(
     const std::shared_ptr<workflow::Step> &identifier,
-    StepConstructor step_constructor
+    std::shared_ptr<Step> step
 ) {
-    this->factory->register_step(identifier, step_constructor);
+    this->factory->register_step(identifier, step);
 }
 
 std::unique_ptr<mimo::IJobDepot>

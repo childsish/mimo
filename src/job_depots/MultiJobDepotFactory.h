@@ -20,7 +20,7 @@ namespace mimo {
 
         void register_step(
             const std::shared_ptr<workflow::Step> &identifier,
-            StepConstructor step_constructor
+            std::shared_ptr<Step> step
         ) override;
 
         std::unique_ptr<IJobDepot> make_depot(

@@ -10,7 +10,6 @@ namespace mimo {
 
     class IJobDepot;
     class Step;
-    using StepConstructor = std::function<std::shared_ptr<Step>()>;
 
     class IMultiJobDepotFactory {
     public:
@@ -19,7 +18,7 @@ namespace mimo {
 
         virtual void register_step(
             const std::shared_ptr<workflow::Step> &identifier,
-            StepConstructor step_constructor
+            std::shared_ptr<Step> step
         ) = 0;
 
         virtual std::unique_ptr<IJobDepot> make_depot(
