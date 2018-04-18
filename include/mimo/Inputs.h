@@ -5,12 +5,9 @@
 
 #include <memory>
 #include <string>
-#include "../../src/queues/IQueueBundle.h"
+#include <workflow/Input.h>
+#include "../src/queues/IQueueBundle.h"
 
-
-namespace workflow {
-    class Input;
-}
 
 namespace mimo {
 
