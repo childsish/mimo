@@ -9,18 +9,26 @@ class Range : public mimo::Step {
 public:
 
     Range(int to) :
-            _from(0),
-            _to(to),
-            _step(1)
+        name("Range"),
+        inputs({}),
+        outputs({"output"}),
+        from(0),
+        to(to),
+        step(1)
     {
         if (to < 0) {
             throw std::runtime_error("Parameter to must be positive.");
         }
     }
+
     Range(int from, int to, int step = 1) :
-            _from(from),
-            _to(to),
-            _step(step) {
+        name("Range"),
+        inputs({}),
+        outputs({"output"}),
+        from(from),
+        to(to),
+        step(step)
+    {
         if (step == 0) {
             throw std::runtime_error("Parameter step must be non-zero.");
         }
@@ -29,10 +37,23 @@ public:
         }
     }
 
+    const std::string &get_name() const override {
+        return this->name;
+    }
+
+    const std::vector<std::string> &get_inputs() const override {
+        return this->inputs;
+    }
+
+    const std::vector<std::string> &get_outputs() const override {
+        return this->outputs;
+    }
+
     bool run(mimo::Inputs &ins, mimo::Outputs &outs) {
-        while (outs["output"].push(std::static_pointer_cast<mimo::Entity>(std::make_shared<Integer>(_from)))) {
-            _from += _step;
-            if (_step > 0 && _from >= _to || _step < 0 && _from < _to) {
+        while (outs.get_status() == mimo::Outputs::PushStatus::CAN_PUSH) {
+            outs.push("output", std::make_shared<Integer>(this->from));
+            this->from += this->step;
+            if (this->step > 0 && this->from >= this->to || this->step < 0 && this->from < this->to) {
                 return true;
             }
         }
@@ -41,9 +62,13 @@ public:
 
 private:
 
-    int _from;
-    int _to;
-    int _step;
+    std::string name;
+    std::vector<std::string> inputs;
+    std::vector<std::string> outputs;
+
+    int from;
+    int to;
+    int step;
 
 };
 
