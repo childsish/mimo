@@ -17,8 +17,10 @@ namespace mimo {
 
         virtual ~IJobDepot() = default;
 
-        virtual void add_entity(const std::shared_ptr<workflow::Input> &input,
-                                std::shared_ptr<Entity> entity) = 0;
+        virtual void add_entity(
+            const std::shared_ptr<workflow::Input> &input,
+            std::shared_ptr<Entity> entity
+        ) = 0;
 
         virtual bool has_runnable_job() const = 0;
 

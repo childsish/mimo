@@ -23,7 +23,7 @@ namespace mimo {
             std::shared_ptr<Step> step
         ) override;
 
-        std::unique_ptr<IJobDepot> make_depot(
+        std::unique_ptr<IMultiJobDepot> make_depot(
             std::shared_ptr<workflow::Workflow> workflow
         ) const override;
 

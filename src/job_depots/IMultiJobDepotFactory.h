@@ -8,7 +8,7 @@
 
 namespace mimo {
 
-    class IJobDepot;
+    class IMultiJobDepot;
     class Step;
 
     class IMultiJobDepotFactory {
@@ -21,7 +21,7 @@ namespace mimo {
             std::shared_ptr<Step> step
         ) = 0;
 
-        virtual std::unique_ptr<IJobDepot> make_depot(
+        virtual std::unique_ptr<IMultiJobDepot> make_depot(
             std::shared_ptr<workflow::Workflow> workflow
         ) const = 0;
 

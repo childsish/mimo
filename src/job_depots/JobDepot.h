@@ -5,24 +5,30 @@
 
 #include <queue>
 #include <workflow/Workflow.h>
-#include "IJobDepot.h"
+#include "IMultiJobDepot.h"
 #include "SingleJobDepotFactory.h"
 
 
 namespace mimo {
 
     /** @brief: Manages the jobs being run by the system. Prevents too many jobs from being run. */
-    class JobDepot : public IJobDepot {
+    class JobDepot : public IMultiJobDepot {
     public:
 
-        explicit JobDepot(std::shared_ptr<workflow::Workflow> workflow_,
-                            std::shared_ptr<ISingleJobDepotFactory> factory = std::make_shared<SingleJobDepotFactory>(5));
+        explicit JobDepot(
+            std::shared_ptr<workflow::Workflow> workflow_,
+            std::shared_ptr<ISingleJobDepotFactory> factory = std::make_shared<SingleJobDepotFactory>(5)
+        );
 
-        void add_entity(const std::shared_ptr<workflow::Input> &input,
-                        std::shared_ptr<Entity> entity) override;
+        void add_entity(
+            const std::shared_ptr<workflow::Input> &input,
+            std::shared_ptr<Entity> entity
+        ) override;
 
-        void add_entity(const std::shared_ptr<workflow::Output> &identifier,
-                        std::shared_ptr<Entity> entity);
+        void add_entity(
+            const std::shared_ptr<workflow::Output> &identifier,
+            std::shared_ptr<Entity> entity
+        ) override;
 
         bool has_runnable_job() const override;
 
