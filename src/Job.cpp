@@ -39,8 +39,15 @@ std::shared_ptr<mimo::IQueueBundle> &mimo::Job::get_outputs() {
 }
 
 bool mimo::Job::can_run() const {
-    return this->inputs->get_pop_status() == IQueueBundle::PopStatus::CAN_POP
-           && this->outputs->get_push_status() == IQueueBundle::PushStatus::CAN_PUSH;
+    auto pop_status = this->inputs->get_pop_status();
+    auto push_status = this->outputs->get_push_status();
+    return !this->completed && (
+         pop_status == IQueueBundle::PopStatus::NO_QUEUE ||
+         pop_status == IQueueBundle::PopStatus::CAN_POP
+    ) && (
+         push_status == IQueueBundle::PushStatus::NO_QUEUE ||
+         push_status == IQueueBundle::PushStatus::CAN_PUSH
+    );
 }
 
 void mimo::Job::run() {

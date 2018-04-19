@@ -15,8 +15,10 @@ mimo::AsynchronousJobDepot::AsynchronousJobDepot(
     identifier(identifier),
     step(step) {}
 
-void mimo::AsynchronousJobDepot::add_entity(const std::shared_ptr<workflow::Input> &input,
-                                              std::shared_ptr<mimo::Entity> entity) {
+void mimo::AsynchronousJobDepot::add_entity(
+    const std::shared_ptr<workflow::Input> &input,
+    std::shared_ptr<mimo::Entity> entity)
+{
     this->job->get_inputs()->push(input->name, entity);
 }
 

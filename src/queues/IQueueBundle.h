@@ -14,12 +14,14 @@ namespace mimo {
     public:
 
         enum class PushStatus {
+            NO_QUEUE,
             CAN_PUSH,
             QUEUE_FULL,
             SYNC_QUEUE_FULL
         };
 
         enum class PopStatus {
+            NO_QUEUE,
             CAN_POP,
             QUEUE_EMPTY,
             SYNC_QUEUE_EMPTY

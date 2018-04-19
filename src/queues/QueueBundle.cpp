@@ -26,6 +26,9 @@ mimo::QueueBundle::QueueBundle(
 }
 
 mimo::IQueueBundle::PushStatus mimo::QueueBundle::get_push_status() const {
+    if (this->queues.empty()) {
+        return PushStatus::NO_QUEUE;
+    }
     auto group_can_push = this->get_group_status();
     if (std::any_of(group_can_push.begin(), group_can_push.end(),
         [](const std::pair<unsigned int, bool> item){ return item.second; })
@@ -58,6 +61,9 @@ void mimo::QueueBundle::push(const std::string &name, std::shared_ptr<mimo::Enti
 }
 
 mimo::IQueueBundle::PopStatus mimo::QueueBundle::get_pop_status() const {
+    if (this->queues.empty()) {
+        return PopStatus::NO_QUEUE;
+    }
     auto groups = this->get_group_status();
     if (std::any_of(
         groups.begin(),
