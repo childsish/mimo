@@ -15,11 +15,16 @@ mimo::JobDepot::JobDepot(
 {
     for (const auto &step : workflow_->get_steps()) {
         this->jobs.emplace(step.second, std::move(factory->make_depot(step.second)));
+        if (step.second->get_inputs().empty()) {
+            this->runnable_jobs.push(step.second);
+        }
     }
 }
 
-void mimo::JobDepot::add_entity(const std::shared_ptr<workflow::Input> &input,
-                                  std::shared_ptr<mimo::Entity> entity) {
+void mimo::JobDepot::add_entity(
+    const std::shared_ptr<workflow::Input> &input,
+    std::shared_ptr<mimo::Entity> entity)
+{
     auto &step = this->workflow_->get_connected_step(input);
     this->jobs[step]->add_entity(input, entity);
     if (this->jobs[step]->has_runnable_job()) {
@@ -27,8 +32,10 @@ void mimo::JobDepot::add_entity(const std::shared_ptr<workflow::Input> &input,
     }
 }
 
-void mimo::JobDepot::add_entity(const std::shared_ptr<workflow::Output> &identifier,
-                                  std::shared_ptr<mimo::Entity> entity) {
+void mimo::JobDepot::add_entity(
+    const std::shared_ptr<workflow::Output> &identifier,
+    std::shared_ptr<mimo::Entity> entity)
+{
     for (const auto &input : this->workflow_->get_connected_inputs(identifier)) {
         this->add_entity(input, entity);
     }

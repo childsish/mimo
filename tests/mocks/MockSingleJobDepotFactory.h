@@ -15,11 +15,11 @@ namespace mimo {
         std::unique_ptr<IJobDepot> make_depot(
             const std::shared_ptr<workflow::Step> &identifier
         ) const override {
-            return std::unique_ptr<IJobDepot>(this->make_manager_proxy(identifier));
+            return std::unique_ptr<IJobDepot>(this->make_depot_proxy(identifier));
         }
 
-        MOCK_METHOD2(register_step, void(const std::shared_ptr<workflow::Step> &, StepConstructor));
-        MOCK_CONST_METHOD1(make_manager_proxy, IJobDepot*(const std::shared_ptr<workflow::Step> &identifier));
+        MOCK_METHOD2(register_step, void(const std::shared_ptr<workflow::Step> &, std::shared_ptr<Step>));
+        MOCK_CONST_METHOD1(make_depot_proxy, IJobDepot*(const std::shared_ptr<workflow::Step> &identifier));
     };
 }
 

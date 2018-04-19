@@ -14,6 +14,9 @@
 namespace mimo {
     class MockStep : public mimo::Step {
     public:
+        MOCK_CONST_METHOD0(get_name, const std::string &());
+        MOCK_CONST_METHOD0(get_inputs, const std::vector<std::string> &());
+        MOCK_CONST_METHOD0(get_outputs, const std::vector<std::string> &());
         MOCK_METHOD2(run, bool(mimo::Inputs&, mimo::Outputs&));
     };
 }
