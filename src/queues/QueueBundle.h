@@ -59,7 +59,9 @@ namespace mimo {
         ConnectionMap identifiers;
         QueueMap queues;
 
-        std::unordered_map<unsigned int, bool> get_group_status() const;
+        std::unordered_map<unsigned int, bool> get_group_push_status() const;
+
+        std::unordered_map<unsigned int, bool> get_group_pop_status() const;
 
     };
 }

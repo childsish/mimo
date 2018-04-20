@@ -1,7 +1,9 @@
+#include <workflow/Output.h>
 #include "mimo/Engine.h"
 #include "IJob.h"
-#include "job_depots/IJobDepot.h"
+#include "job_depots/IMultiJobDepot.h"
 #include "job_depots/MultiJobDepotFactory.h"
+#include "queues/QueueBundle.h"
 
 #include <iostream>
 
@@ -17,12 +19,16 @@ void mimo::Engine::register_step(const std::shared_ptr<workflow::Step> &identifi
 }
 
 void mimo::Engine::run(std::shared_ptr<workflow::Workflow> workflow) {
-    auto depot = this->factory->make_depot(std::move(workflow));
+    auto depot = this->factory->make_depot(workflow);
     while (depot->has_runnable_job()) {
         auto job = depot->get_runnable_job();
         while (job->can_run()) {
             job->run();
-            job->get_outputs();
+            auto outputs = workflow->get_connected_outputs(job->get_step_id());
+            for (auto &output : outputs) {
+                auto bundle = job->get_outputs();
+                depot->add_entity(output, bundle->pop(output->name));
+            }
         }
         depot->return_complete_job(job);
     }

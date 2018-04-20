@@ -9,6 +9,54 @@
 
 using ::testing::Return;
 
+TEST(QueueBundleTest, no_queues) {
+    workflow::Workflow workflow;
+    auto step = workflow.add_step("step", {}, {});
+    auto inputs = step->get_inputs();
+    auto factory = std::make_shared<mimo::MockQueueFactory>();
+
+    EXPECT_CALL(*factory, make_raw())
+        .Times(0);
+
+    mimo::QueueBundle bundle(inputs, factory);
+    EXPECT_EQ(bundle.get_push_status(), mimo::QueueBundle::PushStatus::NO_QUEUE);
+    EXPECT_EQ(bundle.get_push_status(""), mimo::QueueBundle::PushStatus::NO_QUEUE);
+    EXPECT_THROW(bundle.push("", std::make_shared<mimo::Entity>()), std::out_of_range);
+    EXPECT_EQ(bundle.get_pop_status(), mimo::QueueBundle::PopStatus::NO_QUEUE);
+    EXPECT_THROW(bundle.get_pop_status(""), std::out_of_range);
+    EXPECT_THROW(bundle.peek(""), std::out_of_range);
+    EXPECT_THROW(bundle.pop(""), std::out_of_range);
+}
+
+TEST(QueueBundleTest, one_empty_queue) {
+    workflow::Workflow workflow;
+    auto step = workflow.add_step("step", {"input"}, {});
+    auto inputs = step->get_inputs();
+    auto factory = std::make_shared<mimo::MockQueueFactory>();
+    auto *input = new mimo::MockQueue();
+    auto entity = std::make_shared<mimo::Entity>();
+
+    EXPECT_CALL(*factory, make_raw())
+        .WillOnce(Return(input));
+    EXPECT_CALL(*input, can_pop())
+        .WillRepeatedly(Return(false));
+    EXPECT_CALL(*input, can_push())
+        .WillRepeatedly(Return(true));
+    EXPECT_CALL(*input, push(entity))
+        .Times(1);
+
+    mimo::QueueBundle bundle(inputs, factory);
+    EXPECT_EQ(bundle.get_push_status(), mimo::QueueBundle::PushStatus::CAN_PUSH);
+    EXPECT_EQ(bundle.get_push_status(""), mimo::QueueBundle::PushStatus::NO_QUEUE);
+    EXPECT_EQ(bundle.get_push_status("input"), mimo::QueueBundle::PushStatus::CAN_PUSH);
+    bundle.push("input", entity);
+    EXPECT_EQ(bundle.get_pop_status(), mimo::QueueBundle::PopStatus::QUEUE_EMPTY);
+    EXPECT_THROW(bundle.get_pop_status(""), std::out_of_range);
+    EXPECT_THROW(bundle.get_pop_status("input"), std::out_of_range);
+    EXPECT_THROW(bundle.peek(""), std::out_of_range);
+    EXPECT_THROW(bundle.pop(""), std::out_of_range);
+}
+
 TEST(QueueBundleTest, test_get_status_two_empty_outputs) {
     workflow::Workflow workflow;
     auto step = workflow.add_step("step", {}, {"output1", "output2"});

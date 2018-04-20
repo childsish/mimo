@@ -11,7 +11,7 @@
 #include <unordered_set>
 #include <workflow/Workflow.h>
 #include "Job.h"
-#include "JobManager.h"
+#include "job_ports/JobDepot.h"
 #include "queues/QueueChannel.h"
 
 

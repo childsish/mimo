@@ -29,7 +29,7 @@ mimo::IQueueBundle::PushStatus mimo::QueueBundle::get_push_status() const {
     if (this->queues.empty()) {
         return PushStatus::NO_QUEUE;
     }
-    auto group_can_push = this->get_group_status();
+    auto group_can_push = this->get_group_push_status();
     if (std::any_of(group_can_push.begin(), group_can_push.end(),
         [](const std::pair<unsigned int, bool> item){ return item.second; })
     ) {
@@ -39,10 +39,13 @@ mimo::IQueueBundle::PushStatus mimo::QueueBundle::get_push_status() const {
 }
 
 mimo::IQueueBundle::PushStatus mimo::QueueBundle::get_push_status(const std::string &name) const {
-    if (!this->queues.at(name)->can_push()) {
+    if (this->queues.find(name) == this->queues.end()) {
+        return PushStatus::NO_QUEUE;
+    }
+    else if (!this->queues.at(name)->can_push()) {
         return PushStatus::QUEUE_FULL;
     }
-    auto group_status = this->get_group_status();
+    auto group_status = this->get_group_push_status();
     if (!group_status.at(this->identifiers.at(name)->sync_group)) {
         return PushStatus::SYNC_QUEUE_FULL;
     }
@@ -64,7 +67,7 @@ mimo::IQueueBundle::PopStatus mimo::QueueBundle::get_pop_status() const {
     if (this->queues.empty()) {
         return PopStatus::NO_QUEUE;
     }
-    auto groups = this->get_group_status();
+    auto groups = this->get_group_pop_status();
     if (std::any_of(
         groups.begin(),
         groups.end(),
@@ -76,10 +79,13 @@ mimo::IQueueBundle::PopStatus mimo::QueueBundle::get_pop_status() const {
 }
 
 mimo::IQueueBundle::PopStatus mimo::QueueBundle::get_pop_status(const std::string &name) const {
-    if (!this->queues.at(name)->can_pop()) {
+    if (this->queues.find(name) == this->queues.end()) {
+        return PopStatus::NO_QUEUE;
+    }
+    else if (!this->queues.at(name)->can_pop()) {
         return PopStatus::QUEUE_EMPTY;
     }
-    auto groups = this->get_group_status();
+    auto groups = this->get_group_pop_status();
     if (!groups.at(this->identifiers.at(name)->sync_group)) {
         return PopStatus ::SYNC_QUEUE_EMPTY;
     }
@@ -120,13 +126,24 @@ bool mimo::QueueBundle::is_closed() const {
            );
 }
 
-std::unordered_map<unsigned int, bool> mimo::QueueBundle::get_group_status() const {
+std::unordered_map<unsigned int, bool> mimo::QueueBundle::get_group_push_status() const {
     std::unordered_map<unsigned int, bool> groups;
     for (const auto &item : this->identifiers) {
         if (groups.find(item.second->sync_group) == groups.end()) {
             groups[item.second->sync_group] = true;
         }
         groups[item.second->sync_group] &= this->queues.at(item.first)->can_push();
+    }
+    return groups;
+}
+
+std::unordered_map<unsigned int, bool> mimo::QueueBundle::get_group_pop_status() const {
+    std::unordered_map<unsigned int, bool> groups;
+    for (const auto &item : this->identifiers) {
+        if (groups.find(item.second->sync_group) == groups.end()) {
+            groups[item.second->sync_group] = true;
+        }
+        groups[item.second->sync_group] &= this->queues.at(item.first)->can_pop();
     }
     return groups;
 }
