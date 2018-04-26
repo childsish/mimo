@@ -53,8 +53,11 @@ mimo::IQueueBundle::PushStatus mimo::QueueBundle::get_push_status(const std::str
 }
 
 void mimo::QueueBundle::push(const std::string &name, std::shared_ptr<mimo::Entity> entity) {
-    PushStatus status = this->get_push_status();
-    if (status == PushStatus::QUEUE_FULL) {
+    PushStatus status = this->get_push_status(name);
+    if (status == PushStatus::NO_QUEUE) {
+        throw mimo::QueueError("Invalid queue name " + name + ".");
+    }
+    else if (status == PushStatus::QUEUE_FULL) {
         throw mimo::QueueError("Can not push. " + name + " is full.");
     }
     else if (status == PushStatus::SYNC_QUEUE_FULL) {
@@ -93,8 +96,11 @@ mimo::IQueueBundle::PopStatus mimo::QueueBundle::get_pop_status(const std::strin
 }
 
 std::shared_ptr<mimo::Entity> mimo::QueueBundle::peek(const std::string &name) {
-    PopStatus status = this->get_pop_status();
-    if (status == PopStatus::QUEUE_EMPTY) {
+    PopStatus status = this->get_pop_status(name);
+    if (status == PopStatus::NO_QUEUE) {
+        throw mimo::QueueError("Invalid queue name " + name + ".");
+    }
+    else if (status == PopStatus::QUEUE_EMPTY) {
         throw mimo::QueueError("Can not peek. " + name + " is empty.");
     }
     else if (status == PopStatus::SYNC_QUEUE_EMPTY) {
@@ -104,8 +110,11 @@ std::shared_ptr<mimo::Entity> mimo::QueueBundle::peek(const std::string &name) {
 }
 
 std::shared_ptr<mimo::Entity> mimo::QueueBundle::pop(const std::string &name) {
-    PopStatus status = this->get_pop_status();
-    if (status == PopStatus::QUEUE_EMPTY) {
+    PopStatus status = this->get_pop_status(name);
+    if (status == PopStatus::NO_QUEUE) {
+        throw mimo::QueueError("Invalid queue name " + name + ".");
+    }
+    else if (status == PopStatus::QUEUE_EMPTY) {
         throw mimo::QueueError("Can not pop. " + name + " is empty.");
     }
     else if (status == PopStatus::SYNC_QUEUE_EMPTY) {
