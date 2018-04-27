@@ -49,11 +49,6 @@ namespace mimo {
         std::shared_ptr<Entity> pop(const std::string &name) override;
         /**@}*/
 
-        /** @brief Close all queues. */
-        void close() override;
-        /** @brief Get whether all queues are closed. */
-        bool is_closed() const override;
-
     private:
 
         ConnectionMap identifiers;

@@ -48,7 +48,7 @@ TEST(AsynchronousJobManagerTest, test_only_one_job_allowed) {
     EXPECT_TRUE(manager.has_runnable_job());
     auto job = manager.get_runnable_job();
     EXPECT_FALSE(manager.has_runnable_job());
-    manager.return_complete_job(job);
+    manager.return_job(job);
     EXPECT_TRUE(manager.has_runnable_job());
 }
 
@@ -73,8 +73,8 @@ TEST(AsynchronousJobManagerTest, test_return_wrong_job) {
     auto wrong_identifier = workflow.add_step("step2", {}, {});
     EXPECT_CALL(*wrong_job, get_step_id())
         .WillRepeatedly(Return(wrong_identifier));
-    EXPECT_THROW(manager.return_complete_job(wrong_job), std::runtime_error);
+    EXPECT_THROW(manager.return_job(wrong_job), std::runtime_error);
 
     auto job = manager.get_runnable_job();
-    EXPECT_THROW(manager.return_complete_job(wrong_job), std::runtime_error);
+    EXPECT_THROW(manager.return_job(wrong_job), std::runtime_error);
 }

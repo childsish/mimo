@@ -123,18 +123,6 @@ std::shared_ptr<mimo::Entity> mimo::QueueBundle::pop(const std::string &name) {
     return this->queues.at(name)->pop();
 }
 
-void mimo::QueueBundle::close() {
-    for (auto &&item : this->queues) {
-        item.second->close();
-    }
-}
-
-bool mimo::QueueBundle::is_closed() const {
-    return std::all_of( this->queues.begin(), this->queues.end(),
-               [](const auto &item){ return item.second->is_closed(); }
-           );
-}
-
 std::unordered_map<unsigned int, bool> mimo::QueueBundle::get_group_push_status() const {
     std::unordered_map<unsigned int, bool> groups;
     for (const auto &item : this->identifiers) {

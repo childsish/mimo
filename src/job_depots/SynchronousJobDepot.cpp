@@ -42,7 +42,7 @@ std::shared_ptr<mimo::IJob> mimo::SynchronousJobDepot::get_runnable_job() {
     return old_job;
 }
 
-void mimo::SynchronousJobDepot::return_complete_job(std::shared_ptr<mimo::IJob> job) {
+void mimo::SynchronousJobDepot::return_job(std::shared_ptr<mimo::IJob> job) {
     if (job->get_step_id() != this->identifier) {
         throw std::runtime_error("Returned job does not belong to manager.");
     }

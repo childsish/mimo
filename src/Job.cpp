@@ -54,8 +54,4 @@ void mimo::Job::run() {
     Inputs inputs_(this->inputs);
     Outputs outputs_(this->outputs);
     this->completed = this->step->run(inputs_, outputs_);
-    //this->outputs->end_run();
-    if (this->completed && this->inputs->is_closed()) {
-        this->outputs->close();
-    }
 }

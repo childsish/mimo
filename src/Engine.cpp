@@ -23,13 +23,13 @@ void mimo::Engine::run(std::shared_ptr<workflow::Workflow> workflow) {
     while (depot->has_runnable_job()) {
         auto job = depot->get_runnable_job();
         job->run();
-        auto output_ids = workflow->get_connected_outputs(job->get_step_id());
+        auto &output_ids = workflow->get_connected_outputs(job->get_step_id());
         for (auto &output_id : output_ids) {
-            auto outputs = job->get_outputs();
+            auto &outputs = job->get_outputs();
             while (outputs->get_pop_status() == IQueueBundle::PopStatus::CAN_POP) {
                 depot->add_entity(output_id, outputs->pop(output_id->name));
             }
         }
-        depot->return_complete_job(job);
+        depot->return_job(job);
     }
 }

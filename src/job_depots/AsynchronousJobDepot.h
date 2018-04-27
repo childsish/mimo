@@ -26,7 +26,7 @@ namespace mimo {
 
         std::shared_ptr<IJob> get_runnable_job() override;
 
-        void return_complete_job(std::shared_ptr<IJob> job) override;
+        void return_job(std::shared_ptr<IJob> job) override;
 
     private:
 

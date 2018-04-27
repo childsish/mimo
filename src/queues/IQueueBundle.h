@@ -50,11 +50,6 @@ namespace mimo {
         /** @brief Pop and return the first item of the named queue. */
         virtual std::shared_ptr<Entity> pop(const std::string &name) = 0;
         /**@}*/
-
-        /** @brief Close all queues. */
-        virtual void close() = 0;
-        /** @brief Get whether all queues are closed. */
-        virtual bool is_closed() const = 0;
     };
 }
 

@@ -34,7 +34,7 @@ namespace mimo {
 
         std::shared_ptr<IJob> get_runnable_job() override;
 
-        void return_complete_job(std::shared_ptr<IJob> job) override;
+        void return_job(std::shared_ptr<IJob> job) override;
 
     private:
 
@@ -43,6 +43,7 @@ namespace mimo {
         std::unordered_map<std::shared_ptr<workflow::Step>, std::unique_ptr<IJobDepot>> jobs;
 
         std::queue<std::shared_ptr<workflow::Step>> runnable_jobs;
+        std::unordered_set<std::shared_ptr<workflow::Step>> queued_runnable_jobs;
 
     };
 }

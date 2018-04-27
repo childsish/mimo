@@ -27,8 +27,12 @@ void mimo::JobDepot::add_entity(
 {
     auto &step = this->workflow_->get_connected_step(input);
     this->jobs[step]->add_entity(input, entity);
-    if (this->jobs[step]->has_runnable_job()) {
+    if (
+        this->jobs[step]->has_runnable_job() &&
+        this->queued_runnable_jobs.find(step) == this->queued_runnable_jobs.end())
+    {
         this->runnable_jobs.push(step);
+        this->queued_runnable_jobs.insert(step);
     }
 }
 
@@ -54,6 +58,6 @@ std::shared_ptr<mimo::IJob> mimo::JobDepot::get_runnable_job() {
     return this->jobs[step]->get_runnable_job();
 }
 
-void mimo::JobDepot::return_complete_job(std::shared_ptr<mimo::IJob> job) {
-    this->jobs[job->get_step_id()]->return_complete_job(job);
+void mimo::JobDepot::return_job(std::shared_ptr<mimo::IJob> job) {
+    this->jobs[job->get_step_id()]->return_job(job);
 }

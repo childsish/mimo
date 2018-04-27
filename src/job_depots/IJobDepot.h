@@ -26,7 +26,7 @@ namespace mimo {
 
         virtual std::shared_ptr<IJob> get_runnable_job() = 0;
 
-        virtual void return_complete_job(std::shared_ptr<IJob> job) = 0;
+        virtual void return_job(std::shared_ptr<IJob> job) = 0;
 
     };
 }
