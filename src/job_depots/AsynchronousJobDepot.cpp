@@ -1,3 +1,4 @@
+#include <sstream>
 #include <workflow/Input.h>
 #include "AsynchronousJobDepot.h"
 #include "../IJob.h"
@@ -28,7 +29,9 @@ bool mimo::AsynchronousJobDepot::has_runnable_job() const {
 
 std::shared_ptr<mimo::IJob> mimo::AsynchronousJobDepot::get_runnable_job() {
     if (!this->has_runnable_job()) {
-        throw std::runtime_error("Job is not available.");
+        std::stringstream message;
+        message << this->identifier->name << " is not available.";
+        throw std::runtime_error(message.str());
     }
     this->available = false;
     return this->job;
