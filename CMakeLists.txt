@@ -29,6 +29,7 @@ add_library(mimo
     src/queues/IQueue.h
     src/queues/IQueueBundle.h
     src/job_depots/IJobDepot.h
+    src/job_depots/IMultiJobDepot.h
     src/job_depots/IMultiJobDepotFactory.h
     src/job_depots/ISingleJobDepotFactory.h
     src/job_depots/AsynchronousJobDepot.cpp src/job_depots/AsynchronousJobDepot.h

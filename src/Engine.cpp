@@ -22,12 +22,12 @@ void mimo::Engine::run(std::shared_ptr<workflow::Workflow> workflow) {
     auto depot = this->factory->make_depot(workflow);
     while (depot->has_runnable_job()) {
         auto job = depot->get_runnable_job();
-        while (job->can_run()) {
-            job->run();
-            auto outputs = workflow->get_connected_outputs(job->get_step_id());
-            for (auto &output : outputs) {
-                auto bundle = job->get_outputs();
-                depot->add_entity(output, bundle->pop(output->name));
+        job->run();
+        auto output_ids = workflow->get_connected_outputs(job->get_step_id());
+        for (auto &output_id : output_ids) {
+            auto outputs = job->get_outputs();
+            while (outputs->get_pop_status() == IQueueBundle::PopStatus::CAN_POP) {
+                depot->add_entity(output_id, outputs->pop(output_id->name));
             }
         }
         depot->return_complete_job(job);
