@@ -39,7 +39,10 @@ std::shared_ptr<mimo::IJob> mimo::AsynchronousJobDepot::get_runnable_job() {
 
 void mimo::AsynchronousJobDepot::return_job(std::shared_ptr<mimo::IJob> job) {
     if (job->get_step_id() != this->identifier) {
-        throw std::runtime_error("Returned job does not belong to manager.");
+        std::stringstream message;
+        message << "Can not return a " << job->get_step_id()->name << " to a "
+                << this->identifier->name << " depot.";
+        throw std::runtime_error(message.str());
     }
-    this->available = true;
+    this->available = !job->is_complete();
 }

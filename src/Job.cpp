@@ -30,11 +30,11 @@ unsigned int mimo::Job::get_job_id() const {
     return this->job_id;
 }
 
-std::shared_ptr<mimo::IQueueBundle> &mimo::Job::get_inputs() {
+std::shared_ptr<mimo::IQueueBundle> mimo::Job::get_inputs() {
     return this->inputs;
 }
 
-std::shared_ptr<mimo::IQueueBundle> &mimo::Job::get_outputs() {
+std::shared_ptr<mimo::IQueueBundle> mimo::Job::get_outputs() {
     return this->outputs;
 }
 

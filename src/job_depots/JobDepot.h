@@ -45,6 +45,8 @@ namespace mimo {
         std::queue<std::shared_ptr<workflow::Step>> runnable_jobs;
         std::unordered_set<std::shared_ptr<workflow::Step>> queued_runnable_jobs;
 
+        void queue_job(const std::shared_ptr<workflow::Step> step_id);
+
     };
 }
 

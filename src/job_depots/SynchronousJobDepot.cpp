@@ -10,41 +10,57 @@ mimo::SynchronousJobDepot::SynchronousJobDepot(
     std::shared_ptr<mimo::Step> step,
     std::shared_ptr<mimo::IJobFactory> job_factory
 ) :
-    available(true),
+    active_jobs(0),
     capacity(capacity),
     identifier(identifier),
     step(std::move(step)),
     job_factory(std::move(job_factory))
 {
-    auto job = this->job_factory->make_shared(this->identifier, this->step);
-    this->current_job = job->get_job_id();
-    this->jobs.emplace(this->current_job, job);
+    this->make_job();
 }
 
-void mimo::SynchronousJobDepot::add_entity(const std::shared_ptr<workflow::Input> &input,
-                                             std::shared_ptr<mimo::Entity> entity) {
-    this->jobs.at(this->current_job)->get_inputs()->push(input->name, entity);
+void mimo::SynchronousJobDepot::add_entity(
+    const std::shared_ptr<workflow::Input> &input,
+    std::shared_ptr<mimo::Entity> entity)
+{
+    this->jobs.back()->get_inputs()->push(input->name, entity);
 }
 
 bool mimo::SynchronousJobDepot::has_runnable_job() const {
-    return this->available && this->jobs.size() <= this->capacity && this->jobs.at(this->current_job)->can_run();
+    return this->jobs.front()->can_run() &&
+        this->active_jobs <= this->capacity;
 }
 
 std::shared_ptr<mimo::IJob> mimo::SynchronousJobDepot::get_runnable_job() {
     if (!this->has_runnable_job()) {
-        throw std::runtime_error("Job is not available.");
+        std::stringstream message;
+        message << this->identifier->name << " is not available.";
+        throw std::runtime_error(message.str());
     }
-    this->available = this->jobs.size() < this->capacity;
-    auto old_job = this->jobs.at(this->current_job);
-    auto new_job = this->job_factory->make_shared(this->identifier, this->step);
-    this->current_job = new_job->get_job_id();
-    this->jobs.emplace(this->current_job, new_job);
-    return old_job;
+    auto job = this->jobs.front();
+    this->jobs.pop_front();
+    if (this->jobs.empty()) {
+        this->make_job();
+    }
+    return job;
 }
 
 void mimo::SynchronousJobDepot::return_job(std::shared_ptr<mimo::IJob> job) {
     if (job->get_step_id() != this->identifier) {
-        throw std::runtime_error("Returned job does not belong to manager.");
+        std::stringstream message;
+        message << "Can not return a " << job->get_step_id()->name << " to a "
+                << this->identifier->name << " depot.";
+        throw std::runtime_error(message.str());
     }
-    this->jobs.erase(job->get_job_id());
+    if (job->is_complete()) {
+        this->active_jobs -= 1;
+    }
+    else {
+        this->jobs.push_front(job);
+    }
+}
+
+void mimo::SynchronousJobDepot::make_job() {
+    this->jobs.push_front(this->job_factory->make_shared(this->identifier, this->step));
+    this->active_jobs += 1;
 }

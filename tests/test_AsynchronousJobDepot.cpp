@@ -37,6 +37,8 @@ TEST(AsynchronousJobManagerTest, test_only_one_job_allowed) {
         .WillRepeatedly(Return(true));
     EXPECT_CALL(*job_proxy, get_step_id())
         .WillRepeatedly(Return(identifier));
+    EXPECT_CALL(*job_proxy, is_complete())
+        .WillRepeatedly(Return(false));
 
     auto factory = std::make_shared<mimo::MockJobFactory>();
     std::shared_ptr<mimo::Step> step = std::make_shared<mimo::MockStep>();

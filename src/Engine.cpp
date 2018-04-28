@@ -25,7 +25,7 @@ void mimo::Engine::run(std::shared_ptr<workflow::Workflow> workflow) {
         job->run();
         auto &output_ids = workflow->get_connected_outputs(job->get_step_id());
         for (auto &output_id : output_ids) {
-            auto &outputs = job->get_outputs();
+            auto outputs = job->get_outputs();
             while (outputs->get_pop_status() == IQueueBundle::PopStatus::CAN_POP) {
                 depot->add_entity(output_id, outputs->pop(output_id->name));
             }

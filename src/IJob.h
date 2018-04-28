@@ -26,10 +26,10 @@ namespace mimo {
         virtual unsigned int get_job_id() const = 0;
 
         /** @brief Gets the inputs for the job. */
-        virtual std::shared_ptr<IQueueBundle> &get_inputs() = 0;
+        virtual std::shared_ptr<IQueueBundle> get_inputs() = 0;
 
         /** @brief Gets the outputs for the job. */
-        virtual std::shared_ptr<IQueueBundle> &get_outputs() = 0;
+        virtual std::shared_ptr<IQueueBundle> get_outputs() = 0;
 
         /** @brief Check if the job can be run. */
         virtual bool can_run() const = 0;

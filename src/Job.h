@@ -26,9 +26,9 @@ namespace mimo {
 
         unsigned int get_job_id() const override;
 
-        std::shared_ptr<IQueueBundle> &get_inputs() override;
+        std::shared_ptr<IQueueBundle> get_inputs() override;
 
-        std::shared_ptr<IQueueBundle> &get_outputs() override;
+        std::shared_ptr<IQueueBundle> get_outputs() override;
 
         bool can_run() const override;
 
