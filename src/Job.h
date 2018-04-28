@@ -34,6 +34,8 @@ namespace mimo {
 
         void run() override;
 
+        bool is_complete() const override;
+
     private:
 
         const std::shared_ptr<workflow::Step> step_id;

@@ -36,6 +36,9 @@ namespace mimo {
 
         /** @brief Runs the job. */
         virtual void run() = 0;
+
+        /** @brief True if job is complete. */
+        virtual bool is_complete() const = 0;
     };
 }
 

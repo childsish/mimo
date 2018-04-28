@@ -15,6 +15,7 @@ namespace mimo {
         MOCK_METHOD0(get_outputs, std::shared_ptr<IQueueBundle>&());
         MOCK_CONST_METHOD0(can_run, bool());
         MOCK_METHOD0(run, void());
+        MOCK_CONST_METHOD0(is_complete, bool());
     };
 }
 

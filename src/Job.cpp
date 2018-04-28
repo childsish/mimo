@@ -55,3 +55,7 @@ void mimo::Job::run() {
     Outputs outputs_(this->outputs);
     this->completed = this->step->run(inputs_, outputs_);
 }
+
+bool mimo::Job::is_complete() const {
+    return this->completed;
+}
