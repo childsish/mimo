@@ -29,6 +29,17 @@ namespace mimo {
 
         virtual ~IQueueBundle() = default;
 
+        /** @name Queue transfer functions */
+        /**@{*/
+        virtual void acquire_queue(
+            const std::shared_ptr<workflow::Connection> &connection_id,
+            std::unique_ptr<IQueue> queue
+        ) = 0;
+        virtual std::unique_ptr<IQueue> release_queue(
+            const std::shared_ptr<workflow::Connection> &connection_id
+        ) = 0;
+        /**@}*/
+
         /** @name Push functions */
         /**@{*/
         /** @brief Get whether all queues can be pushed. */

@@ -6,12 +6,10 @@
 #include "../errors.h"
 
 mimo::QueueBundle::QueueBundle(
-    const workflow::InputMap &identifiers,
-    std::shared_ptr<mimo::IQueueFactory> factory
+    const workflow::InputMap &identifiers
 ) {
     for (auto &&item : identifiers) {
         this->identifiers.emplace(item.first, item.second);
-        this->queues.emplace(item.first, factory->make_unique());
     }
 }
 
@@ -23,6 +21,19 @@ mimo::QueueBundle::QueueBundle(
         this->identifiers.emplace(item.first, item.second);
         this->queues.emplace(item.first, factory->make_unique());
     }
+}
+
+void mimo::QueueBundle::acquire_queue(
+    const std::shared_ptr<workflow::Connection> &connection_id,
+    std::unique_ptr<mimo::IQueue> queue
+) {
+    this->queues.emplace(connection_id->name, std::move(queue));
+}
+
+std::unique_ptr<mimo::IQueue> mimo::QueueBundle::release_queue(
+    const std::shared_ptr<workflow::Connection> &connection_id
+) {
+    return std::move(this->queues.at(connection_id->name));
 }
 
 mimo::IQueueBundle::PushStatus mimo::QueueBundle::get_push_status() const {

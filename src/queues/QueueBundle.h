@@ -18,14 +18,22 @@ namespace mimo {
     public:
 
         explicit QueueBundle(
-            const workflow::InputMap &identifiers,
-            std::shared_ptr<IQueueFactory> factory = std::make_shared<QueueFactory>()
+            const workflow::InputMap &identifiers
         );
 
         explicit QueueBundle(
             const workflow::OutputMap &identifiers,
             std::shared_ptr<IQueueFactory> factory = std::make_shared<QueueFactory>()
         );
+
+        void acquire_queue(
+            const std::shared_ptr<workflow::Connection> &connection_id,
+            std::unique_ptr<IQueue> queue
+        ) override;
+
+        std::unique_ptr<IQueue> release_queue(
+            const std::shared_ptr<workflow::Connection> &connection_id
+        ) override;
 
         /** @name Push functions */
         /**@{*/
