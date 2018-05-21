@@ -8,9 +8,17 @@ namespace mimo {
 
     class Entity;
 
+    class IQueueIterator {
+    public:
+        virtual bool operator!=(const IQueueIterator &that) = 0;
+        virtual IQueueIterator operator++() = 0;
+        virtual std::shared_ptr<Entity> operator*() = 0;
+    };
+
     /** @brief A FIFO queue for storing entities. */
     class IQueue {
     public:
+
         virtual ~IQueue() = default;
 
         /** @brief Get the first item from the queue but leave it as the first item. */
@@ -21,6 +29,9 @@ namespace mimo {
 
         /** @brief Add an item to the back of the queue. */
         virtual void push(std::shared_ptr<Entity> entity) = 0;
+
+        /** @brief Add many entities to the back of the queue. */
+        virtual void push(const IQueue &queue) = 0;
 
         /** @brief Return true if the queue has items that can be popped. */
         virtual bool can_pop() const = 0;
@@ -38,6 +49,9 @@ namespace mimo {
 
         /** @brief Return true if the queue has no more capacity. */
         virtual bool is_full() const = 0;
+
+        virtual const IQueueIterator begin() const = 0;
+        virtual const IQueueIterator end() const = 0;
     };
 }
 

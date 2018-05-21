@@ -5,8 +5,8 @@
 #ifndef MIMO_QUEUE_H
 #define MIMO_QUEUE_H
 
+#include <deque>
 #include <memory>
-#include <queue>
 #include "../Factory.h"
 #include "IQueue.h"
 
@@ -27,77 +27,47 @@ namespace mimo {
          */
         explicit Queue(unsigned int capacity = CAPACITY);
 
-        /**
-         * Get the next entity, but don't remove it from the queue.
-         * @return next entity
-         */
         std::shared_ptr<Entity> peek() override;
 
-        /**
-         * Get the next entity and remove it from the queue.
-         * @return next entity
-         */
         std::shared_ptr<Entity> pop() override;
 
-        /**
-         * Push an entity into the queue. Return true if there is still space for more.
-         * @param entity entity to push
-         * @return true if queue size is less than threshold
-         */
         void push(std::shared_ptr<Entity> entity) override;
+        void push(const IQueue &queue) override;
 
-        /**
-         * Check if queue can be popped from
-         * @return true if entities in queue
-         */
         bool can_pop() const override;
 
-        /**
-         * Check if queue can be pushed to
-         * @return true if fewer entities in queue than threshold
-         */
         bool can_push() const override;
 
-        /**
-         * @brief flag queue as end-of-task
-         * Indicate that this queue is the last to be produced in this task.
-         * Queue can no longer be pushed to and can only be popped until it's empty.
-         */
         void end_task();
         bool is_end_of_task() const;
 
-        /**
-         * @brief flag queue as end-of-stream
-         * Indicate that this queue is the last to be produced by this step.
-         * Queue can no longer be pushed to and can only be popped until it's empty.
-         */
         void close() override;
         bool is_closed() const override;
 
-        /**
-         * Check if the queue is empty
-         * @return true if the queue is empty
-         * @return
-         */
         bool is_empty() const override;
 
-        /**
-         * Check if the queue is full
-         * @return true if the queue is full
-         * @return
-         */
         bool is_full() const override;
+
+        const IQueueIterator begin() const override;
+        const IQueueIterator end() const override;
 
     private:
 
         unsigned int capacity;
-
-        std::queue<std::shared_ptr<Entity>> entities;
-
+        std::deque<std::shared_ptr<Entity>> entities;
         bool end_of_task;
-
         bool closed;
 
+    };
+
+    class QueueIterator : public IQueueIterator {
+    public:
+        explicit QueueIterator(std::deque::iterator iterator);
+        bool operator!=(const IQueueIterator &that) override;
+        IQueueIterator operator++() override;
+        std::shared_ptr<Entity> operator*() override;
+    private:
+        std::deque::iterator iterator;
     };
 }
 
