@@ -22,7 +22,7 @@ TEST(QueueTest, test_fifo) {
     EXPECT_EQ(integer->value, 1);
 }
 
-TEST(QueueTest, test_treshold) {
+TEST(QueueTest, test_threshold) {
     mimo::Queue queue(2);
 
     EXPECT_TRUE(queue.can_push());
@@ -33,7 +33,6 @@ TEST(QueueTest, test_treshold) {
     queue.push(std::make_shared<Integer>(0));
     EXPECT_FALSE(queue.can_push());
     EXPECT_TRUE(queue.can_pop());
-    EXPECT_THROW(queue.push(std::make_shared<Integer>(0)), mimo::QueueError);
     auto entity = queue.pop();
     EXPECT_TRUE(queue.can_push());
     EXPECT_TRUE(queue.can_pop());
@@ -46,4 +45,18 @@ TEST(QueueTest, test_empty) {
 
     EXPECT_THROW(queue.peek(), mimo::QueueError);
     EXPECT_THROW(queue.pop(), mimo::QueueError);
+}
+
+TEST(QueueTest, test_iterator) {
+    mimo::Queue queue(10);
+
+    for (int i = 0; i < 10; ++i) {
+        queue.push(std::make_shared<Integer>(i));
+    }
+
+    int i = 0;
+    for (const auto entity : queue) {
+        EXPECT_EQ(std::static_pointer_cast<Integer>(entity)->value, i);
+        i += 1;
+    }
 }

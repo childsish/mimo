@@ -1,7 +1,4 @@
-/**
- * @author Liam Childs (liam.h.childs@gmail.com)
- * A queue for storing entities between steps.
- */
+/** @author Liam Childs (liam.h.childs@gmail.com) */
 #ifndef MIMO_QUEUE_H
 #define MIMO_QUEUE_H
 
@@ -27,29 +24,21 @@ namespace mimo {
          */
         explicit Queue(unsigned int capacity = CAPACITY);
 
+        bool can_pop() const override;
         std::shared_ptr<Entity> peek() override;
-
         std::shared_ptr<Entity> pop() override;
 
+        bool can_push() const override;
         void push(std::shared_ptr<Entity> entity) override;
         void push(const IQueue &queue) override;
-
-        bool can_pop() const override;
-
-        bool can_push() const override;
-
-        void end_task();
-        bool is_end_of_task() const;
 
         void close() override;
         bool is_closed() const override;
 
-        bool is_empty() const override;
-
-        bool is_full() const override;
-
-        const IQueueIterator begin() const override;
-        const IQueueIterator end() const override;
+        IForwardIterator<std::shared_ptr<Entity>> begin() override;
+        IForwardIterator<std::shared_ptr<Entity>> begin() const override;
+        IForwardIterator<std::shared_ptr<Entity>> end() override;
+        IForwardIterator<std::shared_ptr<Entity>> end() const override;
 
     private:
 
@@ -58,16 +47,6 @@ namespace mimo {
         bool end_of_task;
         bool closed;
 
-    };
-
-    class QueueIterator : public IQueueIterator {
-    public:
-        explicit QueueIterator(std::deque::iterator iterator);
-        bool operator!=(const IQueueIterator &that) override;
-        IQueueIterator operator++() override;
-        std::shared_ptr<Entity> operator*() override;
-    private:
-        std::deque::iterator iterator;
     };
 }
 

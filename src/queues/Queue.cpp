@@ -1,7 +1,3 @@
-/**
- * @author Liam Childs (liam.h.childs@gmail.com)
- * A queue for storing entities between steps.
- */
 #include "Queue.h"
 
 #include <iostream>
@@ -14,6 +10,10 @@ mimo::Queue::Queue(unsigned int capacity) :
     capacity(capacity),
     end_of_task(false),
     closed(false) {}
+
+bool mimo::Queue::can_pop() const {
+    return !this->entities.empty();
+}
 
 std::shared_ptr<mimo::Entity> mimo::Queue::peek() {
     if (this->entities.empty()) {
@@ -33,35 +33,21 @@ std::shared_ptr<mimo::Entity> mimo::Queue::pop() {
     return entity;
 }
 
+bool mimo::Queue::can_push() const {
+    return !this->end_of_task && this->entities.size() < this->capacity;
+}
+
 void mimo::Queue::push(std::shared_ptr<mimo::Entity> entity) {
-    if (this->entities.size() >= this->capacity) {
-        throw QueueError("Queue is full.");
-    } else if (this->end_of_task) {
+    if (this->end_of_task) {
         throw QueueError("Can not push to a is_end_of_task queue.");
     }
     this->entities.push_back(entity);
 }
 
 void mimo::Queue::push(const mimo::IQueue &queue) {
-    for (const auto& entity : queue) {
+    for (const auto &entity : queue) {
         this->entities.push_back(entity);
     }
-}
-
-bool mimo::Queue::can_pop() const {
-    return !this->entities.empty();
-}
-
-bool mimo::Queue::can_push() const {
-    return !this->end_of_task && this->entities.size() < this->capacity;
-}
-
-void mimo::Queue::end_task() {
-    this->end_of_task = true;
-}
-
-bool mimo::Queue::is_end_of_task() const {
-    return this->end_of_task;
 }
 
 void mimo::Queue::close() {
@@ -72,33 +58,18 @@ bool mimo::Queue::is_closed() const {
     return this->closed;
 }
 
-bool mimo::Queue::is_empty() const {
-    return this->entities.empty();
+mimo::IForwardIterator<std::shared_ptr<mimo::Entity>> mimo::Queue::begin() {
+    return this->entities.begin();
 }
 
-bool mimo::Queue::is_full() const {
-    return this->entities.size() >= this->capacity;
+mimo::IForwardIterator<std::shared_ptr<mimo::Entity>> mimo::Queue::begin() const {
+    return this->entities.begin();
 }
 
-const mimo::IQueueIterator mimo::Queue::begin() const {
-    return QueueIterator(this->entities.begin());
+mimo::IForwardIterator<std::shared_ptr<mimo::Entity>> mimo::Queue::end() {
+    return this->entities.end();
 }
 
-const mimo::IQueueIterator mimo::Queue::end() const {
-    return QueueIterator(this->entities.end());
-}
-
-
-mimo::QueueIterator::QueueIterator(std::deque::iterator iterator) : iterator(iterator) {}
-
-bool mimo::QueueIterator::operator!=(const mimo::IQueueIterator &that) {
-    return this->iterator != static_cast<const QueueIterator &>(that).iterator;
-}
-
-std::shared_ptr<mimo::Entity> mimo::QueueIterator::operator*() {
-    return *this->iterator;
-}
-
-mimo::IQueueIterator mimo::QueueIterator::operator++() {
-    ++this->iterator;
+mimo::IForwardIterator<std::shared_ptr<mimo::Entity>> mimo::Queue::end() const {
+    return this->entities.end();
 }
