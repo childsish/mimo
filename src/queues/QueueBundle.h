@@ -12,54 +12,40 @@
 namespace mimo {
 
     using QueueMap = std::unordered_map<std::string, std::unique_ptr<IQueue>>;
-    using ConnectionMap = std::unordered_map<std::string, std::shared_ptr<workflow::Connection>>;
 
     class QueueBundle : public IQueueBundle {
     public:
 
         explicit QueueBundle(
-            const workflow::InputMap &identifiers
-        );
-
-        explicit QueueBundle(
-            const workflow::OutputMap &identifiers,
+            std::shared_ptr<ConnectionMap> identifiers,
             std::shared_ptr<IQueueFactory> factory = std::make_shared<QueueFactory>()
         );
 
+        const ConnectionMap &get_identifiers() const override;
+
+        std::unique_ptr<IQueue> release_queue(
+            const workflow::Connection &id
+        ) override;
+
         void acquire_queue(
-            const std::shared_ptr<workflow::Connection> &connection_id,
+            const workflow::Connection &id,
             std::unique_ptr<IQueue> queue
         ) override;
 
-        std::unique_ptr<IQueue> release_queue(
-            const std::shared_ptr<workflow::Connection> &connection_id
-        ) override;
-
-        /** @name Push functions */
-        /**@{*/
-        /** @brief Get whether all queues can be pushed. */
         PushStatus get_push_status() const override;
-        /** @brief Get whether a queue can be pushed or if it, or a synchronised queue, is full. */
         PushStatus get_push_status(const std::string &name) const override;
-        /** @brief Push an entity to the queue */
         void push(const std::string &name, std::shared_ptr<Entity> entity) override;
-        /**@}*/
+        void push(const std::string &name, const IQueue &queue) override;
 
-        /** @name Pop functions */
-        /**@{*/
-        /** @brief Get whether all queues can be popped. */
         PopStatus get_pop_status() const override;
-        /** @brief Get whether a queue can be popped or if it, or a synchronised queue, is empty. */
         PopStatus get_pop_status(const std::string &name) const override;
-        /** @brief Peek at the first item in the named queue but do not pop it. */
         std::shared_ptr<Entity> peek(const std::string &name) override;
-        /** @brief Pop and return the first item of the named queue. */
         std::shared_ptr<Entity> pop(const std::string &name) override;
-        /**@}*/
 
     private:
 
-        ConnectionMap identifiers;
+        std::shared_ptr<ConnectionMap> identifiers;
+        std::shared_ptr<IQueueFactory> factory;
         QueueMap queues;
 
         std::unordered_map<unsigned int, bool> get_group_push_status() const;

@@ -1,7 +1,4 @@
-/**
- * @author: Liam Childs (liam.h.childs@gmail.com)
- * @brief:
- */
+/** @author: Liam Childs (liam.h.childs@gmail.com) */
 
 #ifndef MIMO_QUEUECHANNEL_H
 #define MIMO_QUEUECHANNEL_H
@@ -14,30 +11,12 @@
 
 namespace mimo {
 
-    class OutputQueue;
-
     /**
-     * A container class for co-ordinating Queues. To ensure that out-of-order Queues are retrieved in-order, a
+     * @brief A container class for co-ordinating Queues. To ensure that out-of-order Queues are retrieved in-order, a
      * QueueChannel can be used.
      */
     class QueueChannel {
     public:
-
-        enum PushStatus {
-            CAN_PUSH, // can push to channel
-            PUSH_FULL, // no space left in channel for push
-            PUSH_NEXT, // last place must be pushed by next task
-            PUSH_ENDED // queue is from task that has ended
-        };
-
-        enum PopStatus {
-            CAN_POP,
-            CAN_NOT_POP
-        };
-
-        static unsigned int CAPACITY;
-
-        const unsigned int capacity;
 
         /**
          * @param capacity maximum number of queues that can be stored

@@ -3,7 +3,7 @@
 #include <mimo/Step.h>
 #include "MockJobDepot.h"
 #include "MockSingleJobDepotFactory.h"
-#include "../src/job_depots/JobDepot.h"
+#include "../src/job_depots/MultiJobDepot.h"
 
 
 using ::testing::Return;
@@ -22,7 +22,7 @@ TEST(JobDepotTest, test_correct_factory_is_used) {
     EXPECT_CALL(*factory, make_depot_proxy(step2))
         .WillOnce(Return(async_manager));
 
-    mimo::JobDepot manager(workflow, factory);
+    mimo::MultiJobDepot manager(workflow, factory);
 }
 
 TEST(JobDepotTest, test_empty_input_steps) {
@@ -30,7 +30,7 @@ TEST(JobDepotTest, test_empty_input_steps) {
     auto factory = std::make_shared<mimo::MockSingleJobDepotFactory>();
     workflow->add_step("step", {}, {"output"});
 
-    mimo::JobDepot manager(workflow, factory);
+    mimo::MultiJobDepot manager(workflow, factory);
 
     EXPECT_TRUE(manager.has_runnable_job());
 }

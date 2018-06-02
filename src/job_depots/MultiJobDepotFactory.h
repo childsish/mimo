@@ -4,7 +4,7 @@
 #define MIMO_MULTIJOBDEPOTFACTORY_H
 
 #include "IMultiJobDepotFactory.h"
-#include "SingleJobDepotFactory.h"
+#include "SingleJobDepot.h"
 
 
 namespace mimo {

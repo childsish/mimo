@@ -3,8 +3,8 @@
 #ifndef MIMO_STEP_H
 #define MIMO_STEP_H
 
-#include "Inputs.h"
-#include "Outputs.h"
+#include "IInputs.h"
+#include "IOutputs.h"
 
 
 namespace mimo {
@@ -17,7 +17,7 @@ namespace mimo {
         virtual const std::vector<std::string> &get_outputs() const = 0;
 
         /** @brief Run the step. Returns true if the step completed running. */
-        virtual bool run(Inputs &ins, Outputs &outs) = 0;
+        virtual bool run(IInputs &ins, IOutputs &outs) = 0;
 
     };
 }

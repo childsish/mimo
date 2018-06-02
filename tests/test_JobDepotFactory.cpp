@@ -2,9 +2,7 @@
 #include <workflow/Workflow.h>
 #include "../src/job_depots/IJobDepot.h"
 #include "mocks/MockStep.h"
-#include "mimo/Inputs.h"
-#include "mimo/Outputs.h"
-#include "../src/job_depots/SingleJobDepotFactory.h"
+#include "../src/job_depots/SingleJobDepot.h"
 
 TEST(JobManagerFactoryTest, test_register_and_create_step) {
     workflow::Workflow workflow;

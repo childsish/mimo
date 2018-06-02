@@ -3,8 +3,8 @@
 #include "../src/IJob.h"
 #include "../src/JobFactory.h"
 #include "mocks/MockStep.h"
-#include "mimo/Inputs.h"
-#include "mimo/Outputs.h"
+#include "mimo/IInputs.h"
+#include "mimo/IOutputs.h"
 
 TEST(JobFactoryTest, test_make_job) {;
     workflow::Workflow workflow;

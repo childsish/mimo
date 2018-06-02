@@ -4,63 +4,31 @@
 #define MIMO_IQUEUEBUNDLE_H
 
 #include <memory>
+#include "mimo/IInputs.h"
+#include "mimo/IOutputs.h"
 
 
 namespace mimo {
 
     class Entity;
+    using ConnectionMap = std::unordered_map<std::string, std::shared_ptr<workflow::Connection>>;
 
-    class IQueueBundle {
+    class IQueueBundle : public IInputs, public IOutputs {
     public:
-
-        enum class PushStatus {
-            NO_QUEUE,
-            CAN_PUSH,
-            QUEUE_FULL,
-            SYNC_QUEUE_FULL
-        };
-
-        enum class PopStatus {
-            NO_QUEUE,
-            CAN_POP,
-            QUEUE_EMPTY,
-            SYNC_QUEUE_EMPTY
-        };
-
         virtual ~IQueueBundle() = default;
 
-        /** @name Queue transfer functions */
-        /**@{*/
+        virtual const ConnectionMap &get_identifiers() const = 0;
+
+        virtual std::unique_ptr<IQueue> release_queue(
+            const workflow::Connection &id
+        ) = 0;
+
         virtual void acquire_queue(
-            const std::shared_ptr<workflow::Connection> &connection_id,
+            const workflow::Connection &id,
             std::unique_ptr<IQueue> queue
         ) = 0;
-        virtual std::unique_ptr<IQueue> release_queue(
-            const std::shared_ptr<workflow::Connection> &connection_id
-        ) = 0;
-        /**@}*/
 
-        /** @name Push functions */
-        /**@{*/
-        /** @brief Get whether all queues can be pushed. */
-        virtual PushStatus get_push_status() const = 0;
-        /** @brief Get whether a queue can be pushed or if it, or a synchronised queue, is full. */
-        virtual PushStatus get_push_status(const std::string &name) const = 0;
-        /** @brief Push an entity to the queue */
-        virtual void push(const std::string &name, std::shared_ptr<Entity> entity) = 0;
-        /**@}*/
-
-        /** @name Pop functions */
-        /**@{*/
-        /** @brief Get whether all queues can be popped. */
-        virtual PopStatus get_pop_status() const = 0;
-        /** @brief Get whether a queue can be popped or if it, or a synchronised queue, is empty. */
-        virtual PopStatus get_pop_status(const std::string &name) const = 0;
-        /** @brief Peek at the first item in the named queue but do not pop it. */
-        virtual std::shared_ptr<Entity> peek(const std::string &name) = 0;
-        /** @brief Pop and return the first item of the named queue. */
-        virtual std::shared_ptr<Entity> pop(const std::string &name) = 0;
-        /**@}*/
+        virtual void push(const std::string &name, const IQueue &queue) = 0;
     };
 }
 

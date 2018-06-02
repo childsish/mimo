@@ -12,6 +12,7 @@ namespace workflow {
 
 namespace mimo {
 
+    class Entity;
     class IQueueBundle;
 
     /** @brief A manager of a step's input, output and readiness. */
@@ -24,6 +25,9 @@ namespace mimo {
 
         /** @brief Gets the identifier for the job. */
         virtual unsigned int get_job_id() const = 0;
+
+        /** @brief Transfer all the entities from one input queue bundle to another. */
+        virtual void transfer_input(IQueueBundle &bundle) = 0;
 
         /** @brief Gets the inputs for the job. */
         virtual std::shared_ptr<IQueueBundle> get_inputs() = 0;

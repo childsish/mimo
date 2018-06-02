@@ -3,8 +3,8 @@
 #include "Job.h"
 #include "queues/IQueue.h"
 #include "queues/IQueueBundle.h"
-#include "mimo/Inputs.h"
-#include "mimo/Outputs.h"
+#include "mimo/IInputs.h"
+#include "mimo/IOutputs.h"
 
 
 unsigned int NEXT_JOB_ID = 0;
@@ -30,6 +30,12 @@ unsigned int mimo::Job::get_job_id() const {
     return this->job_id;
 }
 
+void mimo::Job::transfer_input(mimo::IQueueBundle &bundle) {
+    for (const auto &item : bundle.get_identifiers()) {
+        this->inputs->acquire_queue(*item.second, bundle.release_queue(*item.second));
+    }
+}
+
 std::shared_ptr<mimo::IQueueBundle> mimo::Job::get_inputs() {
     return this->inputs;
 }
@@ -42,18 +48,16 @@ bool mimo::Job::can_run() const {
     auto pop_status = this->inputs->get_pop_status();
     auto push_status = this->outputs->get_push_status();
     return !this->completed && (
-         pop_status == IQueueBundle::PopStatus::NO_QUEUE ||
-         pop_status == IQueueBundle::PopStatus::CAN_POP
+         pop_status == IInputs::PopStatus::NO_QUEUE ||
+         pop_status == IInputs::PopStatus::CAN_POP
     ) && (
-         push_status == IQueueBundle::PushStatus::NO_QUEUE ||
-         push_status == IQueueBundle::PushStatus::CAN_PUSH
+         push_status == IOutputs::PushStatus::NO_QUEUE ||
+         push_status == IOutputs::PushStatus::CAN_PUSH
     );
 }
 
 void mimo::Job::run() {
-    Inputs inputs_(this->inputs);
-    Outputs outputs_(this->outputs);
-    this->completed = this->step->run(inputs_, outputs_);
+    this->completed = this->step->run(*this->inputs, *this->outputs);
 }
 
 bool mimo::Job::is_complete() const {

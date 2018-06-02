@@ -1,4 +1,4 @@
-#include "JobDepot.h"
+#include "MultiJobDepot.h"
 #include "MultiJobDepotFactory.h"
 
 mimo::MultiJobDepotFactory::MultiJobDepotFactory(
@@ -18,5 +18,5 @@ std::unique_ptr<mimo::IMultiJobDepot>
 mimo::MultiJobDepotFactory::make_depot(
     std::shared_ptr<workflow::Workflow> workflow
 ) const {
-    return std::make_unique<JobDepot>(workflow, this->factory);
+    return std::make_unique<MultiJobDepot>(workflow, this->factory);
 }

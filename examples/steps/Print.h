@@ -32,9 +32,9 @@ public:
         return this->outputs;
     }
 
-    bool run(mimo::Inputs &ins, mimo::Outputs &outs) {
+    bool run(mimo::IInputs &ins, mimo::IOutputs &outs) {
         std::shared_ptr<E> entity;
-        while (ins.get_status() == mimo::Inputs::PopStatus::CAN_POP) {
+        while (ins.get_status() == mimo::IInputs::PopStatus::CAN_POP) {
             entity = std::static_pointer_cast<E>(ins.pop("input"));
             std::cout << prefix << *entity << suffix << std::endl;
         }

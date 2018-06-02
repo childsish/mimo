@@ -6,34 +6,33 @@
 #include "../errors.h"
 
 mimo::QueueBundle::QueueBundle(
-    const workflow::InputMap &identifiers
-) {
-    for (auto &&item : identifiers) {
-        this->identifiers.emplace(item.first, item.second);
-    }
-}
-
-mimo::QueueBundle::QueueBundle(
-    const workflow::OutputMap &identifiers,
-    std::shared_ptr<mimo::IQueueFactory> factory
-) {
-    for (auto &&item : identifiers) {
-        this->identifiers.emplace(item.first, item.second);
+    std::shared_ptr<ConnectionMap> identifiers,
+    std::shared_ptr<IQueueFactory> factory
+) :
+    identifiers(std::move(identifiers)),
+    factory(std::move(factory))
+{
+    for (const auto &item : *identifiers) {
         this->queues.emplace(item.first, factory->make_unique());
     }
 }
 
-void mimo::QueueBundle::acquire_queue(
-    const std::shared_ptr<workflow::Connection> &connection_id,
-    std::unique_ptr<mimo::IQueue> queue
-) {
-    this->queues.emplace(connection_id->name, std::move(queue));
+const mimo::ConnectionMap & mimo::QueueBundle::get_identifiers() const {
+    return *this->identifiers;
 }
 
-std::unique_ptr<mimo::IQueue> mimo::QueueBundle::release_queue(
-    const std::shared_ptr<workflow::Connection> &connection_id
+std::unique_ptr<mimo::IQueue>
+mimo::QueueBundle::release_queue(const workflow::Connection &id) {
+    auto queue = std::move(this->queues.at(id.name));
+    this->queues.emplace(id.name, this->factory->make_unique());
+    return queue;
+}
+
+void mimo::QueueBundle::acquire_queue(
+    const workflow::Connection &id,
+    std::unique_ptr<IQueue> queue
 ) {
-    return std::move(this->queues.at(connection_id->name));
+    this->queues.at(id.name) = std::move(queue);
 }
 
 mimo::IQueueBundle::PushStatus mimo::QueueBundle::get_push_status() const {
@@ -57,7 +56,7 @@ mimo::IQueueBundle::PushStatus mimo::QueueBundle::get_push_status(const std::str
         return PushStatus::QUEUE_FULL;
     }
     auto group_status = this->get_group_push_status();
-    if (!group_status.at(this->identifiers.at(name)->sync_group)) {
+    if (!group_status.at(this->identifiers->at(name)->sync_group)) {
         return PushStatus::SYNC_QUEUE_FULL;
     }
     return PushStatus::CAN_PUSH;
@@ -75,6 +74,10 @@ void mimo::QueueBundle::push(const std::string &name, std::shared_ptr<mimo::Enti
         throw mimo::QueueError("Can not push. " + name + " is synced with full queue.");
     }
     this->queues.at(name)->push(entity);
+}
+
+void mimo::QueueBundle::push(const std::string &name, const mimo::IQueue &queue) {
+    this->queues.at(name)->push(queue);
 }
 
 mimo::IQueueBundle::PopStatus mimo::QueueBundle::get_pop_status() const {
@@ -100,7 +103,7 @@ mimo::IQueueBundle::PopStatus mimo::QueueBundle::get_pop_status(const std::strin
         return PopStatus::QUEUE_EMPTY;
     }
     auto groups = this->get_group_pop_status();
-    if (!groups.at(this->identifiers.at(name)->sync_group)) {
+    if (!groups.at(this->identifiers->at(name)->sync_group)) {
         return PopStatus ::SYNC_QUEUE_EMPTY;
     }
     return PopStatus::CAN_POP;
@@ -136,7 +139,7 @@ std::shared_ptr<mimo::Entity> mimo::QueueBundle::pop(const std::string &name) {
 
 std::unordered_map<unsigned int, bool> mimo::QueueBundle::get_group_push_status() const {
     std::unordered_map<unsigned int, bool> groups;
-    for (const auto &item : this->identifiers) {
+    for (const auto &item : *this->identifiers) {
         if (groups.find(item.second->sync_group) == groups.end()) {
             groups[item.second->sync_group] = true;
         }
@@ -147,7 +150,7 @@ std::unordered_map<unsigned int, bool> mimo::QueueBundle::get_group_push_status(
 
 std::unordered_map<unsigned int, bool> mimo::QueueBundle::get_group_pop_status() const {
     std::unordered_map<unsigned int, bool> groups;
-    for (const auto &item : this->identifiers) {
+    for (const auto &item : *this->identifiers) {
         if (groups.find(item.second->sync_group) == groups.end()) {
             groups[item.second->sync_group] = true;
         }
