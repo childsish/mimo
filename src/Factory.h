@@ -1,7 +1,4 @@
-/**
- * @author: Liam Childs (liam.h.childs@gmail.com)
- * @brief:
- */
+/** @author: Liam Childs (liam.h.childs@gmail.com) */
 
 #ifndef MIMO_FACTORY_H
 #define MIMO_FACTORY_H
@@ -10,7 +7,6 @@
 
 
 namespace mimo {
-
     template<typename Base, typename Derived, typename ... Args>
     class Factory : public IFactory<Base, Args...> {
 

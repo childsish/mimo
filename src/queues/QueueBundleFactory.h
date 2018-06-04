@@ -5,26 +5,26 @@
 
 #include <workflow/Connection.h>
 #include <workflow/Step.h>
-#include "IQueueBundleFactory.h"
+#include "QueueBundle.h"
 #include "QueueFactory.h"
 
 
 namespace mimo {
 
-    class QueueBundleFactory : public IQueueBundleFactory {
+    class QueueBundleFactory : public IFactory<IQueueBundle, std::shared_ptr<workflow::ConnectionMap>> {
     public:
-        explicit QueueBundleFactory(std::shared_ptr<IQueueFactory> factory = std::make_shared<QueueFactory>());
+        explicit QueueBundleFactory(
+            std::shared_ptr<IFactory<IQueue>> factory = std::make_shared<QueueFactory>()
+        ) :
+            factory(std::move(factory)) {}
         
-        IQueueBundle *make_raw(const workflow::InputMap &inputs) const override;
-        std::shared_ptr<IQueueBundle> make_shared(const workflow::InputMap &inputs) const override;
-        std::unique_ptr<IQueueBundle> make_unique(const workflow::InputMap &inputs) const override;
-
-        IQueueBundle *make_raw(const workflow::OutputMap &outputs) const override;
-        std::shared_ptr<IQueueBundle> make_shared(const workflow::OutputMap &outputs) const override;
-        std::unique_ptr<IQueueBundle> make_unique(const workflow::OutputMap &outputs) const override;
-
+        IQueueBundle *make_raw(
+            std::shared_ptr<workflow::ConnectionMap> connections
+        ) const override {
+            return new QueueBundle(std::move(connections), this->factory);
+        }
     private:
-        std::shared_ptr<IQueueFactory> factory;
+        std::shared_ptr<IFactory<IQueue>> factory;
     };
 }
 
