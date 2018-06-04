@@ -12,8 +12,8 @@ mimo::QueueBundle::QueueBundle(
     identifiers(std::move(identifiers)),
     factory(std::move(factory))
 {
-    for (const auto &item : *identifiers) {
-        this->queues.emplace(item.first, factory->make_unique());
+    for (const auto &item : *this->identifiers) {
+        this->queues.emplace(item.first, this->factory->make_unique());
     }
 }
 

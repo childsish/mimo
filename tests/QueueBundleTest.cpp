@@ -13,7 +13,7 @@ using ::testing::Return;
 TEST(QueueBundleTest, no_queues) {
     workflow::Workflow workflow;
     auto step = workflow.add_step("step", {}, {});
-    auto input_ids = std::static_pointer_cast<mimo::ConnectionMap >(step->get_inputs());
+    auto input_ids = std::static_pointer_cast<mimo::ConnectionMap>(step->get_inputs());
     auto factory = std::make_shared<mimo::MockQueueFactory>();
 
     EXPECT_CALL(*factory, make_raw())
