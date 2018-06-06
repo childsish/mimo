@@ -22,7 +22,7 @@ namespace mimo {
         
         IQueueBundle *make_raw(
             std::shared_ptr<workflow::ConnectionMap> connections
-        ) const override {
+        ) override {
             return new QueueBundle(std::move(connections), this->factory);
         }
     private:
