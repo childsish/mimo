@@ -11,6 +11,7 @@
 
 namespace mimo {
 
+    class IQueue;
     using QueueMap = std::unordered_map<std::string, std::unique_ptr<IQueue>>;
 
     class QueueBundle : public IQueueBundle {
@@ -18,7 +19,7 @@ namespace mimo {
 
         explicit QueueBundle(
             std::shared_ptr<ConnectionMap> identifiers,
-            std::shared_ptr<IQueueFactory> factory = std::make_shared<QueueFactory>()
+            std::shared_ptr<IFactory<IQueue>> factory = std::make_shared<QueueFactory>()
         );
 
         const ConnectionMap &get_identifiers() const override;
@@ -45,7 +46,7 @@ namespace mimo {
     private:
 
         std::shared_ptr<ConnectionMap> identifiers;
-        std::shared_ptr<IQueueFactory> factory;
+        std::shared_ptr<IFactory<IQueue>> factory;
         QueueMap queues;
 
         std::unordered_map<unsigned int, bool> get_group_push_status() const;

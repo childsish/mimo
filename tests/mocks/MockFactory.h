@@ -6,7 +6,7 @@
 #include <gmock/gmock.h>
 #include "../../src/IFactory.h"
 
-#define MOCK_FACTORY(Name, Base) \
+#define MOCK_FACTORY0(Name, Base) \
 class Name ## Factory : public mimo::IFactory<Base> { \
 public: \
     MOCK_CONST_METHOD0(make_raw, Base *()); \

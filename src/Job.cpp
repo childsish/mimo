@@ -7,19 +7,18 @@
 #include "mimo/IOutputs.h"
 
 
-unsigned int NEXT_JOB_ID = 0;
-
 mimo::Job::Job(
-        const std::shared_ptr<workflow::Step> &step_id,
-        std::shared_ptr<Step> step,
-        std::shared_ptr<IQueueBundleFactory> factory
-) : step_id(step_id),
-    job_id(NEXT_JOB_ID),
+    unsigned int job_id,
+    std::shared_ptr<workflow::Step> step_id,
+    std::shared_ptr<Step> step,
+    std::shared_ptr<IFactory<IQueueBundle, std::shared_ptr<workflow::ConnectionMap>>> factory
+) :
+    job_id(job_id),
+    step_id(std::move(step_id)),
     step(std::move(step)),
-    inputs(factory->make_shared(step_id->get_inputs())),
-    outputs(factory->make_shared(step_id->get_outputs()))
+    inputs(factory->make_shared(this->step_id->get_inputs())),
+    outputs(factory->make_shared(this->step_id->get_outputs()))
 {
-    NEXT_JOB_ID += 1;
 }
 
 const std::shared_ptr<workflow::Step> mimo::Job::get_step_id() const {

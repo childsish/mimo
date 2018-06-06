@@ -17,9 +17,10 @@ namespace mimo {
     public:
 
         Job(
-            const std::shared_ptr<workflow::Step> &step_id,
+            unsigned int job_id,
+            std::shared_ptr<workflow::Step> step_id,
             std::shared_ptr<Step> step,
-            std::shared_ptr<IQueueBundleFactory> factory = std::make_shared<QueueBundleFactory>()
+            std::shared_ptr<IFactory<IQueueBundle, std::shared_ptr<workflow::ConnectionMap>>> factory = std::make_shared<QueueBundleFactory>()
         );
 
         const std::shared_ptr<workflow::Step> get_step_id() const override;
@@ -40,8 +41,8 @@ namespace mimo {
 
     private:
 
-        const std::shared_ptr<workflow::Step> step_id;
         unsigned int job_id;
+        std::shared_ptr<workflow::Step> step_id;
         std::shared_ptr<mimo::Step> step;
 
         std::shared_ptr<IQueueBundle> inputs;

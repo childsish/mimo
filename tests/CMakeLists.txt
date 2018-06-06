@@ -7,9 +7,13 @@ add_subdirectory(googletest)
 
 
 add_executable(test_mimo
+    JobTest.cpp
     QueueTest.cpp
     QueueBundleTest.cpp
+    mocks/MockFactory.h
     mocks/MockQueue.h
+    mocks/MockQueueBundle.h
+    mocks/MockStep.h
 )
 target_include_directories(test_mimo PRIVATE
     ${gtest_SOURCE_DIR}/include

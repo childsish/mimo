@@ -2,7 +2,6 @@
 #include <workflow/Workflow.h>
 #include <mimo/Step.h>
 #include "MockJobDepot.h"
-#include "MockSingleJobDepotFactory.h"
 #include "../src/job_depots/MultiJobDepot.h"
 
 

@@ -2,19 +2,24 @@
 #include <gmock/gmock.h>
 #include <workflow/Output.h>
 #include <workflow/Workflow.h>
+#include "mocks/MockFactory.h"
 #include "mocks/MockQueue.h"
-#include "mocks/MockQueueFactory.h"
-#include "../src/queues/QueueBundle.h"
 #include "../src/errors.h"
+#include "../src/Factory.h"
+#include "../src/queues/IQueue.h"
+
+#include "../src/queues/QueueBundle.h"
 
 
 using ::testing::Return;
+
+MOCK_FACTORY0(MockQueue, mimo::IQueue)
 
 TEST(QueueBundleTest, no_queues) {
     workflow::Workflow workflow;
     auto step = workflow.add_step("step", {}, {});
     auto input_ids = std::static_pointer_cast<mimo::ConnectionMap>(step->get_inputs());
-    auto factory = std::make_shared<mimo::MockQueueFactory>();
+    auto factory = std::make_shared<MockQueueFactory>();
 
     EXPECT_CALL(*factory, make_raw())
         .Times(0);
@@ -34,7 +39,7 @@ TEST(QueueBundleTest, one_empty_queue) {
     workflow::Workflow workflow;
     auto step = workflow.add_step("step", {"input"}, {});
     auto input_ids = std::static_pointer_cast<mimo::ConnectionMap >(step->get_inputs());
-    auto factory = std::make_shared<mimo::MockQueueFactory>();
+    auto factory = std::make_shared<MockQueueFactory>();
     auto *input = new mimo::MockQueue();
     auto entity = std::make_shared<mimo::Entity>();
 
@@ -65,7 +70,7 @@ TEST(QueueBundleTest, one_full_queue) {
     workflow::Workflow workflow;
     auto step = workflow.add_step("step", {"input"}, {});
     auto input_ids = std::static_pointer_cast<mimo::ConnectionMap >(step->get_inputs());
-    auto factory = std::make_shared<mimo::MockQueueFactory>();
+    auto factory = std::make_shared<MockQueueFactory>();
     auto *input = new mimo::MockQueue();
     auto entity = std::make_shared<mimo::Entity>();
 
@@ -98,7 +103,7 @@ TEST(QueueBundleTest, test_two_empty_aync_queues) {
     workflow::Workflow workflow;
     auto step = workflow.add_step("step", {"input1", "input2"}, {});
     auto input_ids = std::static_pointer_cast<mimo::ConnectionMap >(step->get_inputs());
-    auto factory = std::make_shared<mimo::MockQueueFactory>();
+    auto factory = std::make_shared<MockQueueFactory>();
     auto *input1 = new mimo::MockQueue();
     auto *input2 = new mimo::MockQueue();
     auto entity = std::make_shared<mimo::Entity>();
@@ -142,7 +147,7 @@ TEST(QueueBundleTest, test_two_full_aync_queues) {
     workflow::Workflow workflow;
     auto step = workflow.add_step("step", {"input1", "input2"}, {});
     auto input_ids = std::static_pointer_cast<mimo::ConnectionMap >(step->get_inputs());
-    auto factory = std::make_shared<mimo::MockQueueFactory>();
+    auto factory = std::make_shared<MockQueueFactory>();
     auto *input1 = new mimo::MockQueue();
     auto *input2 = new mimo::MockQueue();
     auto entity = std::make_shared<mimo::Entity>();
@@ -190,7 +195,7 @@ TEST(QueueBundleTest, test_one_full_one_empty_async_queues) {
     workflow::Workflow workflow;
     auto step = workflow.add_step("step", {"input1", "input2"}, {});
     auto input_ids = std::static_pointer_cast<mimo::ConnectionMap >(step->get_inputs());
-    auto factory = std::make_shared<mimo::MockQueueFactory>();
+    auto factory = std::make_shared<MockQueueFactory>();
     auto *input1 = new mimo::MockQueue();
     auto *input2 = new mimo::MockQueue();
     auto entity = std::make_shared<mimo::Entity>();

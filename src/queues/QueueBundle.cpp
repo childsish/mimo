@@ -7,7 +7,7 @@
 
 mimo::QueueBundle::QueueBundle(
     std::shared_ptr<ConnectionMap> identifiers,
-    std::shared_ptr<IQueueFactory> factory
+    std::shared_ptr<IFactory<IQueue>> factory
 ) :
     identifiers(std::move(identifiers)),
     factory(std::move(factory))
