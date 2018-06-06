@@ -3,7 +3,6 @@
 #ifndef MIMO_QUEUEFACTORY_H
 #define MIMO_QUEUEFACTORY_H
 
-#include <memory>
 #include "Queue.h"
 #include "../IFactory.h"
 

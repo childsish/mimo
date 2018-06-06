@@ -1,10 +1,9 @@
 /** @author Liam Childs (liam.h.childs@gmail.com) */
+
 #ifndef MIMO_QUEUE_H
 #define MIMO_QUEUE_H
 
 #include <deque>
-#include <memory>
-#include "../Factory.h"
 #include "IQueue.h"
 
 
