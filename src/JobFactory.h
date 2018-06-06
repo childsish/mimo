@@ -4,6 +4,7 @@
 #define MIMO_JOBFACTORY_H
 
 #include "IFactory.h"
+#include "Job.h"
 #include "queues/QueueBundleFactory.h"
 
 
@@ -13,12 +14,22 @@ namespace mimo {
 
     class JobFactory : public IJobFactory {
     public:
-        explicit JobFactory(std::shared_ptr<IFactory<QueueBundle>> inputs_factory = std::make_shared<QueueBundleFactory>());
+        explicit JobFactory(
+            std::shared_ptr<IQueueBundleFactory> factory = std::make_shared<QueueBundleFactory>()
+        ) :
+            job_id(0),
+            factory(std::move(factory)) {}
 
-        IJob *make_raw(const std::shared_ptr<workflow::Step> &step_id, std::shared_ptr<Step> step) const override;
+        IJob *make_raw(
+            std::shared_ptr<workflow::Step> step_id,
+            std::shared_ptr<Step> step
+        ) override {
+            return new Job(this->job_id++, std::move(step_id), std::move(step), this->factory);
+        }
 
     private:
-        const std::shared_ptr<IQueueBundleFactory> factory;
+        unsigned int job_id;
+        std::shared_ptr<IQueueBundleFactory> factory;
     };
 }
 

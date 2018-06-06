@@ -9,7 +9,6 @@
 
 namespace mimo {
 
-    class Entity;
     class IQueueBundle;
 
     /** @brief A manager of a step's input, output and readiness. */
