@@ -11,7 +11,7 @@ mimo::Job::Job(
     unsigned int job_id,
     std::shared_ptr<workflow::Step> step_id,
     std::shared_ptr<Step> step,
-    std::shared_ptr<IFactory<IQueueBundle, std::shared_ptr<workflow::ConnectionMap>>> factory
+    std::shared_ptr<IQueueBundleFactory> factory
 ) :
     job_id(job_id),
     step_id(std::move(step_id)),

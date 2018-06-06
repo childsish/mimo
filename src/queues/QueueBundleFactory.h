@@ -11,7 +11,9 @@
 
 namespace mimo {
 
-    class QueueBundleFactory : public IFactory<IQueueBundle, std::shared_ptr<workflow::ConnectionMap>> {
+    using IQueueBundleFactory = IFactory<IQueueBundle, std::shared_ptr<workflow::ConnectionMap>>;
+
+    class QueueBundleFactory : public IQueueBundleFactory {
     public:
         explicit QueueBundleFactory(
             std::shared_ptr<IFactory<IQueue>> factory = std::make_shared<QueueFactory>()
