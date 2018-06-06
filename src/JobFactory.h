@@ -9,14 +9,11 @@
 
 namespace mimo {
 
-    class IJob;
-    class Step;
-    using IJobFactory = IFactory<IJob, const std::shared_ptr<workflow::Step>&, std::shared_ptr<Step>>;
+    using IJobFactory = IFactory<IJob, std::shared_ptr<workflow::Step>, std::shared_ptr<Step>>;
 
     class JobFactory : public IJobFactory {
     public:
-
-        explicit JobFactory(std::shared_ptr<IQueueBundleFactory> inputs_factory = std::make_shared<QueueBundleFactory>());
+        explicit JobFactory(std::shared_ptr<IFactory<QueueBundle>> inputs_factory = std::make_shared<QueueBundleFactory>());
 
         IJob *make_raw(const std::shared_ptr<workflow::Step> &step_id, std::shared_ptr<Step> step) const override;
 
