@@ -3,8 +3,6 @@
 #ifndef MIMO_JOB_H
 #define MIMO_JOB_H
 
-#include <memory>
-#include <workflow/Step.h>
 #include "queues/QueueBundleFactory.h"
 #include "IJob.h"
 

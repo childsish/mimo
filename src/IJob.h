@@ -4,11 +4,8 @@
 #define MIMO_IJOB_H
 
 #include <memory>
+#include <workflow/Step.h>
 
-
-namespace workflow {
-    class Step;
-}
 
 namespace mimo {
 
