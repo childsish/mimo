@@ -17,22 +17,12 @@ mimo::QueueBundle::QueueBundle(
     }
 }
 
-const mimo::ConnectionMap & mimo::QueueBundle::get_identifiers() const {
+const mimo::ConnectionMap &mimo::QueueBundle::get_identifiers() const {
     return *this->identifiers;
 }
 
-std::unique_ptr<mimo::IQueue>
-mimo::QueueBundle::release_queue(const workflow::Connection &id) {
-    auto queue = std::move(this->queues.at(id.name));
-    this->queues.emplace(id.name, this->factory->make_unique());
-    return queue;
-}
-
-void mimo::QueueBundle::acquire_queue(
-    const workflow::Connection &id,
-    std::unique_ptr<IQueue> queue
-) {
-    this->queues.at(id.name) = std::move(queue);
+mimo::IQueue &mimo::QueueBundle::get_queue(const std::string &name) {
+    return *this->queues.at(name);
 }
 
 mimo::IQueueBundle::PushStatus mimo::QueueBundle::get_push_status() const {
@@ -74,10 +64,6 @@ void mimo::QueueBundle::push(const std::string &name, std::shared_ptr<mimo::Enti
         throw mimo::QueueError("Can not push. " + name + " is synced with full queue.");
     }
     this->queues.at(name)->push(entity);
-}
-
-void mimo::QueueBundle::push(const std::string &name, const mimo::IQueue &queue) {
-    this->queues.at(name)->push(queue);
 }
 
 mimo::IQueueBundle::PopStatus mimo::QueueBundle::get_pop_status() const {

@@ -4,6 +4,7 @@
 #define MIMO_IQUEUEBUNDLE_H
 
 #include <memory>
+#include <workflow/Connection.h>
 #include "mimo/IInputs.h"
 #include "mimo/IOutputs.h"
 
@@ -11,6 +12,7 @@
 namespace mimo {
 
     class Entity;
+    class IQueue;
     using ConnectionMap = std::unordered_map<std::string, std::shared_ptr<workflow::Connection>>;
 
     class IQueueBundle : public IInputs, public IOutputs {
@@ -18,17 +20,7 @@ namespace mimo {
         virtual ~IQueueBundle() = default;
 
         virtual const ConnectionMap &get_identifiers() const = 0;
-
-        virtual std::unique_ptr<IQueue> release_queue(
-            const workflow::Connection &id
-        ) = 0;
-
-        virtual void acquire_queue(
-            const workflow::Connection &id,
-            std::unique_ptr<IQueue> queue
-        ) = 0;
-
-        virtual void push(const std::string &name, const IQueue &queue) = 0;
+        virtual IQueue &get_queue(const std::string &name) = 0;
     };
 }
 

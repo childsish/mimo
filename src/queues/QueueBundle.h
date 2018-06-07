@@ -23,20 +23,11 @@ namespace mimo {
         );
 
         const ConnectionMap &get_identifiers() const override;
-
-        std::unique_ptr<IQueue> release_queue(
-            const workflow::Connection &id
-        ) override;
-
-        void acquire_queue(
-            const workflow::Connection &id,
-            std::unique_ptr<IQueue> queue
-        ) override;
+        IQueue &get_queue(const std::string &name) override;
 
         PushStatus get_push_status() const override;
         PushStatus get_push_status(const std::string &name) const override;
         void push(const std::string &name, std::shared_ptr<Entity> entity) override;
-        void push(const std::string &name, const IQueue &queue) override;
 
         PopStatus get_pop_status() const override;
         PopStatus get_pop_status(const std::string &name) const override;
