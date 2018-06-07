@@ -31,6 +31,8 @@ namespace mimo {
         void push(std::shared_ptr<Entity> entity) override;
         void push(const IQueue &queue) override;
 
+        void clear() override;
+
         void close() override;
         bool is_closed() const override;
 

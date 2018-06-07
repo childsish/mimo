@@ -30,6 +30,8 @@ namespace mimo {
         /** @brief Add many entities to the back of the queue. */
         virtual void push(const IQueue &queue) = 0;
 
+        virtual void clear();
+
         /** @brief Closes the queue. */
         virtual void close() = 0;
         /** @brief Return true if the the queue has been closed. */

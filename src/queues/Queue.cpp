@@ -50,6 +50,10 @@ void mimo::Queue::push(const mimo::IQueue &queue) {
     }
 }
 
+void mimo::Queue::clear() {
+    this->entities.clear();
+}
+
 void mimo::Queue::close() {
     this->closed = true;
 }
