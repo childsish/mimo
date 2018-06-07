@@ -21,7 +21,7 @@ namespace mimo {
 
         /** @brief Add a single entity to the specified input queue of the job. */
         virtual void push(
-            const std::shared_ptr<workflow::Input> &input_id,
+            const workflow::Input &input_id,
             std::shared_ptr<Entity> entity
         ) = 0;
 

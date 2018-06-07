@@ -21,6 +21,8 @@ namespace mimo {
             SYNC_QUEUE_FULL
         };
 
+        virtual ~IOutputs() = default;
+
         virtual PushStatus get_push_status() const = 0;
         virtual PushStatus get_push_status(const std::string &name) const = 0;
 

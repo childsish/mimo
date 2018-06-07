@@ -3,43 +3,44 @@
 #include "IJob.h"
 
 mimo::SingleJobDepot::SingleJobDepot(
-    std::shared_ptr<workflow::Step> identifier,
-    std::shared_ptr<mimo::Step> step,
-    std::shared_ptr<mimo::IJobFactory> job_factory
+    std::shared_ptr<workflow::Step> step_id,
+    std::shared_ptr<Step> step,
+    std::shared_ptr<IJobFactory> job_factory,
+    std::shared_ptr<IQueueBundleFactory> bundle_factory
 ) :
-    identifier(std::move(identifier)),
-    step(step),
-    job(job_factory->make_unique(identifier, step)),
-    buffer(identifier->get_inputs())
+    step_id(std::move(step_id)),
+    step(std::move(step)),
+    job(job_factory->make_unique(this->step_id, this->step)),
+    buffer(bundle_factory->make_unique(this->step_id->get_inputs()))
 {
 }
 
 void mimo::SingleJobDepot::push(
-    const std::shared_ptr<workflow::Input> &input_id,
+    const workflow::Input &input_id,
     std::shared_ptr<mimo::Entity> entity
 ) {
-    this->job->push(input_id, std::move(entity));
+    this->buffer->push(input_id.name, std::move(entity));
 }
 
-bool mimo::SingleJobDepot::can_queue(const std::shared_ptr<workflow::Input> &input_id) {
-    return this->buffer.get_push_status(input_id->name) == IQueueBundle::PushStatus::CAN_PUSH;
+bool mimo::SingleJobDepot::can_queue(const workflow::Input &input_id) {
+    return this->buffer->get_push_status(input_id.name) == IOutputs::PushStatus::CAN_PUSH;
 }
 
 void mimo::SingleJobDepot::queue_input(
-    const std::shared_ptr<workflow::Input> &input_id,
+    const workflow::Input &input_id,
     const IQueue &queue
 ) {
-    this->buffer.push(input_id->name, queue);
+    this->buffer->get_queue(input_id.name).push(queue);
 }
 
 bool mimo::SingleJobDepot::has_runnable_jobs() const {
-    return bool(this->job);
+    return bool(this->job) && this->job->can_run();
 }
 
 std::set<std::unique_ptr<mimo::IJob>> mimo::SingleJobDepot::get_runnable_jobs() {
     std::set<std::unique_ptr<IJob>> jobs;
-    if (this->job) {
-        this->job->transfer_input(this->buffer);
+    if (this->has_runnable_jobs()) {
+        this->job->transfer_input(*this->buffer);
         jobs.emplace(std::move(this->job));
     }
     return jobs;

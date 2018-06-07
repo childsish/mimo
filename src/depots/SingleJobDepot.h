@@ -3,11 +3,10 @@
 #ifndef MIMO_SINGLEJOBDEPOT_H
 #define MIMO_SINGLEJOBDEPOT_H
 
-#include <queue>
-#include <workflow/Step.h>
 #include "ISingleJobDepot.h"
-#include "../queues/QueueBundle.h"
+#include "../Factory.h"
 #include "../JobFactory.h"
+#include "../queues/QueueBundleFactory.h"
 
 
 namespace mimo {
@@ -16,20 +15,21 @@ namespace mimo {
     class SingleJobDepot : public ISingleJobDepot {
     public:
         SingleJobDepot(
-            std::shared_ptr<workflow::Step> identifier,
+            std::shared_ptr<workflow::Step> step_id,
             std::shared_ptr<Step> step,
-            std::shared_ptr<IJobFactory> job_factory = std::make_shared<JobFactory>()
+            std::shared_ptr<IJobFactory> job_factory = std::make_shared<JobFactory>(),
+            std::shared_ptr<IQueueBundleFactory> bundle_factory = std::make_shared<QueueBundleFactory>()
         );
 
         void push(
-            const std::shared_ptr<workflow::Input> &input_id,
+            const workflow::Input &input_id,
             std::shared_ptr<Entity> entity
         ) override;
 
-        bool can_queue(const std::shared_ptr<workflow::Input> &input_id) override;
+        bool can_queue(const workflow::Input &input_id) override;
 
         void queue_input(
-            const std::shared_ptr<workflow::Input> &input_id,
+            const workflow::Input &input_id,
             const IQueue &queue
         ) override;
 
@@ -40,13 +40,14 @@ namespace mimo {
         void return_exhausted_job(std::unique_ptr<IJob> job) override;
 
     private:
-        std::shared_ptr<workflow::Step> identifier;
+        std::shared_ptr<workflow::Step> step_id;
         std::shared_ptr<Step> step;
         std::unique_ptr<IJob> job;
-
-        QueueBundle buffer;
+        std::unique_ptr<IQueueBundle> buffer;
     };
 
+
+    using ISingleJobDepotFactory = IFactory<ISingleJobDepot>;
     using SingleJobDepotFactory = Factory<ISingleJobDepot, SingleJobDepot, std::shared_ptr<workflow::Step>, std::shared_ptr<Step>>;
 }
 

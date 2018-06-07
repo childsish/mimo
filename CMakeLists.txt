@@ -26,6 +26,8 @@ add_library(mimo
     src/IForwardIterator.h
     src/IJob.h
     src/Job.cpp src/Job.h
+    src/JobFactory.h
+    src/depots/IJobDepot.h
     src/depots/ISingleJobDepot.h
     src/depots/SingleJobDepot.cpp src/depots/SingleJobDepot.h
     src/queues/IQueue.h

@@ -21,6 +21,8 @@ namespace mimo {
             SYNC_QUEUE_EMPTY
         };
 
+        virtual ~IInputs() = default;
+
         virtual PopStatus get_pop_status() const = 0;
         virtual PopStatus get_pop_status(const std::string &name) const = 0;
 

@@ -31,7 +31,7 @@ namespace mimo {
         virtual void push(const IQueue &queue) = 0;
 
         /** @brief Clear the queue. */
-        virtual void clear();
+        virtual void clear() = 0;
 
         /** @brief Closes the queue. */
         virtual void close() = 0;

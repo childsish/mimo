@@ -12,6 +12,7 @@ add_executable(test_mimo
     QueueBundleTest.cpp
     SingleJobDepotTest.cpp
     mocks/MockFactory.h
+    mocks/MockJob.h
     mocks/MockQueue.h
     mocks/MockQueueBundle.h
     mocks/MockStep.h
