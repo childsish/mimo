@@ -22,6 +22,7 @@ namespace mimo {
         MOCK_CONST_METHOD0(can_push, bool());
         MOCK_METHOD1(push, void(std::shared_ptr<Entity> entity));
         MOCK_METHOD1(push, void(const IQueue &queue));
+        MOCK_METHOD0(clear, void());
         MOCK_METHOD0(close, void());
         MOCK_CONST_METHOD0(is_closed, bool());
         MOCK_METHOD0(begin, IForwardIterator<std::shared_ptr<Entity>>());
