@@ -8,6 +8,7 @@ add_subdirectory(googletest)
 
 add_executable(test_mimo
     JobTest.cpp
+    MultiJobDepotTest.cpp
     QueueTest.cpp
     QueueBundleTest.cpp
     SingleJobDepotTest.cpp

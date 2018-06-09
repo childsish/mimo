@@ -3,34 +3,30 @@
 #ifndef MIMO_MULTIJOBDEPOTFACTORY_H
 #define MIMO_MULTIJOBDEPOTFACTORY_H
 
-#include "IMultiJobDepotFactory.h"
-#include "SingleJobDepot.h"
+#include <workflow/Workflow.h>
+#include "MultiJobDepot.h"
+#include "SingleJobDepotFactory.h"
 
 
 namespace mimo {
 
+    class IMultiJobDepot;
+    class Step;
+    using IMultiJobDepotFactory = IFactory<IMultiJobDepot, std::shared_ptr<workflow::Workflow>>;
+
     class MultiJobDepotFactory : public IMultiJobDepotFactory {
     public:
-
         explicit MultiJobDepotFactory(
-            std::shared_ptr<ISingleJobDepotFactory> factory = std::make_shared<SingleJobDepotFactory>(10)
-        );
+            std::shared_ptr<ISingleJobDepotFactory> factory = std::make_shared<SingleJobDepotFactory>()
+        ) : factory(factory) {}
 
-        ~MultiJobDepotFactory();
-
-        void register_step(
-            const std::shared_ptr<workflow::Step> &identifier,
-            std::shared_ptr<Step> step
-        ) override;
-
-        std::unique_ptr<IMultiJobDepot> make_depot(
+        IMultiJobDepot *make_raw(
             std::shared_ptr<workflow::Workflow> workflow
-        ) const override;
-
+        ) override {
+            return new MultiJobDepot(workflow, this->factory);
+        }
     private:
-
         std::shared_ptr<ISingleJobDepotFactory> factory;
-
     };
 }
 

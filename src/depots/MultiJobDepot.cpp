@@ -13,7 +13,7 @@ mimo::MultiJobDepot::MultiJobDepot(
     workflow_(workflow_)
 {
     for (const auto &&step_id : workflow_->get_steps()) {
-        this->depots.emplace(step_id.second, std::move(factory->make_depot(step_id.second)));
+        this->depots.emplace(step_id.second, std::move(factory->make_unique(step_id.second)));
         if (this->depots.at(step_id.second)->has_runnable_jobs()) {
             this->runnable_jobs.insert(step_id.second);
         }
@@ -21,7 +21,7 @@ mimo::MultiJobDepot::MultiJobDepot(
 }
 
 void mimo::MultiJobDepot::push(
-    const std::shared_ptr<workflow::Input> &input_id,
+    const workflow::Input &input_id,
     std::shared_ptr<mimo::Entity> entity
 ) {
     auto &&step_id = this->workflow_->get_connected_step(input_id);
@@ -30,23 +30,24 @@ void mimo::MultiJobDepot::push(
     this->runnable_jobs.insert(jobs.begin(), jobs.end());
 }
 
-bool mimo::MultiJobDepot::can_queue(const std::shared_ptr<workflow::Output> &output_id) {
+bool mimo::MultiJobDepot::can_queue(const workflow::Output &output_id) {
     const auto &&input_ids = this->workflow_->get_connected_inputs(output_id);
     return std::all_of(
         input_ids.begin(),
         input_ids.end(),
         [this](const std::shared_ptr<workflow::Input> &&input_id) {
-            return this->depots.at(this->workflow_->get_connected_step(input_id))->can_queue(input_id);
+            const auto &step_id = this->workflow_->get_connected_step(*input_id);
+            return this->depots.at(step_id)->can_queue(*input_id);
         }
     );
 }
 
 void mimo::MultiJobDepot::queue_input(
-    const std::shared_ptr<workflow::Output> &output_id,
+    const workflow::Output &output_id,
     const IQueue &queue
 ) {
     for (auto &&input_id : this->workflow_->get_connected_inputs(output_id)) {
-        this->depots.at(this->workflow_->get_connected_step(input_id))->queue_input(input_id, queue);
+        this->depots.at(this->workflow_->get_connected_step(*input_id))->queue_input(*input_id, queue);
     }
 }
 

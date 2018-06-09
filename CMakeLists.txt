@@ -28,8 +28,12 @@ add_library(mimo
     src/Job.cpp src/Job.h
     src/JobFactory.h
     src/depots/IJobDepot.h
+    src/depots/IMultiJobDepot.h
     src/depots/ISingleJobDepot.h
+    src/depots/MultiJobDepot.cpp src/depots/MultiJobDepot.h
+    src/depots/MultiJobDepotFactory.h
     src/depots/SingleJobDepot.cpp src/depots/SingleJobDepot.h
+    src/depots/SingleJobDepotFactory.h
     src/queues/IQueue.h
     src/queues/IQueueBundle.h
     src/queues/Queue.cpp src/queues/Queue.h

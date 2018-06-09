@@ -21,14 +21,14 @@ namespace mimo {
         );
 
         void push(
-            const std::shared_ptr<workflow::Input> &input_id,
+            const workflow::Input &input_id,
             std::shared_ptr<Entity> entity
         ) override;
 
-        bool can_queue(const std::shared_ptr<workflow::Output> &output_id) override;
+        bool can_queue(const workflow::Output &output_id) override;
 
         void queue_input(
-            const std::shared_ptr<workflow::Output> &output_id,
+            const workflow::Output &output_id,
             const IQueue &queue
         ) override;
 

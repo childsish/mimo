@@ -3,6 +3,7 @@
 #ifndef MIMO_IMULTIJOBDEPOT_H
 #define MIMO_IMULTIJOBDEPOT_H
 
+#include <workflow/Output.h>
 #include "IJobDepot.h"
 
 
@@ -15,7 +16,7 @@ namespace mimo {
 
         /** @brief Transfer all entites from the given queue to the inputs connected to the specified output. */
         virtual void queue_input(
-            const std::shared_ptr<workflow::Output> &output_id,
+            const workflow::Output &output_id,
             const IQueue &queue
         ) = 0;
     };

@@ -1,11 +1,15 @@
 #include <gtest/gtest.h>
 #include <workflow/Workflow.h>
 #include <mimo/Step.h>
-#include "MockJobDepot.h"
-#include "../src/job_depots/MultiJobDepot.h"
+#include "mocks/MockFactory.h"
+#include "mocks/MockJobDepot.h"
+#include "../src/depots/ISingleJobDepot.h"
+#include "../src/depots/MultiJobDepot.h"
 
 
 using ::testing::Return;
+
+MOCK_FACTORY1(MockSingleJobDepot, mimo::ISingleJobDepot, std::shared_ptr<workflow::Step>)
 
 TEST(JobDepotTest, test_correct_factory_is_used) {
     auto workflow = std::make_shared<workflow::Workflow>();
@@ -15,7 +19,7 @@ TEST(JobDepotTest, test_correct_factory_is_used) {
 
     auto sync_manager = new mimo::MockJobDepot();
     auto async_manager = new mimo::MockJobDepot();
-    auto factory = std::make_shared<mimo::MockSingleJobDepotFactory>();
+    auto factory = std::make_shared<MockSingleJobDepotFactory>();
     EXPECT_CALL(*factory, make_depot_proxy(step1))
         .WillOnce(Return(sync_manager));
     EXPECT_CALL(*factory, make_depot_proxy(step2))
@@ -26,7 +30,7 @@ TEST(JobDepotTest, test_correct_factory_is_used) {
 
 TEST(JobDepotTest, test_empty_input_steps) {
     auto workflow = std::make_shared<workflow::Workflow>();
-    auto factory = std::make_shared<mimo::MockSingleJobDepotFactory>();
+    auto factory = std::make_shared<MockSingleJobDepotFactory>();
     workflow->add_step("step", {}, {"output"});
 
     mimo::MultiJobDepot manager(workflow, factory);
