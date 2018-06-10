@@ -16,6 +16,8 @@ add_executable(test_mimo
     mocks/MockJob.h
     mocks/MockQueue.h
     mocks/MockQueueBundle.h
+    mocks/MockSingleJobDepot.h
+    mocks/MockSingleJobDepotFactory.h
     mocks/MockStep.h
 )
 target_include_directories(test_mimo PRIVATE

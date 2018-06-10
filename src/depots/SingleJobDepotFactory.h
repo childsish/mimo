@@ -35,8 +35,8 @@ namespace mimo {
             std::shared_ptr<workflow::Step> step_id
         ) override {
             return new SingleJobDepot(
-                std::move(step_id),
-                std::move(this->steps.at(step_id)),
+                step_id,
+                this->steps.at(step_id),
                 this->job_factory,
                 this->bundle_factory
             );
