@@ -9,15 +9,11 @@
 namespace mimo {
     template<typename Base, typename Derived, typename ... Args>
     class Factory : public IFactory<Base, Args...> {
-
-        Base* make_raw(Args ... args) override;
+    public:
+        Base *make_raw(Args ... args) override {
+            return new Derived(std::forward<Args>(args)...);
+        }
     };
 }
-
-template<typename Base, typename Derived, typename ... Args>
-Base* mimo::Factory<Base, Derived, Args...>::make_raw(Args ... args) {
-    return new Derived(std::forward<Args>(args)...);
-}
-
 
 #endif //MIMO_FACTORY_H

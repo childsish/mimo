@@ -35,7 +35,7 @@ namespace mimo {
 
         bool has_runnable_jobs() const override;
 
-        std::set<std::unique_ptr<IJob>> get_runnable_jobs() override;
+        std::set<std::unique_ptr<IJob>, JobComparator> get_runnable_jobs() override;
 
         void return_exhausted_job(std::unique_ptr<IJob> job) override;
 
@@ -45,10 +45,6 @@ namespace mimo {
         std::unique_ptr<IJob> job;
         std::unique_ptr<IQueueBundle> buffer;
     };
-
-
-    using ISingleJobDepotFactory = IFactory<ISingleJobDepot>;
-    using SingleJobDepotFactory = Factory<ISingleJobDepot, SingleJobDepot, std::shared_ptr<workflow::Step>, std::shared_ptr<Step>>;
 }
 
 

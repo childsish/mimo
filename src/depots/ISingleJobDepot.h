@@ -9,7 +9,7 @@
 
 namespace mimo {
 
-    class ISingleJobDepot : IJobDepot {
+    class ISingleJobDepot : public IJobDepot {
     public:
         /** @brief Check if specified input queue is full. */
         virtual bool can_queue(const workflow::Input &input_id) = 0;

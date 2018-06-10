@@ -37,8 +37,8 @@ bool mimo::SingleJobDepot::has_runnable_jobs() const {
     return bool(this->job) && this->job->can_run();
 }
 
-std::set<std::unique_ptr<mimo::IJob>> mimo::SingleJobDepot::get_runnable_jobs() {
-    std::set<std::unique_ptr<IJob>> jobs;
+std::set<std::unique_ptr<mimo::IJob>, mimo::JobComparator> mimo::SingleJobDepot::get_runnable_jobs() {
+    std::set<std::unique_ptr<IJob>, JobComparator> jobs;
     if (this->has_runnable_jobs()) {
         this->job->transfer_input(*this->buffer);
         jobs.emplace(std::move(this->job));

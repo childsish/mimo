@@ -6,10 +6,15 @@
 #include <queue>
 #include <workflow/Workflow.h>
 #include "IMultiJobDepot.h"
-#include "SingleJobDepot.h"
+#include "SingleJobDepotFactory.h"
 
 
 namespace mimo {
+
+    using DepotMap = std::unordered_map<
+        std::shared_ptr<workflow::Step>,
+        std::unique_ptr<ISingleJobDepot>
+    >;
 
     /** @brief: Manages the jobs being run by the system. Prevents too many jobs from being run. */
     class MultiJobDepot : public IMultiJobDepot {
@@ -17,7 +22,8 @@ namespace mimo {
 
         explicit MultiJobDepot(
             std::shared_ptr<workflow::Workflow> workflow_,
-            std::shared_ptr<ISingleJobDepotFactory> factory = std::make_shared<SingleJobDepotFactory>(5)
+            std::shared_ptr<ISingleJobDepotFactory> factory =
+                std::make_shared<SingleJobDepotFactory>()
         );
 
         void push(
@@ -34,16 +40,14 @@ namespace mimo {
 
         bool has_runnable_jobs() const override;
 
-        std::set<std::unique_ptr<IJob>> get_runnable_jobs() override;
+        std::set<std::unique_ptr<IJob>, JobComparator> get_runnable_jobs() override;
 
         void return_exhausted_job(std::unique_ptr<IJob> job) override;
 
     private:
-
         std::shared_ptr<workflow::Workflow> workflow_;
-        std::unordered_map<std::shared_ptr<workflow::Step>, std::unique_ptr<ISingleJobDepot>> depots;
+        DepotMap depots;
         std::set<std::shared_ptr<workflow::Step>> runnable_jobs;
-
     };
 }
 

@@ -3,17 +3,17 @@
 #ifndef MIMO_ISINGLEJOBDEPOTFACTORY_H
 #define MIMO_ISINGLEJOBDEPOTFACTORY_H
 
-#include <workflow/Step.h>
+#include "IJobDepotFactory.h"
 #include "SingleJobDepot.h"
 
 
 namespace mimo {
 
     class Step;
-    using ISingleJobDepotFactory = IFactory<
+    using ISingleJobDepotFactory = IJobDepotFactory<
         ISingleJobDepot,
         std::shared_ptr<workflow::Step>
-    >
+    >;
 
     class SingleJobDepotFactory : public ISingleJobDepotFactory {
     public:
@@ -27,7 +27,7 @@ namespace mimo {
         void register_step(
             std::shared_ptr<workflow::Step> step_id,
             std::shared_ptr<Step> step
-        ) {
+        ) override {
             this->steps[step_id] = step;
         }
 

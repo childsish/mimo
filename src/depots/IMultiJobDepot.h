@@ -12,7 +12,7 @@ namespace mimo {
     class IMultiJobDepot : public IJobDepot {
     public:
         /** @brief Check if specified input queue is full. */
-        virtual bool can_queue(const std::shared_ptr<workflow::Output> &output_id) = 0;
+        virtual bool can_queue(const workflow::Output &output_id) = 0;
 
         /** @brief Transfer all entites from the given queue to the inputs connected to the specified output. */
         virtual void queue_input(
