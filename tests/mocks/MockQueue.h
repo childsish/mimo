@@ -1,7 +1,4 @@
-/**
- * @author: Liam Childs (liam.h.childs@gmail.com)
- * @brief:
- */
+/** @author: Liam Childs (liam.h.childs@gmail.com) */
 
 #ifndef MIMO_MOCKQUEUE_H
 #define MIMO_MOCKQUEUE_H
@@ -16,12 +13,16 @@
 namespace mimo {
     class MockQueue : public IQueue {
     public:
+        void push(const IQueue &queue) {
+            this->push_proxy(&queue);
+        }
+
         MOCK_CONST_METHOD0(can_pop, bool());
         MOCK_METHOD0(peek, std::shared_ptr<Entity>());
         MOCK_METHOD0(pop, std::shared_ptr<Entity>());
         MOCK_CONST_METHOD0(can_push, bool());
-        MOCK_METHOD1(push, void(std::shared_ptr<Entity> entity));
-        MOCK_METHOD1(push, void(const IQueue &queue));
+        MOCK_METHOD1(push, void(std::shared_ptr<Entity>));
+        MOCK_METHOD1(push_proxy, void(const IQueue *));
         MOCK_METHOD0(clear, void());
         MOCK_METHOD0(close, void());
         MOCK_CONST_METHOD0(is_closed, bool());

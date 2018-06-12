@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <workflow/Workflow.h>
 #include <mimo/Entity.h>
+#include "mocks/MockJob.h"
 #include "mocks/MockSingleJobDepot.h"
 #include "mocks/MockSingleJobDepotFactory.h"
 #include "../src/depots/MultiJobDepot.h"
@@ -12,17 +13,29 @@ TEST(MultiJobDepotTest, test_construct_with_runnable_jobs) {
     auto workflow = std::make_shared<workflow::Workflow>();
     auto step_id = workflow->add_step("step1", {}, {});
 
+    auto job = new mimo::MockJob();
+    EXPECT_CALL(*job, get_step_id())
+        .WillRepeatedly(Return(step_id));
+    std::vector<mimo::IJob*> jobs{{job}};
     auto single_job_depot = new mimo::MockSingleJobDepot();
     EXPECT_CALL(*single_job_depot, has_runnable_jobs())
         .WillRepeatedly(Return(true));
+    EXPECT_CALL(*single_job_depot, get_runnable_jobs_proxy())
+        .WillOnce(Return(jobs));
     auto factory = std::make_shared<mimo::MockSingleJobDepotFactory>();
     EXPECT_CALL(*factory, make_raw(step_id))
         .WillOnce(Return(single_job_depot));
 
     mimo::MultiJobDepot multi_job_depot(workflow, factory);
     EXPECT_TRUE(multi_job_depot.has_runnable_jobs());
-    EXPECT_GT(multi_job_depot.get_runnable_jobs().size(), 0);
+    auto runnable_jobs = multi_job_depot.get_runnable_jobs();
+    EXPECT_GT(runnable_jobs.size(), 0);
     EXPECT_FALSE(multi_job_depot.has_runnable_jobs());
+    for (auto &job : runnable_jobs) {
+        auto step_id = job->get_step_id();
+        multi_job_depot.return_exhausted_job(std::move(job));
+    }
+    EXPECT_TRUE(multi_job_depot.has_runnable_jobs());
 }
 
 TEST(MultiJobDepotTest, test_push_with_runnable_jobs) {
@@ -31,10 +44,16 @@ TEST(MultiJobDepotTest, test_push_with_runnable_jobs) {
     auto input_id = step_id->get_inputs()->at("input");
     auto entity = std::make_shared<mimo::Entity>();
 
+    auto job = new mimo::MockJob();
+    EXPECT_CALL(*job, get_step_id())
+        .WillRepeatedly(Return(step_id));
+    std::vector<mimo::IJob*> jobs{{job}};
     auto single_job_depot = new mimo::MockSingleJobDepot();
     EXPECT_CALL(*single_job_depot, has_runnable_jobs())
         .WillOnce(Return(false))
         .WillRepeatedly(Return(true));
+    EXPECT_CALL(*single_job_depot, get_runnable_jobs_proxy())
+        .WillOnce(Return(jobs));
     auto factory = std::make_shared<mimo::MockSingleJobDepotFactory>();
     EXPECT_CALL(*factory, make_raw(step_id))
         .WillOnce(Return(single_job_depot));
@@ -43,8 +62,14 @@ TEST(MultiJobDepotTest, test_push_with_runnable_jobs) {
     EXPECT_FALSE(multi_job_depot.has_runnable_jobs());
     multi_job_depot.push(dynamic_cast<workflow::Input&>(*input_id), entity);
     EXPECT_TRUE(multi_job_depot.has_runnable_jobs());
-    EXPECT_GT(multi_job_depot.get_runnable_jobs().size(), 0);
+    auto runnable_jobs = multi_job_depot.get_runnable_jobs();
+    EXPECT_GT(runnable_jobs.size(), 0);
     EXPECT_FALSE(multi_job_depot.has_runnable_jobs());
+    for (auto &job : runnable_jobs) {
+        auto step_id = job->get_step_id();
+        multi_job_depot.return_exhausted_job(std::move(job));
+    }
+    EXPECT_TRUE(multi_job_depot.has_runnable_jobs());
 }
 
 TEST(MultiJobDepotTest, test_push_without_runnable_jobs) {
@@ -87,8 +112,6 @@ TEST(MultiJobDepotTest, test_can_queue) {
         .WillOnce(Return(true));
     auto depot2 = new mimo::MockSingleJobDepot();
     EXPECT_CALL(*depot2, can_queue(dynamic_cast<workflow::Input&>(*input_id2)))
-        .WillOnce(Return(false))
-        .WillOnce(Return(true))
         .WillOnce(Return(false))
         .WillOnce(Return(true));
     auto factory = std::make_shared<mimo::MockSingleJobDepotFactory>();

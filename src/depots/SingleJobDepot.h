@@ -35,7 +35,7 @@ namespace mimo {
 
         bool has_runnable_jobs() const override;
 
-        std::set<std::unique_ptr<IJob>, JobComparator> get_runnable_jobs() override;
+        std::vector<std::unique_ptr<IJob>> get_runnable_jobs() override;
 
         void return_exhausted_job(std::unique_ptr<IJob> job) override;
 

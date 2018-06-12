@@ -1,6 +1,8 @@
+#include "MultiJobDepot.h"
+
 #include <algorithm>
 #include <workflow/Step.h>
-#include "MultiJobDepot.h"
+#include "../JobComparator.h"
 
 
 mimo::MultiJobDepot::MultiJobDepot(
@@ -53,12 +55,15 @@ bool mimo::MultiJobDepot::has_runnable_jobs() const {
     return !this->runnable_jobs.empty();
 }
 
-std::set<std::unique_ptr<mimo::IJob>, mimo::JobComparator> mimo::MultiJobDepot::get_runnable_jobs() {
-    std::set<std::unique_ptr<IJob>, JobComparator> jobs;
+std::vector<std::unique_ptr<mimo::IJob>> mimo::MultiJobDepot::get_runnable_jobs() {
+    std::vector<std::unique_ptr<IJob>> jobs;
     for (const auto &step_id : this->runnable_jobs) {
-        jobs.merge(this->depots.at(step_id)->get_runnable_jobs());
+        for (auto &&job : this->depots.at(step_id)->get_runnable_jobs()) {
+            jobs.emplace_back(std::move(job));
+        }
     }
     this->runnable_jobs.clear();
+    std::sort(jobs.begin(), jobs.end(), JobComparator());
     return jobs;
 }
 

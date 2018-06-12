@@ -4,9 +4,8 @@
 #define MIMO_IJOBDEPOT_H
 
 #include <memory>
-#include <set>
+#include <vector>
 #include <workflow/Input.h>
-#include "../JobComparator.h"
 
 
 namespace mimo {
@@ -30,7 +29,7 @@ namespace mimo {
         virtual bool has_runnable_jobs() const = 0;
 
         /** @brief Get the job if it considered runnable in the local context. */
-        virtual std::set<std::unique_ptr<IJob>, JobComparator> get_runnable_jobs() = 0;
+        virtual std::vector<std::unique_ptr<IJob>> get_runnable_jobs() = 0;
 
         /** @brief Return the job to the depot. */
         virtual void return_exhausted_job(std::unique_ptr<IJob> job) = 0;

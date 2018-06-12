@@ -40,14 +40,14 @@ namespace mimo {
 
         bool has_runnable_jobs() const override;
 
-        std::set<std::unique_ptr<IJob>, JobComparator> get_runnable_jobs() override;
+        std::vector<std::unique_ptr<IJob>> get_runnable_jobs() override;
 
         void return_exhausted_job(std::unique_ptr<IJob> job) override;
 
     private:
         std::shared_ptr<workflow::Workflow> workflow_;
         DepotMap depots;
-        std::set<std::shared_ptr<workflow::Step>> runnable_jobs;
+        std::unordered_set<std::shared_ptr<workflow::Step>> runnable_jobs;
     };
 }
 

@@ -12,6 +12,7 @@
 
 using ::testing::_;
 using ::testing::Return;
+using ::testing::ReturnRef;
 
 MOCK_FACTORY1(MockQueueBundle, mimo::IQueueBundle, std::shared_ptr<workflow::ConnectionMap>)
 MOCK_FACTORY2(MockJob, mimo::IJob, std::shared_ptr<workflow::Step>, std::shared_ptr<mimo::Step>)
@@ -25,7 +26,7 @@ TEST(SingleJobDepotTest, test_buffer_interactions) {
 
     mimo::MockQueue queue1;
     mimo::MockQueue queue2;
-    EXPECT_CALL(queue1, push(queue2))
+    EXPECT_CALL(queue1, push_proxy(&queue2))
         .Times(1);
     auto job = new mimo::MockJob();
     auto mock_bundle = new mimo::MockQueueBundle();
@@ -35,7 +36,7 @@ TEST(SingleJobDepotTest, test_buffer_interactions) {
         .WillOnce(Return(mimo::IOutputs::PushStatus::CAN_PUSH))
         .WillOnce(Return(mimo::IOutputs::PushStatus::QUEUE_FULL));
     EXPECT_CALL(*mock_bundle, get_queue("input"))
-        .WillOnce(Return(&queue1));
+        .WillOnce(ReturnRef(queue1));
     auto job_factory = std::make_shared<MockJobFactory>();
     EXPECT_CALL(*job_factory, make_raw(_, _)) // TODO: Match against step_id and step.
         .WillOnce(Return(job));
@@ -64,7 +65,7 @@ TEST(SingleJobDepotTest, test_with_runnable_job) {
     auto mock_job = new mimo::MockJob();
     EXPECT_CALL(*mock_job, can_run())
         .WillRepeatedly(Return(true));
-    EXPECT_CALL(*mock_job, transfer_input(*mock_bundle))
+    EXPECT_CALL(*mock_job, transfer_input_proxy(mock_bundle))
         .Times(1);
     auto job_factory = std::make_shared<MockJobFactory>();
     EXPECT_CALL(*job_factory, make_raw(_, _))
@@ -74,8 +75,9 @@ TEST(SingleJobDepotTest, test_with_runnable_job) {
     EXPECT_TRUE(depot.has_runnable_jobs());
     auto jobs = depot.get_runnable_jobs();
     EXPECT_FALSE(depot.has_runnable_jobs());
-    for (auto &&job : jobs) {
-        depot.return_exhausted_job(std::move(job));
+    while (!jobs.empty()) {
+        depot.return_exhausted_job(std::move(jobs.back()));
+        jobs.pop_back();
     }
     EXPECT_TRUE(depot.has_runnable_jobs());
 }

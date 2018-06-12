@@ -12,6 +12,14 @@ namespace mimo {
 
     class MockSingleJobDepot : public mimo::ISingleJobDepot {
     public:
+        std::vector<std::unique_ptr<IJob>> get_runnable_jobs() {
+            std::vector<std::unique_ptr<IJob>> jobs;
+            for (auto job : this->get_runnable_jobs_proxy()) {
+                jobs.emplace_back(job);
+            }
+            return jobs;
+        }
+
         void return_exhausted_job(std::unique_ptr<IJob> job) override {
             this->return_exhausted_job_proxy(job.get());
         }
@@ -21,7 +29,7 @@ namespace mimo {
 
         MOCK_METHOD2(push, void(const workflow::Input &input_id, std::shared_ptr<Entity> entity));
         MOCK_CONST_METHOD0(has_runnable_jobs, bool());
-        MOCK_METHOD0(get_runnable_jobs, std::set<std::unique_ptr<IJob>, JobComparator>());
+        MOCK_METHOD0(get_runnable_jobs_proxy, std::vector<IJob *>());
         MOCK_METHOD1(return_exhausted_job_proxy, void(IJob *job));
     };
 }

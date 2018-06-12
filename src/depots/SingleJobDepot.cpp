@@ -1,7 +1,5 @@
 #include "SingleJobDepot.h"
 
-#include "IJob.h"
-
 mimo::SingleJobDepot::SingleJobDepot(
     std::shared_ptr<workflow::Step> step_id,
     std::shared_ptr<Step> step,
@@ -37,11 +35,11 @@ bool mimo::SingleJobDepot::has_runnable_jobs() const {
     return bool(this->job) && this->job->can_run();
 }
 
-std::set<std::unique_ptr<mimo::IJob>, mimo::JobComparator> mimo::SingleJobDepot::get_runnable_jobs() {
-    std::set<std::unique_ptr<IJob>, JobComparator> jobs;
+std::vector<std::unique_ptr<mimo::IJob>> mimo::SingleJobDepot::get_runnable_jobs() {
+    std::vector<std::unique_ptr<IJob>> jobs;
     if (this->has_runnable_jobs()) {
         this->job->transfer_input(*this->buffer);
-        jobs.emplace(std::move(this->job));
+        jobs.emplace_back(std::move(this->job));
     }
     return jobs;
 }
