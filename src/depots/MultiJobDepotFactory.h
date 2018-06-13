@@ -15,14 +15,22 @@ namespace mimo {
     class Step;
     using IMultiJobDepotFactory = IJobDepotFactory<
         IMultiJobDepot,
-        std::shared_ptr<workflow::Step>
+        std::shared_ptr<workflow::Workflow>
     >;
 
     class MultiJobDepotFactory : public IMultiJobDepotFactory {
     public:
         explicit MultiJobDepotFactory(
             std::shared_ptr<ISingleJobDepotFactory> factory = std::make_shared<SingleJobDepotFactory>()
-        ) : factory(std::move(factory)) {}
+        ) :
+            factory(std::move(factory)) {}
+
+        void register_step(
+            std::shared_ptr<workflow::Step> step_id,
+            std::shared_ptr<Step> step
+        ) override {
+            this->factory->register_step(std::move(step_id), std::move(step));
+        }
 
         IMultiJobDepot *make_raw(
             std::shared_ptr<workflow::Workflow> workflow

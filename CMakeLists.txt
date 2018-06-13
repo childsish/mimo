@@ -21,6 +21,7 @@ add_library(mimo
     include/mimo/IOutputs.h
     include/mimo/Entity.h
     include/mimo/Step.h
+    src/Engine.cpp include/mimo/Engine.h
     src/Factory.h
     src/IFactory.h
     src/IForwardIterator.h

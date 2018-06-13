@@ -17,7 +17,7 @@ namespace mimo {
 
     class SingleJobDepotFactory : public ISingleJobDepotFactory {
     public:
-        SingleJobDepotFactory(
+        explicit SingleJobDepotFactory(
             std::shared_ptr<IJobFactory> job_factory = std::make_shared<JobFactory>(),
             std::shared_ptr<IQueueBundleFactory> = std::make_shared<QueueBundleFactory>()
         ) :
