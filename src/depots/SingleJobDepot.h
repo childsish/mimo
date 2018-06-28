@@ -43,7 +43,7 @@ namespace mimo {
         std::shared_ptr<workflow::Step> step_id;
         std::shared_ptr<Step> step;
         std::unique_ptr<IJob> job;
-        std::unique_ptr<IInputs> buffer;
+        std::unique_ptr<IQueueBundle> buffer;
     };
 }
 

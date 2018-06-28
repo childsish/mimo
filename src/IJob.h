@@ -9,8 +9,7 @@
 
 namespace mimo {
 
-    class IInputs;
-    class IOutputs;
+    class IQueueBundle;
 
     /** @brief A manager of a step's input, output and readiness. */
     class IJob {
@@ -27,10 +26,10 @@ namespace mimo {
         virtual void transfer_input(IQueueBundle &bundle) = 0;
 
         /** @brief Gets the inputs for the job. */
-        virtual std::shared_ptr<IInputs> get_inputs() = 0;
+        virtual std::shared_ptr<IQueueBundle> get_inputs() = 0;
 
         /** @brief Gets the outputs for the job. */
-        virtual std::shared_ptr<IOutputs> get_outputs() = 0;
+        virtual std::shared_ptr<IQueueBundle> get_outputs() = 0;
 
         /** @brief Check if the job can be run. */
         virtual bool can_run() const = 0;

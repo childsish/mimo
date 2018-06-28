@@ -27,9 +27,9 @@ namespace mimo {
 
         void transfer_input(IQueueBundle &bundle) override;
 
-        std::shared_ptr<IInputs> get_inputs() override;
+        std::shared_ptr<IQueueBundle> get_inputs() override;
 
-        std::shared_ptr<IOutputs> get_outputs() override;
+        std::shared_ptr<IQueueBundle> get_outputs() override;
 
         bool can_run() const override;
 
@@ -43,8 +43,8 @@ namespace mimo {
         std::shared_ptr<workflow::Step> step_id;
         std::shared_ptr<mimo::Step> step;
 
-        std::shared_ptr<IInputs> inputs;
-        std::shared_ptr<IOutputs> outputs;
+        std::shared_ptr<IQueueBundle> inputs;
+        std::shared_ptr<IQueueBundle> outputs;
 
         bool completed;
     };

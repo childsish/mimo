@@ -34,11 +34,11 @@ void mimo::Job::transfer_input(mimo::IQueueBundle &bundle) {
     }
 }
 
-std::shared_ptr<mimo::IInputs> mimo::Job::get_inputs() {
+std::shared_ptr<mimo::IQueueBundle> mimo::Job::get_inputs() {
     return this->inputs;
 }
 
-std::shared_ptr<mimo::IOutputs> mimo::Job::get_outputs() {
+std::shared_ptr<mimo::IQueueBundle> mimo::Job::get_outputs() {
     return this->outputs;
 }
 
