@@ -50,7 +50,7 @@ public:
     }
 
     bool run(mimo::IInputs &ins, mimo::IOutputs &outs) {
-        while (outs.get_status() == mimo::IOutputs::PushStatus::CAN_PUSH) {
+        while (outs.get_push_status() == mimo::IOutputs::PushStatus::CAN_PUSH) {
             outs.push("output", std::make_shared<Integer>(this->from));
             this->from += this->step;
             if (this->step > 0 && this->from >= this->to || this->step < 0 && this->from < this->to) {

@@ -14,7 +14,7 @@ public:
         const std::string prefix = "",
         const std::string suffix = ""
     ) :
-        name("Range"),
+        name("Print"),
         inputs({"input"}),
         outputs({}),
         prefix(prefix),
@@ -34,7 +34,7 @@ public:
 
     bool run(mimo::IInputs &ins, mimo::IOutputs &outs) {
         std::shared_ptr<E> entity;
-        while (ins.get_status() == mimo::IInputs::PopStatus::CAN_POP) {
+        while (ins.get_pop_status() == mimo::IInputs::PopStatus::CAN_POP) {
             entity = std::static_pointer_cast<E>(ins.pop("input"));
             std::cout << prefix << *entity << suffix << std::endl;
         }

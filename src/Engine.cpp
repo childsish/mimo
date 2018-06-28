@@ -8,7 +8,7 @@
 #include <iostream>
 
 mimo::Engine::Engine(std::shared_ptr<IMultiJobDepotFactory> factory) :
-    factory(factory) {}
+    factory(std::move(factory)) {}
 
 void mimo::Engine::register_step(
     std::shared_ptr<workflow::Step> step_id,
@@ -24,7 +24,9 @@ void mimo::Engine::run(std::shared_ptr<workflow::Workflow> workflow) {
             job->run();
             auto outputs = job->get_outputs();
             for (auto &output_id : workflow->get_connected_outputs(*job->get_step_id())) {
-                depot->queue_input(*output_id, outputs->get_queue(output_id->name));
+                auto &queue = outputs->get_queue(output_id->name);
+                depot->queue_input(*output_id, queue);
+                queue.clear();
             }
             depot->return_exhausted_job(std::move(job));
         }

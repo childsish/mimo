@@ -45,8 +45,8 @@ void mimo::Queue::push(std::shared_ptr<mimo::Entity> entity) {
 }
 
 void mimo::Queue::push(const mimo::IQueue &queue) {
-    for (const auto &entity : queue) {
-        this->entities.push_back(entity);
+    for (auto entity : queue) {
+        this->entities.push_back(std::move(entity));
     }
 }
 

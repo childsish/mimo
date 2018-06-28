@@ -47,7 +47,12 @@ void mimo::MultiJobDepot::queue_input(
     const IQueue &queue
 ) {
     for (auto &&input_id : this->workflow_->get_connected_inputs(output_id)) {
-        this->depots.at(this->workflow_->get_connected_step(*input_id))->queue_input(*input_id, queue);
+        const auto &step_id = this->workflow_->get_connected_step(*input_id);
+        auto &depot = this->depots.at(step_id);
+        depot->queue_input(*input_id, queue);
+        if (depot->has_runnable_jobs()) {
+            this->runnable_jobs.insert(step_id);
+        }
     }
 }
 
@@ -68,9 +73,10 @@ std::vector<std::unique_ptr<mimo::IJob>> mimo::MultiJobDepot::get_runnable_jobs(
 }
 
 void mimo::MultiJobDepot::return_exhausted_job(std::unique_ptr<mimo::IJob> job) {
-    auto &&step_id = job->get_step_id();
-    this->depots.at(step_id)->return_exhausted_job(std::move(job));
-    if (this->depots.at(step_id)->has_runnable_jobs()) {
+    const auto &step_id = job->get_step_id();
+    auto &depot = this->depots.at(step_id);
+    depot->return_exhausted_job(std::move(job));
+    if (depot->has_runnable_jobs()) {
         this->runnable_jobs.insert(step_id);
     }
 }

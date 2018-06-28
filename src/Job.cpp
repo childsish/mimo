@@ -1,10 +1,6 @@
 #include <workflow/Step.h>
 #include "mimo/Step.h"
 #include "Job.h"
-#include "queues/IQueue.h"
-#include "queues/IQueueBundle.h"
-#include "mimo/IInputs.h"
-#include "mimo/IOutputs.h"
 
 
 mimo::Job::Job(
@@ -17,7 +13,8 @@ mimo::Job::Job(
     step_id(std::move(step_id)),
     step(std::move(step)),
     inputs(factory->make_shared(this->step_id->get_inputs())),
-    outputs(factory->make_shared(this->step_id->get_outputs()))
+    outputs(factory->make_shared(this->step_id->get_outputs())),
+    completed(false)
 {
 }
 
@@ -37,11 +34,11 @@ void mimo::Job::transfer_input(mimo::IQueueBundle &bundle) {
     }
 }
 
-std::shared_ptr<mimo::IQueueBundle> mimo::Job::get_inputs() {
+std::shared_ptr<mimo::IInputs> mimo::Job::get_inputs() {
     return this->inputs;
 }
 
-std::shared_ptr<mimo::IQueueBundle> mimo::Job::get_outputs() {
+std::shared_ptr<mimo::IOutputs> mimo::Job::get_outputs() {
     return this->outputs;
 }
 
