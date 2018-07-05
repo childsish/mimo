@@ -34,6 +34,10 @@ namespace mimo {
         std::shared_ptr<Entity> peek(const std::string &name) override;
         std::shared_ptr<Entity> pop(const std::string &name) override;
 
+        void close() override;
+        bool is_closed(const std::string& name) const override;
+        void clear() override;
+
     private:
 
         std::shared_ptr<ConnectionMap> identifiers;

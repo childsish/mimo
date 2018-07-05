@@ -20,7 +20,7 @@ void mimo::Engine::register_step(
 void mimo::Engine::run(std::shared_ptr<workflow::Workflow> workflow) {
     auto depot = this->factory->make_unique(workflow);
     while (depot->has_runnable_jobs()) {
-        for (auto &job : depot->get_runnable_jobs()) {
+        for (auto &&job : depot->get_runnable_jobs()) {
             job->run();
             auto outputs = job->get_outputs();
             for (auto &output_id : workflow->get_connected_outputs(*job->get_step_id())) {

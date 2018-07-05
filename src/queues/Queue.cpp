@@ -8,8 +8,11 @@ unsigned int mimo::Queue::CAPACITY = 100;
 
 mimo::Queue::Queue(unsigned int capacity) :
     capacity(capacity),
-    end_of_task(false),
     closed(false) {}
+
+unsigned long mimo::Queue::get_size() const {
+    return this->entities.size();
+}
 
 bool mimo::Queue::can_pop() const {
     return !this->entities.empty();
@@ -34,12 +37,12 @@ std::shared_ptr<mimo::Entity> mimo::Queue::pop() {
 }
 
 bool mimo::Queue::can_push() const {
-    return !this->end_of_task && this->entities.size() < this->capacity;
+    return !this->closed && this->entities.size() < this->capacity;
 }
 
 void mimo::Queue::push(std::shared_ptr<mimo::Entity> entity) {
-    if (this->end_of_task) {
-        throw QueueError("Can not push to a is_end_of_task queue.");
+    if (this->closed) {
+        throw QueueError("Can not push to a closed queue.");
     }
     this->entities.push_back(entity);
 }
@@ -59,7 +62,7 @@ void mimo::Queue::close() {
 }
 
 bool mimo::Queue::is_closed() const {
-    return this->closed;
+    return this->entities.empty() && this->closed;
 }
 
 mimo::IForwardIterator<std::shared_ptr<mimo::Entity>> mimo::Queue::begin() {

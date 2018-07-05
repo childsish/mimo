@@ -27,6 +27,8 @@ namespace mimo {
         virtual PushStatus get_push_status(const std::string &name) const = 0;
 
         virtual void push(const std::string &name, std::shared_ptr<Entity> entity) = 0;
+
+        virtual void close() = 0;
     };
 }
 

@@ -23,6 +23,8 @@ namespace mimo {
          */
         explicit Queue(unsigned int capacity = CAPACITY);
 
+        unsigned long get_size() const override;
+
         bool can_pop() const override;
         std::shared_ptr<Entity> peek() override;
         std::shared_ptr<Entity> pop() override;
@@ -44,9 +46,8 @@ namespace mimo {
     private:
 
         unsigned int capacity;
-        std::deque<std::shared_ptr<Entity>> entities;
-        bool end_of_task;
         bool closed;
+        std::deque<std::shared_ptr<Entity>> entities;
 
     };
 }

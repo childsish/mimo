@@ -21,6 +21,7 @@ namespace mimo {
 
         virtual const ConnectionMap &get_identifiers() const = 0;
         virtual IQueue &get_queue(const std::string &name) = 0;
+        virtual void clear() = 0;
     };
 }
 

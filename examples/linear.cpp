@@ -10,7 +10,7 @@
 
 
 int main() {
-    auto range = std::make_shared<Range>(0, 1000000, 1);
+    auto range = std::make_shared<Range>(0, 100000, 1);
     auto print = std::make_shared<Print<Integer>>();
 
     auto workflow = std::make_shared<workflow::Workflow>();

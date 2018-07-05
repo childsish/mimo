@@ -28,9 +28,9 @@ unsigned int mimo::Job::get_job_id() const {
 
 void mimo::Job::transfer_input(mimo::IQueueBundle &bundle) {
     for (const auto &item : bundle.get_identifiers()) {
-        auto &queue = this->inputs->get_queue(item.first);
-        queue.push(bundle.get_queue(item.first));
-        queue.clear();
+        auto &to_queue = this->inputs->get_queue(item.first);
+        auto &from_queue = bundle.get_queue(item.first);
+        to_queue.push(from_queue);
     }
 }
 

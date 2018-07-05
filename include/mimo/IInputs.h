@@ -28,6 +28,8 @@ namespace mimo {
 
         virtual std::shared_ptr<Entity> peek(const std::string &name) = 0;
         virtual std::shared_ptr<Entity> pop(const std::string &name) = 0;
+
+        virtual bool is_closed(const std::string& name) const = 0;
     };
 }
 

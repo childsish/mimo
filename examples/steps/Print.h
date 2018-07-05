@@ -38,7 +38,7 @@ public:
             entity = std::static_pointer_cast<E>(ins.pop("input"));
             std::cout << prefix << *entity << suffix << std::endl;
         }
-        return true;
+        return ins.is_closed("input");
     }
 
 private:

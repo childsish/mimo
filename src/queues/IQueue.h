@@ -16,6 +16,8 @@ namespace mimo {
     public:
         virtual ~IQueue() = default;
 
+        virtual unsigned long get_size() const = 0;
+
         /** @brief Return true if the queue has items that can be popped. */
         virtual bool can_pop() const = 0;
         /** @brief Get the first item from the queue but leave it as the first item. */

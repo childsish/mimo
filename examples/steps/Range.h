@@ -54,6 +54,7 @@ public:
             outs.push("output", std::make_shared<Integer>(this->from));
             this->from += this->step;
             if (this->step > 0 && this->from >= this->to || this->step < 0 && this->from < this->to) {
+                outs.close();
                 return true;
             }
         }
