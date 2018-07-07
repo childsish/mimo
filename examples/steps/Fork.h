@@ -1,23 +1,22 @@
-#ifndef MIMO_CAPTURE_H
-#define MIMO_CAPTURE_H
+/** @author: Liam Childs (liam.h.childs@gmail.com) */
+
+#ifndef MIMO_SPLIT_H
+#define MIMO_SPLIT_H
 
 #include <mimo/Step.h>
-#include <iostream>
 
 
 template<typename E>
-class Print : public mimo::Step {
+class Fork : public mimo::Step {
 public:
 
-    Print(
-        const std::string prefix = "",
-        const std::string suffix = ""
+    explicit Fork(
+        bool (*condition)(const E &value)
     ) :
-        name("Print"),
-        inputs({"input"}),
-        outputs({}),
-        prefix(prefix),
-        suffix(suffix) {}
+      name("Split"),
+      inputs({"input"}),
+      outputs({"true", "false"}),
+      condition(condition) {}
 
     const std::string &get_name() const override {
         return this->name;
@@ -35,9 +34,13 @@ public:
         std::shared_ptr<E> entity;
         while (ins.get_pop_status() == mimo::IInputs::PopStatus::CAN_POP) {
             entity = std::static_pointer_cast<E>(ins.pop("input"));
-            std::cout << prefix << *entity << suffix << std::endl;
+            if (this->condition(*entity)) {
+                outs.push("true", entity);
+            }
+            else {
+                outs.push("false", entity);
+            }
         }
-        return ins.is_closed("input");
     }
 
 private:
@@ -46,9 +49,8 @@ private:
     std::vector<std::string> inputs;
     std::vector<std::string> outputs;
 
-    const std::string prefix;
-    const std::string suffix;
+    bool (*condition)(const E &value);
 
 };
 
-#endif //MIMO_CAPTURE_H
+#endif //MIMO_SPLIT_H

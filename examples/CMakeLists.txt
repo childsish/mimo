@@ -15,14 +15,21 @@ target_link_libraries(join
     mimo
     workflow)
 
-add_executable(fork fork.cpp)
+add_executable(fork fork.cpp
+    entities/Integer.h
+    steps/Print.h
+    steps/Range.h
+    steps/Fork.h)
 target_include_directories(fork PRIVATE
     ../include)
 target_link_libraries(fork
     mimo
     workflow)
 
-add_executable(split split.cpp)
+add_executable(split split.cpp
+    entities/Integer.h
+    steps/Print.h
+    steps/Range.h)
 target_include_directories(split PRIVATE
     ../include)
 target_link_libraries(split
