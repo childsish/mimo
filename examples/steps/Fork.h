@@ -41,6 +41,7 @@ public:
                 outs.push("false", entity);
             }
         }
+        return ins.is_closed("input");
     }
 
 private:

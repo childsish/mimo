@@ -1,5 +1,7 @@
 #include "SingleJobDepot.h"
 
+#include "../queues/IQueue.h"
+
 mimo::SingleJobDepot::SingleJobDepot(
     std::shared_ptr<workflow::Step> step_id,
     std::shared_ptr<Step> step,
@@ -9,7 +11,7 @@ mimo::SingleJobDepot::SingleJobDepot(
     step_id(std::move(step_id)),
     step(std::move(step)),
     job(job_factory->make_unique(this->step_id, this->step)),
-    buffer(bundle_factory->make_unique(this->step_id->get_inputs()))
+    buffer(bundle_factory->make_unique(*this->step_id->get_inputs()))
 {
 }
 

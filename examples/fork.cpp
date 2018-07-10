@@ -2,11 +2,11 @@
  * An example demonstrating a simple workflow that has one stream with multiple outputs. The outputs are never split.
  */
 
-#include <workflow/Workflow.h>
-#include <mimo/Engine.h>
 #include "steps/Print.h"
 #include "steps/Range.h"
 #include "steps/Fork.h"
+#include <mimo/Engine.h>
+#include <workflow/Workflow.h>
 
 
 bool is_even(const Integer &integer) {
@@ -15,9 +15,9 @@ bool is_even(const Integer &integer) {
 
 int main() {
     auto range = std::make_shared<Range>(0, 100000, 1);
-    auto fork = std::make_shared<Fork>(&is_even);
+    auto fork = std::make_shared<Fork<Integer>>(&is_even);
     auto print_true = std::make_shared<Print<Integer>>("", " is even.");
-    auto print_false = std::make_shared<Print<Integer>>("", " if odd.");
+    auto print_false = std::make_shared<Print<Integer>>("", " is odd.");
 
     auto workflow = std::make_shared<workflow::Workflow>();
     auto range_step = workflow->add_step(range->get_name(), range->get_inputs(), range->get_outputs());

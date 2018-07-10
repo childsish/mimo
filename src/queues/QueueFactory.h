@@ -9,7 +9,9 @@
 
 namespace mimo {
 
-    class QueueFactory : public IFactory<IQueue> {
+    using IQueueFactory = IFactory<IQueue>;
+
+    class QueueFactory : public IQueueFactory {
     public:
         explicit QueueFactory(unsigned int capacity = 10) : capacity(capacity) {}
 

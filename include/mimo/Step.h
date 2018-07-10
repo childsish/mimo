@@ -5,6 +5,7 @@
 
 #include "IInputs.h"
 #include "IOutputs.h"
+#include <vector>
 
 
 namespace mimo {

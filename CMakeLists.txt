@@ -39,10 +39,11 @@ add_library(mimo
     src/depots/SingleJobDepotFactory.h
     src/queues/IQueue.h
     src/queues/IQueueBundle.h
+    src/queues/IQueueBundleFactory.h
     src/queues/Queue.cpp src/queues/Queue.h
     src/queues/QueueFactory.h
     src/queues/QueueBundle.cpp src/queues/QueueBundle.h
-    src/queues/QueueBundleFactory.h
+    src/queues/QueueBundleFactory.cpp src/queues/QueueBundleFactory.h
 )
 target_include_directories(mimo PRIVATE
     src

@@ -3,13 +3,13 @@
 #ifndef MIMO_JOB_H
 #define MIMO_JOB_H
 
-#include "queues/QueueBundleFactory.h"
 #include "IJob.h"
 
 
 namespace mimo {
 
     class Step;
+    class IQueueBundleFactory;
 
     class Job : public IJob {
     public:
@@ -17,8 +17,14 @@ namespace mimo {
         Job(
             unsigned int job_id,
             std::shared_ptr<workflow::Step> step_id,
+            std::shared_ptr<Step> step
+        );
+
+        Job(
+            unsigned int job_id,
+            std::shared_ptr<workflow::Step> step_id,
             std::shared_ptr<Step> step,
-            std::shared_ptr<IQueueBundleFactory> factory = std::make_shared<QueueBundleFactory>()
+            std::shared_ptr<IQueueBundleFactory> factory
         );
 
         const std::shared_ptr<workflow::Step> get_step_id() const override;

@@ -14,8 +14,11 @@ namespace mimo {
     public:
         virtual ~IQueueBundleFactory() = default;
 
-        virtual std::shared_ptr<IQueueBundle> make_shared(std::shared_ptr<workflow::InputMap>) = 0;
-        virtual std::shared_ptr<IQueueBundle> make_shared(std::shared_ptr<workflow::OutputMap>) = 0;
+        virtual std::shared_ptr<IQueueBundle> make_shared(workflow::InputMap &inputs) = 0;
+        virtual std::shared_ptr<IQueueBundle> make_shared(workflow::OutputMap &outputs) = 0;
+
+        virtual std::unique_ptr<IQueueBundle> make_unique(workflow::InputMap &inputs) = 0;
+        virtual std::unique_ptr<IQueueBundle> make_unique(workflow::OutputMap &outputs) = 0;
     };
 }
 

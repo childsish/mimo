@@ -1,7 +1,24 @@
-#include <workflow/Step.h>
-#include "mimo/Step.h"
 #include "Job.h"
 
+#include "mimo/Step.h"
+#include "queues/IQueue.h"
+#include "queues/QueueBundleFactory.h"
+
+
+mimo::Job::Job(
+    unsigned int job_id,
+    std::shared_ptr<workflow::Step> step_id,
+    std::shared_ptr<Step> step
+) :
+    job_id(job_id),
+    step_id(std::move(step_id)),
+    step(std::move(step)),
+    completed(false)
+{
+    QueueBundleFactory factory;
+    this->inputs = factory.make_shared(*this->step_id->get_inputs());
+    this->outputs = factory.make_shared(*this->step_id->get_outputs());
+}
 
 mimo::Job::Job(
     unsigned int job_id,
@@ -12,8 +29,8 @@ mimo::Job::Job(
     job_id(job_id),
     step_id(std::move(step_id)),
     step(std::move(step)),
-    inputs(factory->make_shared(this->step_id->get_inputs())),
-    outputs(factory->make_shared(this->step_id->get_outputs())),
+    inputs(factory->make_shared(*this->step_id->get_inputs())),
+    outputs(factory->make_shared(*this->step_id->get_outputs())),
     completed(false)
 {
 }

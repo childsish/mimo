@@ -3,10 +3,11 @@
 #ifndef MIMO_IQUEUEBUNDLE_H
 #define MIMO_IQUEUEBUNDLE_H
 
-#include <memory>
-#include <workflow/Connection.h>
 #include "mimo/IInputs.h"
 #include "mimo/IOutputs.h"
+#include <workflow/Connection.h>
+#include <memory>
+#include <unordered_map>
 
 
 namespace mimo {
