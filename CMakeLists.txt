@@ -20,7 +20,7 @@ add_library(mimo
     include/mimo/IInputs.h
     include/mimo/IOutputs.h
     include/mimo/Entity.h
-    include/mimo/Step.h
+    src/Step.cpp include/mimo/Step.h
     src/Engine.cpp include/mimo/Engine.h
     src/Factory.h
     src/IFactory.h

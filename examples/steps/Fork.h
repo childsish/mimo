@@ -13,22 +13,8 @@ public:
     explicit Fork(
         bool (*condition)(const E &value)
     ) :
-      name("Split"),
-      inputs({"input"}),
-      outputs({"true", "false"}),
-      condition(condition) {}
-
-    const std::string &get_name() const override {
-        return this->name;
-    }
-
-    const std::vector<std::string> &get_inputs() const override {
-        return this->inputs;
-    }
-
-    const std::vector<std::string> &get_outputs() const override {
-        return this->outputs;
-    }
+        Step("Fork", {"input"}, {"true", "false"}),
+        condition(condition) {}
 
     bool run(mimo::IInputs &ins, mimo::IOutputs &outs) {
         std::shared_ptr<E> entity;
@@ -45,10 +31,6 @@ public:
     }
 
 private:
-
-    std::string name;
-    std::vector<std::string> inputs;
-    std::vector<std::string> outputs;
 
     bool (*condition)(const E &value);
 

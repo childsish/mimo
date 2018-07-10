@@ -8,9 +8,12 @@ target_link_libraries(linear
     mimo
     workflow)
 
-add_executable(join join.cpp)
+add_executable(join join.cpp
+    entities/Integer.h
+    steps/Multiply.h)
 target_include_directories(join PRIVATE
-    ../include)
+    ../include
+    .)
 target_link_libraries(join
     mimo
     workflow)

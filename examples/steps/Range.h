@@ -9,9 +9,7 @@ class Range : public mimo::Step {
 public:
 
     Range(int to) :
-        name("Range"),
-        inputs({}),
-        outputs({"output"}),
+        Step("Range", {}, {"output"}),
         from(0),
         to(to),
         step(1)
@@ -22,9 +20,7 @@ public:
     }
 
     Range(int from, int to, int step = 1) :
-        name("Range"),
-        inputs({}),
-        outputs({"output"}),
+        Step("Range", {}, {"output"}),
         from(from),
         to(to),
         step(step)
@@ -35,18 +31,6 @@ public:
         else if (from < to && step < 0 || to < from && step > 0) {
             throw std::runtime_error("Step iterates in opposite direction from 'from' to 'to'.");
         }
-    }
-
-    const std::string &get_name() const override {
-        return this->name;
-    }
-
-    const std::vector<std::string> &get_inputs() const override {
-        return this->inputs;
-    }
-
-    const std::vector<std::string> &get_outputs() const override {
-        return this->outputs;
     }
 
     bool run(mimo::IInputs &ins, mimo::IOutputs &outs) {
@@ -62,10 +46,6 @@ public:
     }
 
 private:
-
-    std::string name;
-    std::vector<std::string> inputs;
-    std::vector<std::string> outputs;
 
     int from;
     int to;
