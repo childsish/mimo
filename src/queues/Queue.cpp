@@ -1,7 +1,6 @@
 #include "Queue.h"
 
 #include <iostream>
-#include "../errors.h"
 
 
 unsigned int mimo::Queue::CAPACITY = 100;
@@ -20,7 +19,7 @@ bool mimo::Queue::can_pop() const {
 
 std::shared_ptr<mimo::Entity> mimo::Queue::peek() {
     if (this->entities.empty()) {
-        throw QueueError("Trying to peek in empty queue.");
+        throw std::runtime_error("Trying to peek in empty queue.");
     }
 
     return this->entities.front();
@@ -28,7 +27,7 @@ std::shared_ptr<mimo::Entity> mimo::Queue::peek() {
 
 std::shared_ptr<mimo::Entity> mimo::Queue::pop() {
     if (this->entities.empty()) {
-        throw QueueError("Trying to pop from empty queue.");
+        throw std::runtime_error("Trying to pop from empty queue.");
     }
 
     auto entity = this->entities.front();
@@ -42,7 +41,7 @@ bool mimo::Queue::can_push() const {
 
 void mimo::Queue::push(std::shared_ptr<mimo::Entity> entity) {
     if (this->closed) {
-        throw QueueError("Can not push to a closed queue.");
+        throw std::runtime_error("Can not push to a closed queue.");
     }
     this->entities.push_back(entity);
 }

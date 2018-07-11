@@ -3,7 +3,6 @@
 #include <workflow/Output.h>
 #include "IQueue.h"
 #include "QueueBundle.h"
-#include "../errors.h"
 
 mimo::QueueBundle::QueueBundle(
     std::shared_ptr<ConnectionMap> identifiers,

@@ -15,7 +15,7 @@
 using ::testing::_;
 using ::testing::Return;
 
-MOCK_FACTORY1(MockQueueBundle, mimo::IQueueBundle, std::shared_ptr<workflow::ConnectionMap>)
+MOCK_FACTORY1(MockQueueBundle, mimo::IQueueBundle, std::shared_ptr<mimo::ConnectionMap>)
 
 TEST(JobTest, test_job_without_input_or_output) {
     auto workflow = workflow::Workflow();
