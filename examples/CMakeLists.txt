@@ -10,7 +10,9 @@ target_link_libraries(linear
 
 add_executable(join join.cpp
     entities/Integer.h
-    steps/Multiply.h)
+    steps/Multiply.h
+    steps/Print.h
+    steps/Range.h)
 target_include_directories(join PRIVATE
     ../include
     .)
