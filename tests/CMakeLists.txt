@@ -1,20 +1,28 @@
-cmake_minimum_required(VERSION 3.7)
-project(test_graph)
-
-set(CMAKE_CXX_STANDARD 14)
-
 add_subdirectory(googletest)
 
-
-add_executable(test_units
-        test_Entity.cpp
-        test_Queue.cpp
-        test_QueuePusher.cpp
-        test_Stream.cpp)
-target_include_directories(
-        test_units PRIVATE
-        ${gtest_SOURCE_DIR}/include
-        ../include
+add_executable(test_mimo
+    JobTest.cpp
+    MultiJobDepotTest.cpp
+    QueueTest.cpp
+    QueueBundleTest.cpp
+    SingleJobDepotTest.cpp
+    mocks/MockFactory.h
+    mocks/MockJob.h
+    mocks/MockQueue.h
+    mocks/MockQueueBundle.h
+    mocks/MockSingleJobDepot.h
+    mocks/MockSingleJobDepotFactory.h
+    mocks/MockStep.h
 )
-target_link_libraries(test_units gtest_main mimo)
-add_test(test_units test_units)
+target_include_directories(test_mimo PRIVATE
+    ${gtest_SOURCE_DIR}/include
+    ${gmock_SOURCE_DIR}/include
+    ../include
+    mocks
+)
+target_link_libraries(test_mimo
+    gtest_main
+    gmock
+    mimo
+)
+add_test(test_mimo test_units)

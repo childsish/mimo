@@ -2,58 +2,38 @@
  * An example demonstrating a simple workflow that has one stream with multiple outputs. The outputs are never split.
  */
 
-#include "Pipeline.h"
-#include "entities/Integer.h"
-#include "streams/Print.h"
-#include "streams/Range.h"
+#include "steps/Print.h"
+#include "steps/Range.h"
+#include "steps/Fork.h"
+#include <mimo/Engine.h>
+#include <workflow/Workflow.h>
 
-template<typename E>
-class Split : public Stream {
-public:
 
-    Split(bool (*condition)(const E *value)) : Stream("split", {"value"}, {"true", "false"}), _condition(condition) {}
-
-    void run() {
-        E *value;
-        while (can_run()) {
-            value = static_cast<E *>(inputs["value"].pop());
-            if (_condition(value)) {
-                outputs["true"].push(value);
-            }
-            else {
-                outputs["false"].push(value);
-            }
-        }
-    }
-
-private:
-
-    bool (*_condition)(const E *value);
-
-};
-
-bool is_even(const Integer *integer) {
-    return integer->value % 2 == 0;
+bool is_even(const Integer &integer) {
+    return integer.value % 2 == 0;
 }
 
-
 int main() {
-    Queue::THRESHOLD = 2;
+    auto range = std::make_shared<Range>(0, 100000, 1);
+    auto fork = std::make_shared<Fork<Integer>>(&is_even);
+    auto print_true = std::make_shared<Print<Integer>>("", " is even.");
+    auto print_false = std::make_shared<Print<Integer>>("", " is odd.");
 
-    Pipeline pipeline;
-    Range range(10);
-    Split<Integer> split(is_even);
-    Print<Integer> print_true("", " is even");
-    Print<Integer> print_false("", " is not even");
+    auto workflow = std::make_shared<workflow::Workflow>();
+    auto range_step = workflow->add_step(range->get_name(), range->get_inputs(), range->get_outputs());
+    auto fork_step = workflow->add_step(fork->get_name(), fork->get_inputs(), fork->get_outputs());;
+    auto print_true_step = workflow->add_step(print_true->get_name(), print_true->get_inputs(), print_true->get_outputs());
+    auto print_false_step = workflow->add_step(print_false->get_name(), print_false->get_inputs(), print_false->get_outputs());
+    range_step->pipe(*fork_step);
+    fork_step->get_output("true")->pipe(*print_true_step);
+    fork_step->get_output("false")->pipe(*print_false_step);
 
-    uuid range_id = pipeline.add_stream(range);
-    uuid split_id = pipeline.add_stream(split);
-    uuid print_true_id = pipeline.add_stream(print_true);
-    uuid print_false_id = pipeline.add_stream(print_false);
-    pipeline.pipe({range_id, "output"}, {split_id, "value"});
-    pipeline.pipe({split_id, "true"}, {print_true_id, "input"});
-    pipeline.pipe({split_id, "false"}, {print_false_id, "input"});
-    pipeline.run();
+    mimo::Engine engine;
+    engine.register_step(range_step, range);
+    engine.register_step(fork_step, fork);
+    engine.register_step(print_true_step, print_true);
+    engine.register_step(print_false_step, print_false);
+    engine.run(workflow);
 
     return 0;
 }

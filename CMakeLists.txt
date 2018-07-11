@@ -1,53 +1,63 @@
 cmake_minimum_required(VERSION 3.7)
 project(mimo)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 
-set(GRAPH__DISABLE_TESTS on)
-add_subdirectory(../graph ${PROJECT_BINARY_DIR}/lib/graph)
+# Options
 
-set(SOURCE_FILES
-        src/Entity.cpp include/Entity.h
-        src/Pipeline.cpp include/Pipeline.h
-        src/Queue.cpp include/Queue.h
-        src/QueuePusher.cpp include/QueuePusher.h
-        src/Stream.cpp include/Stream.h
-        src/entities/Integer.cpp include/entities/Integer.h
-        include/streams/Capture.h
-        include/streams/Print.h
-        include/streams/Range.h
-        include/streams/Release.h
-        include/streams/Sink.h)
-add_library(mimo ${SOURCE_FILES})
+option(MIMO_BUILD_TESTS "Enable/Disable unit tests for the mimo library." on)
+
+
+# Add workflow library
+
+set(WORKFLOW_BUILD_TESTS off CACHE BOOL "Disable workflow library unit tests.")
+add_subdirectory(lib/workflow)
+
+
+# Add mimo library
+
+add_library(mimo
+    include/mimo/IInputs.h
+    include/mimo/IOutputs.h
+    include/mimo/Entity.h
+    src/Step.cpp include/mimo/Step.h
+    src/Engine.cpp include/mimo/Engine.h
+    src/Factory.h
+    src/IFactory.h
+    src/IForwardIterator.h
+    src/IJob.h
+    src/Job.cpp src/Job.h
+    src/JobComparator.cpp src/JobComparator.h
+    src/JobFactory.h
+    src/depots/IJobDepot.h
+    src/depots/IJobDepotFactory.h
+    src/depots/IMultiJobDepot.h
+    src/depots/ISingleJobDepot.h
+    src/depots/MultiJobDepot.cpp src/depots/MultiJobDepot.h
+    src/depots/MultiJobDepotFactory.h
+    src/depots/SingleJobDepot.cpp src/depots/SingleJobDepot.h
+    src/depots/SingleJobDepotFactory.h
+    src/queues/IQueue.h
+    src/queues/IQueueBundle.h
+    src/queues/IQueueBundleFactory.h
+    src/queues/Queue.cpp src/queues/Queue.h
+    src/queues/QueueFactory.h
+    src/queues/QueueBundle.cpp src/queues/QueueBundle.h
+    src/queues/QueueBundleFactory.cpp src/queues/QueueBundleFactory.h
+)
 target_include_directories(mimo PRIVATE
-        include
-        ${PROJECT_BINARY_DIR}/lib/graph/include)
+    src
+    include)
+target_link_libraries(mimo
+    workflow
+)
 
-enable_testing()
 
-add_executable(linear examples/linear.cpp)
-target_include_directories(linear PRIVATE
-        include)
-target_link_libraries(linear mimo)
-add_test(linear linear)
+# Add examples
 
-add_executable(join examples/join.cpp)
-target_include_directories(join PRIVATE
-        include)
-target_link_libraries(join mimo)
-add_test(join join)
-
-add_executable(fork examples/fork.cpp)
-target_include_directories(fork PRIVATE
-        include)
-target_link_libraries(fork mimo)
-add_test(fork fork)
-
-add_executable(split examples/split.cpp)
-target_include_directories(split PRIVATE
-        include)
-target_link_libraries(split mimo)
-add_test(split split)
-
-add_subdirectory(tests)
+if (MIMO_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(examples)
+    add_subdirectory(tests)
+endif()

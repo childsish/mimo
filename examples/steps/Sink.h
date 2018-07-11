@@ -1,13 +1,13 @@
 #ifndef MIMO_SINK_H
 #define MIMO_SINK_H
 
-#include "Stream.h"
+#include "mimo/Step.h"
 
 
-class Sink : public Stream {
+class Sink : public Step {
 public:
 
-    Sink() : Stream("sink", {"input"}, {}) {}
+    Sink() : Step("sink", {"input"}, {}) {}
 
     void run() {
         Entity *entity;

@@ -2,46 +2,46 @@
  * An example demonstrating a simple workflow that joins two streams. The outputs are never split.
  */
 
-#include "Pipeline.h"
-#include "entities/Integer.h"
-#include "streams/Print.h"
-#include "streams/Range.h"
+#include "steps/Multiply.h"
+#include "steps/Print.h"
+#include "steps/Range.h"
+#include <mimo/Engine.h>
 
-
-class Multiply : public Stream {
-public:
-    Multiply() : Stream("multiply", {"multiplicand", "multiplier"}, {"result"}) {}
-
-    void run() {
-        Integer *multiplicand;
-        Integer *multiplier;
-        while (can_run()) {
-            multiplicand = static_cast<Integer *>(inputs["multiplicand"].pop());
-            multiplier = static_cast<Integer *>(inputs["multiplier"].pop());
-            outputs["result"].push(new Integer(multiplicand->value * multiplier->value));
-            collect(multiplicand);
-            collect(multiplier);
-        }
-    }
-};
 
 int main() {
-    Queue::THRESHOLD = 2;
+    auto range_forward = std::make_shared<Range>(0, 1000, 1);
+    auto range_backward = std::make_shared<Range>(1000, 0, -1);
+    auto multiply = std::make_shared<Multiply>();
+    auto print = std::make_shared<Print<Integer>>();
 
-    Pipeline pipeline;
-    Range one_to_thousand(10);
-    Range thousand_to_one(10, 1, -1);
-    Multiply multiply;
-    Print<Integer> print;
+    auto workflow = std::make_shared<workflow::Workflow>();
+    auto range_forward_step = workflow->add_step(
+        range_forward->get_name(),
+        range_forward->get_inputs(),
+        range_forward->get_outputs());
+    auto range_backward_step = workflow->add_step(
+        range_backward->get_name(),
+        range_backward->get_inputs(),
+        range_backward->get_outputs());
+    auto multiply_step = workflow->add_step(
+        multiply->get_name(),
+        multiply->get_inputs(),
+        multiply->get_outputs());
+    multiply_step->synchronise_inputs({"multiplicand", "multiplier"});
+    auto print_step = workflow->add_step(
+        print->get_name(),
+        print->get_inputs(),
+        print->get_outputs());
+    range_forward_step->pipe(*multiply_step->get_input("multiplicand"));
+    range_backward_step->pipe(*multiply_step->get_input("multiplier"));
+    multiply_step->pipe(*print_step);
 
-    uuid one_to_thousand_id = pipeline.add_stream(one_to_thousand);
-    uuid thousand_to_one_id = pipeline.add_stream(thousand_to_one);
-    uuid multiply_id = pipeline.add_stream(multiply);
-    uuid print_id = pipeline.add_stream(print);
-    pipeline.pipe({one_to_thousand_id, "output"}, {multiply_id, "multiplicand"});
-    pipeline.pipe({thousand_to_one_id, "output"}, {multiply_id, "multiplier"});
-    pipeline.pipe({multiply_id, "result"}, {print_id, "input"});
-    pipeline.run();
+    mimo::Engine engine;
+    engine.register_step(range_forward_step, range_forward);
+    engine.register_step(range_backward_step, range_backward);
+    engine.register_step(multiply_step, multiply);
+    engine.register_step(print_step, print);
+    engine.run(workflow);
 
     return 0;
 }
